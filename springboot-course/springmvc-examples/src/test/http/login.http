@@ -1,0 +1,18 @@
+### 错误
+POST localhost:8080/api/login
+Content-Type: application/json
+
+
+{
+  "account": "202",
+  "password": "654321"
+}
+### 成功
+POST localhost:8080/api/login
+Content-Type: application/json
+
+
+{
+  "account": "202",
+  "password": "123456"
+}

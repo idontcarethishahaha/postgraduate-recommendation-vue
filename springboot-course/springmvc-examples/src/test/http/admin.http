@@ -1,0 +1,7 @@
+GET http://localhost:8080/api/admin/users
+
+###
+GET http://localhost:8080/api/admin/users/202
+
+### user对象不存在，请求成功但返回为空
+GET http://localhost:8080/api/admin/users/110
