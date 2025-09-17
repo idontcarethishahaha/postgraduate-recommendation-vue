@@ -4,47 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/JWTComponent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/PasswordEncoderConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/SnowflakeGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/WebMvcConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/AdminController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/ExceptionController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/LoginController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/dox/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/exception/Code.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/exception/XException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/interceptor/AdminInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/interceptor/LoginInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/repository/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/service/InitService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/vo/ResultVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/resources/schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/admin.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/login.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/user.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/JWTComponent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/PasswordEncoderConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/WebMvcConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/ExceptionController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/exception/XException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/interceptor/AdminInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/interceptor/LoginInterceptor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdbc-examples/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/jdbc-examples/src/main/resources/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/dox/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/dox/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/test/http/admin.http" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/admin.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" afterDir="false" />
-    </list>
+    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -217,7 +177,7 @@
       <workItem from="1758028691110" duration="5630000" />
       <workItem from="1758034374360" duration="1855000" />
       <workItem from="1758093466550" duration="961000" />
-      <workItem from="1758094576110" duration="2251000" />
+      <workItem from="1758094576110" duration="2566000" />
     </task>
     <servers />
   </component>
