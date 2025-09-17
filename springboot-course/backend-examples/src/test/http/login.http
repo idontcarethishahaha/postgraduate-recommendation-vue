@@ -1,0 +1,34 @@
+### success
+POST localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "account": "admin",
+  "password": "admin"
+}
+
+### failed
+POST localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "account": "admin",
+  "password": "666"
+}
+### 用户登录
+POST localhost:8080/api/login
+Content-Type: application/json
+
+{
+"account": "666",
+"password": "666"
+}
+
+### 用户登录
+POST localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "account": "666",
+  "password": "857"
+}

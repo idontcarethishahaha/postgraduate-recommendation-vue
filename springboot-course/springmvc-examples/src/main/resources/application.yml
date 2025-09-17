@@ -9,3 +9,6 @@ logging:
       example: debug
   pattern:
     console: '%-5level %C.%M[%line] - %msg%n'
+
+my:
+  secretkey: QwQ857ciao

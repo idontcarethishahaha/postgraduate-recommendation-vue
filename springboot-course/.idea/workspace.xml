@@ -5,30 +5,45 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/component/SnowflakeGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/dox/Address.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/dox/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/dto/AddressUserDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/dto/UserAddressDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/dto/UserCountDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/mapper/AddressRowMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/mapper/UserExtractor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/repository/AddressRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/java/org/example/jdbcexamples/repository/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/main/resources/schema.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/test/java/org/example/jdbcexamples/repository/AddressRepositoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/test/java/org/example/jdbcexamples/repository/UserRepositoryTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jdbc-examples/src/test/script/script.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/AdminController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/LoginController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/dox/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/exception/Code.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/vo/ResultVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/admin.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/JWTComponent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/PasswordEncoderConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/SnowflakeGenerator.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/component/WebMvcConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/AdminController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/ExceptionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/LoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/dox/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/exception/Code.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/exception/XException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/interceptor/AdminInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/interceptor/LoginInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/repository/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/service/InitService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/service/UserService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/java/org/example/backendexamples/vo/ResultVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/main/resources/schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/admin.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/login.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend-examples/src/test/http/user.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/JWTComponent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/PasswordEncoderConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/component/WebMvcConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/ExceptionController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/exception/XException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/interceptor/AdminInterceptor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/interceptor/LoginInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdbc-examples/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/jdbc-examples/src/main/resources/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/dox/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/dox/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/java/org/example/springmvcexamples/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/test/http/admin.http" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/admin.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" beforeDir="false" afterPath="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,26 +72,51 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="32jB4zMiGPb2yoeQgF2Cgzfx7M6" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "HTTP Request.admin | #1.executor": "Run",
+    "HTTP Request.admin | #4.executor": "Run",
+    "HTTP Request.admin | #5.executor": "Run",
+    "HTTP Request.admin | user对象不存在，请求成功但返回为空.executor": "Run",
+    "HTTP Request.admin | 管理员重置密码  重置账号为 666.executor": "Run",
+    "HTTP Request.login | #1.executor": "Run",
+    "HTTP Request.login | failed.executor": "Run",
+    "HTTP Request.login | success.executor": "Run",
+    "HTTP Request.login | user.executor": "Run",
+    "HTTP Request.login | 成功.executor": "Run",
+    "HTTP Request.login | 用户登录#1.executor": "Run",
+    "HTTP Request.login | 用户登录#2.executor": "Run",
+    "HTTP Request.login | 用户登录.executor": "Run",
+    "HTTP Request.login | 错误.executor": "Run",
+    "HTTP Request.user | 用户可以修改自己的密码.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.BackendExamplesApplication.executor": "Run",
     "Spring Boot.JdbcExamplesApplication.executor": "Run",
+    "Spring Boot.SpringmvcExamplesApplication.executor": "Run",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/workspace-java/springboot-courses-wwj",
+    "last_opened_file_path": "D:/code/springboot-course/springboot-course/backend-examples/src/main/java/org/example/backendexamples",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.configurations.included.in.services": "true",
     "settings.editor.selected.configurable": "File.Encoding",
     "vue.rearranger.settings.migration": "true"
   },
@@ -86,7 +126,52 @@
     ]
   }
 }]]></component>
-  <component name="RunManager" selected="Spring Boot.JdbcExamplesApplication">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\code\springboot-course\springboot-course\backend-examples\src\main\java\org\example\backendexamples" />
+      <recent name="D:\code\springboot-course\springboot-course\backend-examples\src\main\java\org\example\backendexamples\controller" />
+      <recent name="D:\code\springboot-course\springboot-course\backend-examples\src\main\java\org\example\backendexamples\component" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.example.backendexamples.component" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.BackendExamplesApplication">
+    <configuration name="admin | 管理员重置密码  重置账号为 666" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/admin.http" executionIdentifier="管理员重置密码  重置账号为 666" index="2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="login | 用户登录#1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录#1" index="3" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="login | 用户登录#2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录#2" index="4" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="login | 错误" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" executionIdentifier="错误" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="login | 用户登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录" index="3" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="user | 用户可以修改自己的密码" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/user.http" executionIdentifier="用户可以修改自己的密码" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="BackendExamplesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="backend-examples" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.backendexamples.BackendExamplesApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="JdbcExamplesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="jdbc-examples" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="org.example.jdbcexamples.JdbcExamplesApplication" />
@@ -101,6 +186,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.login | 用户登录#1" />
+        <item itemvalue="HTTP Request.login | 用户登录#2" />
+        <item itemvalue="HTTP Request.admin | 管理员重置密码  重置账号为 666" />
+        <item itemvalue="HTTP Request.login | 用户登录" />
+        <item itemvalue="HTTP Request.user | 用户可以修改自己的密码" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -118,7 +212,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1757923914757</updated>
-      <workItem from="1757923916184" duration="2863000" />
+      <workItem from="1757923916184" duration="13111000" />
+      <workItem from="1757947402836" duration="713000" />
+      <workItem from="1758028691110" duration="5630000" />
+      <workItem from="1758034374360" duration="1855000" />
+      <workItem from="1758093466550" duration="961000" />
+      <workItem from="1758094576110" duration="2251000" />
     </task>
     <servers />
   </component>

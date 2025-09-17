@@ -1,0 +1,8 @@
+### 用户可以修改自己的密码
+PATCH localhost:8080/api/user/password
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoieUhKNyIsInVpZCI6IjE0MTc3ODE5MzI1NzY1MzA0MzIiLCJpYXQiOjE3NTgwOTYxNTAsImV4cCI6MTc1ODE4MjU1MH0.qMnVP36-gLboSbVbxd4nV-vbck-8WM_9MgBpXQ9euds
+Content-Type: application/json
+
+{
+  "password": "857"
+}

@@ -5,3 +5,11 @@ GET http://localhost:8080/api/admin/users/202
 
 ### user对象不存在，请求成功但返回为空
 GET http://localhost:8080/api/admin/users/110
+
+###
+GET http://localhost:8080/api/admin/users
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIyMjIiLCJyb2xlIjoiRmVTbyIsImlhdCI6MTc1ODAzMDMzNSwiZXhwIjoxNzU4MTE2NzM1fQ.HqvSZoxIO54Nn7sHKlA1Yc8v8fiGSwtGHTBezE-QIok
+
+###
+GET http://localhost:8080/api/admin/users
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxIiwicm9sZSI6IkNhaHkiLCJpYXQiOjE3NTgwMzA0MjUsImV4cCI6MTc1ODExNjgyNX0.iGUSTZ71fXHx5RYlBtP_1cXOM7MvvGbef8UkhnBRpHc
