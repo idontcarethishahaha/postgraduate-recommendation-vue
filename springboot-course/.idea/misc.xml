@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/jdbc-examples/pom.xml" />
         <option value="$PROJECT_DIR$/springmvc-examples/pom.xml" />
         <option value="$PROJECT_DIR$/backend-examples/pom.xml" />
+        <option value="$PROJECT_DIR$/PGEE/pom.xml" />
       </list>
     </option>
   </component>

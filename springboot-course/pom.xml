@@ -13,5 +13,6 @@
          <module>jdbc-examples</module>
          <module>springmvc-examples</module>
         <module>backend-examples</module>
+        <module>PGEE</module>
     </modules>
 </project>
