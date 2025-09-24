@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/application.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/sql/admin.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/sql/counselor.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/sql/student.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/sql/test_data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/sql/user.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-examples/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend-examples/src/main/resources/schema.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,53 +48,54 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;HTTP Request.admin | #1.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.admin | #4.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.admin | #5.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.admin | user对象不存在，请求成功但返回为空.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.admin | 管理员重置密码  重置账号为 666.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | #1.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | failed.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | success.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | user.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | 成功.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | 用户登录#1.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | 用户登录#2.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | 用户登录.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.login | 错误.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.user | 用户可以修改自己的密码.executor&quot;: &quot;Run&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.BackendExamplesApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.JdbcExamplesApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.SpringmvcExamplesApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/code/springboot-course/springboot-course/backend-examples/src/main/java/org/example/backendexamples&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "HTTP Request.admin | #1.executor": "Run",
+    "HTTP Request.admin | #4.executor": "Run",
+    "HTTP Request.admin | #5.executor": "Run",
+    "HTTP Request.admin | user对象不存在，请求成功但返回为空.executor": "Run",
+    "HTTP Request.admin | 管理员重置密码  重置账号为 666.executor": "Run",
+    "HTTP Request.login | #1.executor": "Run",
+    "HTTP Request.login | failed.executor": "Run",
+    "HTTP Request.login | success.executor": "Run",
+    "HTTP Request.login | user.executor": "Run",
+    "HTTP Request.login | 成功.executor": "Run",
+    "HTTP Request.login | 用户登录#1.executor": "Run",
+    "HTTP Request.login | 用户登录#2.executor": "Run",
+    "HTTP Request.login | 用户登录.executor": "Run",
+    "HTTP Request.login | 错误.executor": "Run",
+    "HTTP Request.user | 用户可以修改自己的密码.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.BackendExamplesApplication.executor": "Run",
+    "Spring Boot.JdbcExamplesApplication.executor": "Run",
+    "Spring Boot.PgeeApplication.executor": "Run",
+    "Spring Boot.SpringmvcExamplesApplication.executor": "Run",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/code/springboot-course/springboot-course/backend-examples/src/main/java/org/example/backendexamples",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "File.Encoding",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\code\springboot-course\springboot-course\backend-examples\src\main\java\org\example\backendexamples" />
@@ -110,7 +116,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.BackendExamplesApplication">
+  <component name="RunManager" selected="Spring Boot.PgeeApplication">
     <configuration name="admin | 管理员重置密码  重置账号为 666" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/admin.http" executionIdentifier="管理员重置密码  重置账号为 666" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
@@ -120,10 +126,10 @@
     <configuration name="login | 用户登录#2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录#2" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="login | 错误" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" executionIdentifier="错误" runType="Run single request">
+    <configuration name="login | 用户登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录" index="3" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="login | 用户登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/login.http" executionIdentifier="用户登录" index="3" runType="Run single request">
+    <configuration name="login | 错误" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" executionIdentifier="错误" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="user | 用户可以修改自己的密码" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/backend-examples/src/test/http/user.http" executionIdentifier="用户可以修改自己的密码" runType="Run single request">
@@ -194,7 +200,10 @@
       <workItem from="1758368676942" duration="51000" />
       <workItem from="1758459189374" duration="7686000" />
       <workItem from="1758504522165" duration="7630000" />
-      <workItem from="1758524688610" duration="3891000" />
+      <workItem from="1758524688610" duration="5290000" />
+      <workItem from="1758540184928" duration="2490000" />
+      <workItem from="1758635839570" duration="5030000" />
+      <workItem from="1758698758555" duration="19706000" />
     </task>
     <servers />
   </component>
