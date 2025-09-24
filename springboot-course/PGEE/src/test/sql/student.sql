@@ -2,7 +2,6 @@
 explain
 select
     ip.name as first_level_name,
-    /*ip.description as indicator_desc,  /*指标说明*/
     mc.name as category_name
 from
     `user` u
