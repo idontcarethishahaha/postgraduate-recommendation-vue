@@ -1,0 +1,4 @@
+### 查询所有学院
+GET localhost:8080/api/open/colleges
+
+

@@ -11,10 +11,11 @@ create table if not exists `major_category`(
      id bigint unsigned primary key ,
      name varchar(25) not null unique,
      college_id bigint unsigned not null ,
+     calculation_rule json not null,
      create_time datetime not null default current_timestamp,
      update_time datetime not null default current_timestamp on update current_timestamp,
 
-    index(college_id)
+    index(college_id)/*查询某个学院的所有类别*/
 );
 
 /* 专业表 */
@@ -26,32 +27,33 @@ create table if not exists `major`(
     create_time datetime not null default current_timestamp,
     update_time datetime not null default current_timestamp on update current_timestamp,
 
-    index(college_id,major_category_id)/*某学院某专业类别的专业*/
+    index(major_category_id)/*查询某个专业类别下的所有专业*/
 );
 
 /* 用户表，仅保留基础信息 */
 create table if not exists `user`
 (
     id          bigint unsigned primary key,
-    name        varchar(45),/*用户真实姓名*/
-    college_id  bigint unsigned not null,
-    account     char(11) not null unique ,
+    name        varchar(45), /*用户真实姓名*/
+    college_id  bigint unsigned,
+    account     varchar(11) not null unique ,
     password    varchar(65) not null ,/*BCrypt*/
-    role        char(5) not null,/*给每个角色自定义一串长度为5的字符串*/
-    tel         char(11) not null ,
+    role        char(4) not null, /*给每个角色自定义一串长度为5的字符串*/
+    tel         char(11),
     create_time datetime not null default current_timestamp,
     update_time datetime not null default current_timestamp on update current_timestamp
-
 );
 
 /*学生中间表*/
 create table if not exists `student_info`(
     id bigint unsigned primary key ,
     user_id bigint unsigned not null ,
-    /*major_category_id bigint unsigned not null,*/
     major_id bigint unsigned not null,
     create_time datetime not null default current_timestamp,
-    update_time datetime not null default current_timestamp on update current_timestamp
+    update_time datetime not null default current_timestamp on update current_timestamp,
+
+    index(user_id),
+    index(major_id)
 );
 
 /*导员中间表*/
@@ -60,7 +62,10 @@ create table if not exists `counselor_info`(
    user_id bigint unsigned not null ,
    major_category_id bigint unsigned not null,
    create_time datetime not null default current_timestamp,
-   update_time datetime not null default current_timestamp on update current_timestamp
+   update_time datetime not null default current_timestamp on update current_timestamp,
+
+   index(user_id),
+   index(major_category_id)
 );
 
 /*学生成绩表*/
@@ -76,18 +81,6 @@ create table if not exists `stu_score`(
     index(user_id)
 );
 
-/*分数计算规则表*/
-create table if not exists `calculation_rule`(
-    id bigint unsigned not null,
-    major_category_id bigint unsigned not null,
-    weighted_score_ratio decimal(3,2) not null ,/*加权成绩占比*/
-    comprehensive_score_ratio decimal(3,2) not null ,/*综合成绩占比*/
-    create_time datetime not null default current_timestamp,
-    update_time datetime not null default current_timestamp on update current_timestamp,
-
-    index(major_category_id)
-);
-
 /* 指标点表 */
 create table if not exists `indicator_points`(
     id bigint unsigned not null primary key ,
@@ -99,11 +92,6 @@ create table if not exists `indicator_points`(
     item_upper_limit int unsigned default 999,/*本项目申报数量上限*/
     parent_id bigint unsigned,/*父级指标点id*/
     is_leaf tinyint not null,/*是否为叶子节点,0表示不是,1表示是*/
-
-    /*code varchar(20) not null,/*为节点编码，存放到层级路径编码中，便于追溯查找*/
-   /* level_code varchar(50) not null,*/
-    /*层级路径编码，如“1”代表1级“学术专长”，“1-1”代表2级“竞赛”，“1-1-1”代表3级“第一等级一等奖”*/
-
     create_time datetime not null default current_timestamp,
     update_time datetime not null default current_timestamp on update current_timestamp,
 
@@ -112,30 +100,22 @@ create table if not exists `indicator_points`(
 
 );
 
-/*
-   1.拉取某专业类别的所有一级指标
-   2.拉取某父节点的所有子节点
-   3.判断某指标点是否为叶子节点
-   4.拉取某指标点的完整路径
-  */
-
 /* 申报记录表 */
 create table if not exists `application`(
     id bigint unsigned not null primary key ,
     user_id bigint unsigned not null ,/* 学生用户的id */
-
-    /*学生仅申报最底层具体项（叶子节点），通过indicator_id反向获取完整指标路径
-      parent_id递归查询 或 通过level_code获取路径*/
+    first_indicator bigint unsigned not null,
+    /* 学生仅申报最底层具体项（叶子节点） */
     indicator_id bigint unsigned not null,/*指标点id，必须是叶子节点*/
     status varchar(25) not null default 'pending',
-        /*'pending','rejected','revision','pass') default 'pending',*/
     item_name varchar(255) not null ,/* 指标点项目名称 */
     description text,
     create_time datetime not null default current_timestamp,
     update_time datetime not null default current_timestamp on update current_timestamp,
 
     index(user_id),
-    index(indicator_id)/*某一指标下的所有申报记录*/
+    index(indicator_id)/*某一指标下的所有申报记录*/,
+    index(user_id,status)
 );
 
 /* 证明材料表 */

@@ -10,3 +10,13 @@ spring:
 
   jackson:
     default-property-inclusion: non_null
+
+logging:
+  level:
+    sql: debug
+    org.example: debug
+  pattern:
+    console: '%-5level %C.%M[%line] - %msg%n'
+
+my:
+  secretkey: Qye35Fd
