@@ -1,0 +1,27 @@
+### 学院管理员登录
+POST localhost:8080/api/open/login
+Content-Type: application/json
+
+{
+  "account": "2023221547",
+  "password": "2023221547"
+}
+
+
+#### 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token
+PATCH localhost:8080/api/open/user/password
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjE0MjExMzQ0MTU5MDY1MjkyODAsInJvbGUiOiJ5SEo3IiwiaWF0IjoxNzU4OTUzOTcwLCJleHAiOjE3NTkwNDAzNzB9.PesYooDlrzngGQ16BzO5rR7MR2HnJwK4oNNxmPJFR4E
+Content-Type: application/json
+
+{
+  "password": "12345678"
+}
+
+### 测试密码是否被成功修改
+POST localhost:8080/api/open/login
+Content-Type: application/json
+
+{
+  "account": "2023221547",
+  "password": "12345678"
+}

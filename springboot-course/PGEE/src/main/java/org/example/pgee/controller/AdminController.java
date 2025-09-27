@@ -37,7 +37,7 @@ public class AdminController {
         return ResultVO.ok();
     }
 */
-    // 重置密码
+    // 重置用户密码
     @PutMapping("admin/users/{account}/password")
     public ResultVO putPassword(@PathVariable String account) {
         userService.updateUserPassword(account);

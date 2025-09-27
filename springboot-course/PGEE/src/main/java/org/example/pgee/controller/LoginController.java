@@ -17,14 +17,14 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/open/")
+@RequestMapping("/api/")
 public class LoginController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JWTComponent jwtComponent;
 
-    @PostMapping("login")
+    @PostMapping("open/login")
     public ResultVO login(@RequestBody User user, HttpServletResponse response) {
         // 处理用户查询
         Optional<User> userOpt = userService.getUser(user.getAccount());

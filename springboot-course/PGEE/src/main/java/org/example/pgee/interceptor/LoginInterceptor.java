@@ -30,7 +30,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         // token 解密
         DecodedJWT decode = jwtComponent.decode(token);
-        String uid = decode.getClaim("uid").asString();
+        //String uid = decode.getClaim("uid").asString();
+        Long uid = decode.getClaim("uid").asLong();
         String role = decode.getClaim("role").asString();
         request.setAttribute("uid", uid);
         request.setAttribute("role", role);

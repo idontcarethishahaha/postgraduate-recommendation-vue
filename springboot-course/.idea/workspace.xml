@@ -5,41 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/component/JWTComponent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/component/PasswordEncoderConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/component/SnowflakeGenerator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/ExceptionController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/LoginController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/UserController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/College.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/CounselorInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/Major.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/MajorCategory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/StudentInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/User.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/CollegeAddDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/exception/Code.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/exception/XException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/AdminInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/LoginInterceptor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/CollegeRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/InitService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ResultVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/test/http/college.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/test/http/login.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/test/http/user.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/component/WebMvcConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/AdminInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/AdminInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/LoginInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/interceptor/LoginInterceptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/CollegeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/CollegeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/sql/counselor.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/sql/counselor.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/sql/student.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/sql/student.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/sql/test_data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/sql/test_data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/sql/user.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/sql/user.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/login.http" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/user.http" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,15 +62,20 @@
     "HTTP Request.admin | #5.executor": "Run",
     "HTTP Request.admin | 9. 删除学院  最后面的一串数是学院id.executor": "Run",
     "HTTP Request.admin | user对象不存在，请求成功但返回为空.executor": "Run",
+    "HTTP Request.admin | 创建一个学院级管理员  101是学院id#1.executor": "Run",
     "HTTP Request.admin | 创建一个学院级管理员  101是学院id#2.executor": "Run",
     "HTTP Request.admin | 创建一个学院级管理员  101是学院id.executor": "Run",
     "HTTP Request.admin | 创建一个学院级管理员.executor": "Run",
     "HTTP Request.admin | 添加学院.executor": "Run",
     "HTTP Request.admin | 管理员重置密码  重置账号为 2023221547.executor": "Run",
     "HTTP Request.admin | 管理员重置密码  重置账号为 666.executor": "Run",
+    "HTTP Request.admin | 超级管理员登录.executor": "Run",
     "HTTP Request.college | 9. 删除学院  最后面的一串数是学院id.executor": "Run",
     "HTTP Request.college | 9. 删除学院.executor": "Run",
     "HTTP Request.college | 查询所有学院.executor": "Run",
+    "HTTP Request.collegeadmin | 学院管理员登录.executor": "Run",
+    "HTTP Request.collegeadmin | 所有用户都可以修改自己的密码.executor": "Run",
+    "HTTP Request.collegeadmin | 测试密码是否被成功修改.executor": "Run",
     "HTTP Request.login | #1.executor": "Run",
     "HTTP Request.login | failed.executor": "Run",
     "HTTP Request.login | success.executor": "Run",
@@ -103,6 +88,8 @@
     "HTTP Request.login | 用户登录.executor": "Run",
     "HTTP Request.login | 超级管理员登录.executor": "Run",
     "HTTP Request.login | 错误.executor": "Run",
+    "HTTP Request.test | 测试Token解码.executor": "Run",
+    "HTTP Request.test | 添加学院.executor": "Run",
     "HTTP Request.user | 用户可以修改自己的密码 (1).executor": "Run",
     "HTTP Request.user | 用户可以修改自己的密码.executor": "Run",
     "RequestMappingsPanelOrder0": "0",
@@ -167,19 +154,16 @@
     <configuration name="admin | 管理员重置密码  重置账号为 2023221547" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/admin.http" executionIdentifier="管理员重置密码  重置账号为 2023221547" index="6" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="admin | 创建一个学院级管理员  101是学院id#2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/admin.http" executionIdentifier="创建一个学院级管理员  101是学院id#2" index="5" runType="Run single request">
+    <configuration name="admin | 创建一个学院级管理员  101是学院id#1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/admin.http" executionIdentifier="创建一个学院级管理员  101是学院id#1" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="admin | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/admin.http" executionIdentifier="#1" runType="Run single request">
+    <configuration name="collegeadmin | 所有用户都可以修改自己的密码" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="所有用户都可以修改自己的密码" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="admin | 添加学院" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/admin.http" executionIdentifier="添加学院" index="2" runType="Run single request">
+    <configuration name="collegeadmin | 测试密码是否被成功修改" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="测试密码是否被成功修改" index="3" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="login | 错误" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/springmvc-examples/src/test/http/login.http" executionIdentifier="错误" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="user | 用户可以修改自己的密码" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/user.http" executionIdentifier="用户可以修改自己的密码" index="2" runType="Run single request">
+    <configuration name="collegeadmin | 学院管理员登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="学院管理员登录" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="BackendExamplesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -212,11 +196,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.user | 用户可以修改自己的密码" />
+        <item itemvalue="HTTP Request.collegeadmin | 测试密码是否被成功修改" />
+        <item itemvalue="HTTP Request.collegeadmin | 所有用户都可以修改自己的密码" />
+        <item itemvalue="HTTP Request.collegeadmin | 学院管理员登录" />
         <item itemvalue="HTTP Request.admin | 管理员重置密码  重置账号为 2023221547" />
-        <item itemvalue="HTTP Request.admin | 创建一个学院级管理员  101是学院id#2" />
-        <item itemvalue="HTTP Request.admin | 添加学院" />
-        <item itemvalue="HTTP Request.admin | #1" />
+        <item itemvalue="HTTP Request.admin | 创建一个学院级管理员  101是学院id#1" />
       </list>
     </recent_temporary>
   </component>
@@ -256,11 +240,23 @@
       <workItem from="1758846467252" duration="3768000" />
       <workItem from="1758856679305" duration="2088000" />
       <workItem from="1758864961344" duration="5255000" />
-      <workItem from="1758882902553" duration="18763000" />
+      <workItem from="1758882902553" duration="20281000" />
+      <workItem from="1758936613383" duration="7751000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

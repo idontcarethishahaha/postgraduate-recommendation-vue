@@ -32,16 +32,16 @@ public class UserService {
     }
 
     // 添加学院管理员
+    //.orElseThrow返回值为optional中的值，空值时抛异常，终止流程，有值时返回值
     @Transactional
     public void addCollegeAdmin(Long collegeId,User user) {
-        // 验证学院是否存在
         collegeRepository.findById(collegeId)
                 .orElseThrow(() -> XException.builder()
                         .number(Code.ERROR)
                         .message("学院不存在")
                         .build());
 
-        // 验证账号是否已存在
+        //.isPresent()返回值为boolean,判断查询结果是否有值，不终止流程，“不存在”正常继续，“已存在”不能继续
         if (userRepository.findByAccount(user.getAccount()).isPresent()) {
             throw XException.builder()
                     .number(Code.ERROR)
@@ -73,6 +73,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // 重置用户密码
     // 权限由controller层面负责，在入口使用拦截器
     @Transactional
     public void updateUserPassword(String account) {
@@ -84,8 +85,9 @@ public class UserService {
                 .setPassword(passwordEncoder.encode(account));
     }
 
+    // 用户集合
     public List<User> listUsers(){
-        return userRepository.findAll();
+        return userRepository.findAll();// CrudRepository接口的内置方法
     }
 
 }

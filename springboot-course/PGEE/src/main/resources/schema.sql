@@ -38,7 +38,7 @@ create table if not exists `user`
     college_id  bigint unsigned,
     account     varchar(11) not null unique ,
     password    varchar(65) not null ,/*BCrypt*/
-    role        char(4) not null, /*给每个角色自定义一串长度为5的字符串*/
+    role        char(4) not null, /*给每个角色自定义一串长度为4的字符串*/
     tel         char(11),
     create_time datetime not null default current_timestamp,
     update_time datetime not null default current_timestamp on update current_timestamp

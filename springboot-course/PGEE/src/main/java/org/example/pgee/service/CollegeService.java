@@ -36,7 +36,7 @@ public class CollegeService {
     // 查询所有学院
     public List<College> listAllColleges() {
         List<College> colleges = new ArrayList<>();
-        collegeRepository.findAll().forEach(colleges::add); // 遍历添加到 List
+        collegeRepository.findAll().forEach(colleges::add);
         return colleges;
     }
 
