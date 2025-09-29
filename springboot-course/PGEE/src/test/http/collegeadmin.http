@@ -43,6 +43,16 @@ Content-Type: application/json
 #  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
 #}
 
+### 为学院添加类别  后续可以改成从token里获取学院id
+POST localhost:8080/api/collegeadmin/categories
+token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "信息类",
+  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
+}
+
 ### 后续可以改成从token里获取学院id  college_id
 #GET localhost:8080/api/collegeadmin/categories/101
 #token: {{token}}
@@ -55,3 +65,13 @@ Content-Type: application/json
 ### 删除学院下的某个类别
 DELETE localhost:8080/api/collegeadmin/categories/1421397273399582720
 token: {{token}}
+
+### 修改类别
+PUT localhost:8080/api/collegeadmin/categories/1422192039766843392
+token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "新类别名称",
+  "calculationRule": "{\"新规则\": \"...\"}"
+}

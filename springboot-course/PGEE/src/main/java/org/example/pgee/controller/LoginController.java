@@ -69,24 +69,24 @@ public class LoginController {
         claims.put("uid", userR.getId());
         claims.put("role", role);
 
-        // 3. 根据角色查询中间表，添加特有字段
+        // 根据角色查询中间表，添加特有字段
         switch (role) {
             case User.COLLEGE_ADMIN:
-                // 学院管理员：从user表获取college_id（你的User实体已有collegeId字段）
+                // 学院管理员：从user表获取college_id
                 claims.put("cid", userR.getCollegeId());
                 break;
             case User.COUNSELOR:
                 // 辅导员：从counselor_info中间表获取major_category_id，同时添加college_id
                 CounselorInfo counselorInfo = userService.getCounselorInfo(userId)
                         .orElseThrow(() -> XException.builder().number(Code.ERROR).message("辅导员信息不存在").build());
-                claims.put("cid", userR.getCollegeId()); // 假设辅导员的college_id在user表
+                claims.put("cid", userR.getCollegeId()); // 辅导员的college_id在user表
                 claims.put("mcid", counselorInfo.getMajorCategoryId());
                 break;
             case User.STUDENT:
                 // 学生：从student_info中间表获取major_id，同时添加college_id
                 StudentInfo studentInfo = userService.getStudentInfo(userId)
                         .orElseThrow(() -> XException.builder().number(Code.ERROR).message("学生信息不存在").build());
-                claims.put("cid", userR.getCollegeId()); // 假设学生的college_id在user表
+                claims.put("cid", userR.getCollegeId()); // 学生的college_id在user表
                 claims.put("mid", studentInfo.getMajorId());
                 break;
             case User.ADMIN: // 超级管理员

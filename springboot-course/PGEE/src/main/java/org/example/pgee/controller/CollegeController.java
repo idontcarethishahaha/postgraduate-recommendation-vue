@@ -3,6 +3,7 @@ package org.example.pgee.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.pgee.dto.MajorCategoryAddDTO;
+import org.example.pgee.dto.MajorCategoryUpdateDTO;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
 import org.example.pgee.service.CollegeService;
@@ -20,10 +21,25 @@ public class CollegeController {
 
     private final CollegeService collegeService;
 
-    //学院管理员可以为学院添加类别  /api/collegeadmin/categories，POST请求
+//    //学院管理员可以为学院添加类别  /api/collegeadmin/categories，POST请求
+//    @PostMapping("collegeadmin/categories")
+//    public ResultVO postMajorCategories(@RequestBody MajorCategoryAddDTO majorCategoryAddDTO) {
+//        collegeService.addMajorCategory(majorCategoryAddDTO);
+//        return ResultVO.ok();
+//    }
+
+    // 学院管理员可以为学院添加类别(从token获取学院ID
     @PostMapping("collegeadmin/categories")
-    public ResultVO postMajorCategories(@RequestBody MajorCategoryAddDTO majorCategoryAddDTO) {
-        collegeService.addMajorCategory(majorCategoryAddDTO);
+    public ResultVO postMajorCategories(@RequestBody MajorCategoryAddDTO majorCategoryAddDTO,
+                                        HttpServletRequest request) {
+        // 从request中获取拦截器解析的学院ID
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        // 直接传递学院ID到service，不依赖前端传递
+        collegeService.addMajorCategory(majorCategoryAddDTO, cid);
         return ResultVO.ok();
     }
 
@@ -41,16 +57,43 @@ public class CollegeController {
         Long cid = (Long) request.getAttribute("cid");
         // 校验：确保学院管理员的Token中包含cid（增强安全性）
         if (cid == null) {
-            throw XException.builder().code(Code.FORBIDDEN).message("无权访问").build();
+            throw XException.builder().code(Code.FORBIDDEN).build();
         }
         // 调用服务层查询该学院下的类别
         return ResultVO.success(collegeService.listAllMajorCategories(cid));
     }
 
     // 删除某个类别
+//    @DeleteMapping("collegeadmin/categories/{mcid}")
+//    public ResultVO deleteMajorCategory(@PathVariable Long mcid) {
+//        collegeService.deleteMajorCategory(mcid);
+//        return ResultVO.ok();
+//    }
+
+    // 删除某个类别（增加学院权限验证
     @DeleteMapping("collegeadmin/categories/{mcid}")
-    public ResultVO deleteMajorCategory(@PathVariable Long mcid) {
-        collegeService.deleteMajorCategory(mcid);
+    public ResultVO deleteMajorCategory(@PathVariable Long mcid, HttpServletRequest request) {
+        // 从token获取学院ID，确保只能删除自己学院的类别
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        collegeService.deleteMajorCategory(mcid, cid);
+        return ResultVO.ok();
+    }
+
+    // 修改类别
+    @PutMapping("collegeadmin/categories/{mcid}")
+    public ResultVO updateMajorCategory(@PathVariable Long mcid,
+                                        @RequestBody MajorCategoryUpdateDTO updateDTO,
+                                        HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        collegeService.updateMajorCategory(mcid, updateDTO, cid);
         return ResultVO.ok();
     }
 
