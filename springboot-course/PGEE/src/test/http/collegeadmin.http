@@ -7,7 +7,11 @@ Content-Type: application/json
   "password": "2023221547"
 }
 
-
+> {%
+    // 保存token到环境变量
+    client.global.set("token", response.headers.valueOf("token"));
+    client.global.set("cid", response.body.data.collegeId);
+%}
 #### 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token
 PATCH localhost:8080/api/open/user/password
 token: {{token}}
@@ -28,20 +32,25 @@ Content-Type: application/json
 
 > {% client.global.set("token", response.headers.valueOf("token")); %}
 
-### 为学院添加类别
-POST localhost:8080/api/collegeadmin/categories
-token: {{token}}
-Content-Type: application/json
-
-{
-  "collegeId": "101",
-  "name": "信息类",
-  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
-}
+### 为学院添加类别  后续可以改成从token里获取学院id
+#POST localhost:8080/api/collegeadmin/categories
+#token: {{token}}
+#Content-Type: application/json
+#
+#{
+#  "collegeId": "101",
+#  "name": "信息类",
+#  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
+#}
 
 ### 后续可以改成从token里获取学院id  college_id
 #GET localhost:8080/api/collegeadmin/categories/101
 #token: {{token}}
+
+###  查询自己所在学院下的所有类别  从学院管理员的token中获取学院id
+GET localhost:8080/api/collegeadmin/categories
+token: {{token}}
+Content-Type: application/json
 
 ### 删除学院下的某个类别
 DELETE localhost:8080/api/collegeadmin/categories/1421397273399582720

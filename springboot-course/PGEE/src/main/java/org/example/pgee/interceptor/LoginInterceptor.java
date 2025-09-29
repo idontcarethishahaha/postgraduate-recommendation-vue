@@ -24,7 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
-        if(token == null){
+        if (token == null) {
             throw XException.builder().code(Code.UNAUTHORIZED).build(); // 未登录异常
         }
         // token 解密
@@ -37,8 +37,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 解析并存储学院id
         // 先判断Token中是否包含college_id，避免解析空值
-        if (!decode.getClaim("college_id").isMissing()) {
-            Long cid = decode.getClaim("college_id").asLong();
+        if (!decode.getClaim("cid").isMissing()) {
+            Long cid = decode.getClaim("cid").asLong();
             request.setAttribute("cid", cid); // 存入request，供控制器获取
         }
 

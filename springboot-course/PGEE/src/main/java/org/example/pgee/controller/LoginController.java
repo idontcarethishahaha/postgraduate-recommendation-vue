@@ -4,8 +4,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.pgee.component.JWTComponent;
+import org.example.pgee.dox.CounselorInfo;
+import org.example.pgee.dox.StudentInfo;
 import org.example.pgee.dox.User;
 import org.example.pgee.exception.Code;
+import org.example.pgee.exception.XException;
 import org.example.pgee.service.UserService;
 import org.example.pgee.vo.ResultVO;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,35 +61,45 @@ public class LoginController {
         User userR = userOpt.get();
         String role = userR.getRole();
 
-        // 构建Token参数Map（基于角色动态添加字段）
+        Long userId = userR.getId(); // 用户ID（用于查询中间表）
+
+        // 构建token参数map（基于角色动态添加字段）
         Map<String, Object> claims = new HashMap<>();
         // 所有角色都必须包含的基础字段
         claims.put("uid", userR.getId());
         claims.put("role", role);
 
-//        // 根据角色添加额外字段（按需添加，避免Token过大）
-//        switch (role) {
-//            case "SUPER_ADMIN": // 超级管理员：仅基础字段
-//                break;
-//            case "COLLEGE_ADMIN": // 学院管理员：需要学院ID
-//                claims.put("college_id", userR.getCollegeId());
-//                break;
-//            case "COUNSELOR": // 辅导员：需要学院ID + 类别ID
-//                claims.put("college_id", userR.getCollegeId());
-//                claims.put("major_category_id", userR.getMajorCategoryId()); // 假设User有该字段
-//                break;
-//            case "STUDENT": // 学生：需要学院ID + 专业ID
-//                claims.put("college_id", userR.getCollegeId());
-//                claims.put("major_id", userR.getMajorId()); // 假设User有该字段
-//                break;
-//            default:
-//                // 其他角色按需扩展
-//        }
+        // 3. 根据角色查询中间表，添加特有字段
+        switch (role) {
+            case User.COLLEGE_ADMIN:
+                // 学院管理员：从user表获取college_id（你的User实体已有collegeId字段）
+                claims.put("cid", userR.getCollegeId());
+                break;
+            case User.COUNSELOR:
+                // 辅导员：从counselor_info中间表获取major_category_id，同时添加college_id
+                CounselorInfo counselorInfo = userService.getCounselorInfo(userId)
+                        .orElseThrow(() -> XException.builder().number(Code.ERROR).message("辅导员信息不存在").build());
+                claims.put("cid", userR.getCollegeId()); // 假设辅导员的college_id在user表
+                claims.put("mcid", counselorInfo.getMajorCategoryId());
+                break;
+            case User.STUDENT:
+                // 学生：从student_info中间表获取major_id，同时添加college_id
+                StudentInfo studentInfo = userService.getStudentInfo(userId)
+                        .orElseThrow(() -> XException.builder().number(Code.ERROR).message("学生信息不存在").build());
+                claims.put("cid", userR.getCollegeId()); // 假设学生的college_id在user表
+                claims.put("mid", studentInfo.getMajorId());
+                break;
+            case User.ADMIN: // 超级管理员
+                // 无需额外字段
+                break;
+            default:
+                throw XException.builder().number(Code.ERROR).message("未知角色").build();
+        }
 
-        // 生成Token（包含动态字段）
+        // 生成token
         String token = jwtComponent.encode(claims);
 
-        // 设置响应头（可选，前端若需要可放，但核心依赖Token）
+        // 设置响应头
         response.setHeader("token", token);
         response.setHeader("role", role);
 

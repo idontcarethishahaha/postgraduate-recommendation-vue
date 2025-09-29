@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/")
 @RequiredArgsConstructor
 public class CollegeController {
+
+
     private final CollegeService collegeService;
 
     //学院管理员可以为学院添加类别  /api/collegeadmin/categories，POST请求
@@ -52,6 +54,8 @@ public class CollegeController {
         return ResultVO.ok();
     }
 
-    // 为类别添加专业
+    // 学院管理员为类别添加专业
+
+    // 以专业来添加学生
 
 }

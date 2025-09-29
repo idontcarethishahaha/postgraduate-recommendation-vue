@@ -2,10 +2,14 @@ package org.example.pgee.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.pgee.dox.CounselorInfo;
+import org.example.pgee.dox.StudentInfo;
 import org.example.pgee.dox.User;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
 import org.example.pgee.repository.CollegeRepository;
+import org.example.pgee.repository.CounselorInfoRepository;
+import org.example.pgee.repository.StudentInfoRepository;
 import org.example.pgee.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,8 +31,26 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CollegeRepository collegeRepository;
 
+    private final CounselorInfoRepository counselorInfoRepository;
+    private final StudentInfoRepository studentInfoRepository;
+
     public Optional<User> getUser(String account) {
         return userRepository.findByAccount(account);
+    }
+
+    // 用户集合
+    public List<User> listUsers(){
+        return userRepository.findAll();// CrudRepository接口的内置方法
+    }
+
+    // 根据用户ID查询辅导员信息
+    public Optional<CounselorInfo> getCounselorInfo(Long userId) {
+        return counselorInfoRepository.findByUserId(userId);
+    }
+
+    // 根据用户ID查询学生信息
+    public Optional<StudentInfo> getStudentInfo(Long userId) {
+        return studentInfoRepository.findByUserId(userId);
     }
 
     // 添加学院管理员
@@ -84,11 +106,6 @@ public class UserService {
                         .build());
         user.setPassword(passwordEncoder.encode(account));
         userRepository.save(user); // 显式保存，强制触发更新
-    }
-
-    // 用户集合
-    public List<User> listUsers(){
-        return userRepository.findAll();// CrudRepository接口的内置方法
     }
 
 }
