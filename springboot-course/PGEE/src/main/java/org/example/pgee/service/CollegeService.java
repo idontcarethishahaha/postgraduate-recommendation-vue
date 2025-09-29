@@ -2,14 +2,14 @@ package org.example.pgee.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.pgee.dox.College;
+import org.example.pgee.dox.Major;
 import org.example.pgee.dox.MajorCategory;
-import org.example.pgee.dto.CollegeAddDTO;
-import org.example.pgee.dto.MajorCategoryAddDTO;
-import org.example.pgee.dto.MajorCategoryUpdateDTO;
+import org.example.pgee.dto.*;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
 import org.example.pgee.repository.CollegeRepository;
 import org.example.pgee.repository.MajorCategoryRepository;
+import org.example.pgee.repository.MajorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +21,7 @@ import java.util.List;
 public class CollegeService {
     private final CollegeRepository collegeRepository;
     private final MajorCategoryRepository majorCategoryRepository;
+    private final MajorRepository majorRepository;
 
     // 添加学院
     @Transactional
@@ -209,4 +210,104 @@ public class CollegeService {
 
         majorCategoryRepository.save(category);
     }
+
+    @Transactional
+    public void addMajor(MajorAddDTO majorAddDTO, Long collegeId) {
+        // 验证类别是否存在且属于当前学院
+        MajorCategory category = majorCategoryRepository.findById(majorAddDTO.getMajorCategoryId())
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("专业类别不存在")
+                        .build());
+
+        // 验证类别是否属于当前学院
+        if (!category.getCollegeId().equals(collegeId)) {
+            throw XException.builder()
+                    .code(Code.FORBIDDEN)
+                    .build();
+        }
+
+        // 检查同一类别下是否已存在同名专业
+        boolean nameExists = majorRepository.existsByMajorCategoryIdAndName(
+                majorAddDTO.getMajorCategoryId(),
+                majorAddDTO.getName()
+        );
+        if (nameExists) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("该类别下已存在同名专业")
+                    .build();
+        }
+
+        Major major = Major.builder()
+                .name(majorAddDTO.getName())
+                .majorCategoryId(majorAddDTO.getMajorCategoryId())
+                .collegeId(collegeId) // 设置学院ID
+                .build();
+
+        majorRepository.save(major);
+    }
+
+    // 查询某类别下的所有专业
+    public List<Major> listMajorsByCategory(Long majorCategoryId, Long collegeId) {
+        // 先验证类别是否属于当前学院
+        MajorCategory category = majorCategoryRepository.findById(majorCategoryId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("专业类别不存在")
+                        .build());
+
+        if (!category.getCollegeId().equals(collegeId)) {
+            throw XException.builder()
+                    .code(Code.FORBIDDEN)
+                    .build();
+        }
+
+        return majorRepository.findByMajorCategoryId(majorCategoryId);
+    }
+
+    // 查询学院下的所有专业
+    public List<Major> listAllMajors(Long collegeId) {
+        return majorRepository.findByCollegeId(collegeId);
+    }
+
+    // 修改专业信息
+    @Transactional
+    public void updateMajor(Long majorId, MajorUpdateDTO updateDTO, Long collegeId) {
+        // 查询专业是否存在且属于当前学院
+        Major major = majorRepository.findByIdAndCollegeId(majorId, collegeId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("专业不存在或无权操作")
+                        .build());
+
+        // 检查名称是否重复（排除自身）
+        if (updateDTO.getName() != null && !updateDTO.getName().equals(major.getName())) {
+            boolean nameExists = majorRepository.existsByMajorCategoryIdAndName(
+                    major.getMajorCategoryId(), updateDTO.getName());
+            if (nameExists) {
+                throw XException.builder()
+                        .number(Code.ERROR)
+                        .message("该类别下已存在同名专业")
+                        .build();
+            }
+            major.setName(updateDTO.getName());
+        }
+
+        majorRepository.save(major);
+    }
+
+    // 删除专业
+    @Transactional
+    public void deleteMajor(Long majorId, Long collegeId) {
+        // 查询专业是否存在且属于当前学院
+        Major major = majorRepository.findByIdAndCollegeId(majorId, collegeId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("专业不存在或无权操作")
+                        .build());
+
+        majorRepository.deleteById(majorId);
+    }
+
 }

@@ -2,8 +2,10 @@ package org.example.pgee.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.example.pgee.dto.MajorAddDTO;
 import org.example.pgee.dto.MajorCategoryAddDTO;
 import org.example.pgee.dto.MajorCategoryUpdateDTO;
+import org.example.pgee.dto.MajorUpdateDTO;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
 import org.example.pgee.service.CollegeService;
@@ -98,6 +100,64 @@ public class CollegeController {
     }
 
     // 学院管理员为类别添加专业
+    @PostMapping("collegeadmin/majors")
+    public ResultVO addMajor(@RequestBody MajorAddDTO majorAddDTO, HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        collegeService.addMajor(majorAddDTO, cid);
+        return ResultVO.ok();
+    }
+
+    // 查询某类别下的所有专业
+    @GetMapping("collegeadmin/categories/{mcid}/majors")
+    public ResultVO getMajorsByCategory(@PathVariable Long mcid, HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        return ResultVO.success(collegeService.listMajorsByCategory(mcid, cid));
+    }
+
+    // 查询学院下的所有专业
+    @GetMapping("collegeadmin/majors")
+    public ResultVO getAllMajors(HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        return ResultVO.success(collegeService.listAllMajors(cid));
+    }
+
+    // 修改专业信息
+    @PutMapping("collegeadmin/majors/{mid}")
+    public ResultVO updateMajor(@PathVariable Long mid,
+                                @RequestBody MajorUpdateDTO updateDTO,
+                                HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        collegeService.updateMajor(mid, updateDTO, cid);
+        return ResultVO.ok();
+    }
+
+    // 删除专业
+    @DeleteMapping("collegeadmin/majors/{mid}")
+    public ResultVO deleteMajor(@PathVariable Long mid, HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        collegeService.deleteMajor(mid, cid);
+        return ResultVO.ok();
+    }
 
     // 以专业来添加学生
 

@@ -71,4 +71,7 @@ public class AdminController {
         collegeService.deleteCollege(collegeid);
         return ResultVO.ok();
     }
+
+    // 学院管理员为类别添加辅导员
+    
 }

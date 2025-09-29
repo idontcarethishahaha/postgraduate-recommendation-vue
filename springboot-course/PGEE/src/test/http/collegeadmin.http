@@ -75,3 +75,34 @@ Content-Type: application/json
   "name": "新类别名称",
   "calculationRule": "{\"新规则\": \"...\"}"
 }
+
+### 添加专业
+POST localhost:8080/api/collegeadmin/majors
+token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "计算机科学与技术",
+  "majorCategoryId": 10101
+}
+
+### 查询某类别下的专业
+GET localhost:8080/api/collegeadmin/categories/10101/majors
+token: {{token}}
+
+### 查询学院所有专业
+GET localhost:8080/api/collegeadmin/majors
+token: {{token}}
+
+### 修改专业
+PUT localhost:8080/api/collegeadmin/majors/1422229491437068288
+token: {{token}}
+Content-Type: application/json
+
+{
+  "name": "软件工程"
+}
+
+### 删除专业
+DELETE localhost:8080/api/collegeadmin/majors/1422229491437068288
+token: {{token}}

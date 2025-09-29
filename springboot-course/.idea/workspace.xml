@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/MajorCategoryUpdateDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/MajorUpdateDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/MajorCategoryAddDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/MajorCategoryAddDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/MajorRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/MajorRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" afterDir="false" />
     </list>
@@ -21,8 +21,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -67,13 +67,18 @@
     "HTTP Request.collegeadmin | #5.executor": "Run",
     "HTTP Request.collegeadmin | 为学院添加类别  后续可以改成从token里获取学院id.executor": "Run",
     "HTTP Request.collegeadmin | 为学院添加类别.executor": "Run",
+    "HTTP Request.collegeadmin | 修改专业.executor": "Run",
     "HTTP Request.collegeadmin | 修改类别.executor": "Run",
+    "HTTP Request.collegeadmin | 删除专业.executor": "Run",
     "HTTP Request.collegeadmin | 删除学院下的某个类别.executor": "Run",
     "HTTP Request.collegeadmin | 后续可以改成从token里获取学院id  college_id.executor": "Run",
     "HTTP Request.collegeadmin | 学院管理员登录.executor": "Run",
     "HTTP Request.collegeadmin | 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token.executor": "Run",
     "HTTP Request.collegeadmin | 所有用户都可以修改自己的密码.executor": "Run",
+    "HTTP Request.collegeadmin | 查询学院所有专业.executor": "Run",
+    "HTTP Request.collegeadmin | 查询某类别下的专业.executor": "Run",
     "HTTP Request.collegeadmin | 测试密码是否被成功修改.executor": "Run",
+    "HTTP Request.collegeadmin | 添加专业.executor": "Run",
     "HTTP Request.login | #1.executor": "Run",
     "HTTP Request.login | failed.executor": "Run",
     "HTTP Request.login | success.executor": "Run",
@@ -149,13 +154,16 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.PgeeApplication">
-    <configuration name="collegeadmin | 为学院添加类别  后续可以改成从token里获取学院id" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="为学院添加类别  后续可以改成从token里获取学院id" index="4" runType="Run single request">
+    <configuration name="collegeadmin | 查询某类别下的专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询某类别下的专业" index="9" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="collegeadmin | 修改类别" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="修改类别" index="7" runType="Run single request">
+    <configuration name="collegeadmin | 查询学院所有专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询学院所有专业" index="10" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="collegeadmin | 删除学院下的某个类别" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="删除学院下的某个类别" index="6" runType="Run single request">
+    <configuration name="collegeadmin | 修改专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="修改专业" index="11" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="collegeadmin | 删除专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="删除专业" index="12" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="collegeadmin | 测试密码是否被成功修改" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="测试密码是否被成功修改" index="3" runType="Run single request">
@@ -170,10 +178,7 @@
     <configuration name="collegeadmin | 为学院添加类别" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="为学院添加类别" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="collegeadmin | 后续可以改成从token里获取学院id  college_id" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="后续可以改成从token里获取学院id  college_id" index="5" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="collegeadmin | 学院管理员登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="学院管理员登录" runType="Run single request">
+    <configuration name="collegeadmin | 添加专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="添加专业" index="8" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="BackendExamplesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -206,11 +211,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.collegeadmin | 修改类别" />
-        <item itemvalue="HTTP Request.collegeadmin | 学院管理员登录" />
-        <item itemvalue="HTTP Request.collegeadmin | 为学院添加类别  后续可以改成从token里获取学院id" />
-        <item itemvalue="HTTP Request.collegeadmin | 后续可以改成从token里获取学院id  college_id" />
-        <item itemvalue="HTTP Request.collegeadmin | 删除学院下的某个类别" />
+        <item itemvalue="HTTP Request.collegeadmin | 删除专业" />
+        <item itemvalue="HTTP Request.collegeadmin | 修改专业" />
+        <item itemvalue="HTTP Request.collegeadmin | 查询学院所有专业" />
+        <item itemvalue="HTTP Request.collegeadmin | 查询某类别下的专业" />
+        <item itemvalue="HTTP Request.collegeadmin | 添加专业" />
       </list>
     </recent_temporary>
   </component>
@@ -256,7 +261,7 @@
       <workItem from="1759061023153" duration="5244000" />
       <workItem from="1759119054942" duration="5000" />
       <workItem from="1759119069154" duration="5000" />
-      <workItem from="1759122013860" duration="10588000" />
+      <workItem from="1759122013860" duration="14995000" />
     </task>
     <servers />
   </component>
