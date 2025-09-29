@@ -77,12 +77,13 @@ public class UserService {
     // 权限由controller层面负责，在入口使用拦截器
     @Transactional
     public void updateUserPassword(String account) {
-        userRepository.findByAccount(account)
+        User user = userRepository.findByAccount(account)
                 .orElseThrow(() -> XException.builder()
                         .number(Code.ERROR)
                         .message("用户不存在")
-                        .build())
-                .setPassword(passwordEncoder.encode(account));
+                        .build());
+        user.setPassword(passwordEncoder.encode(account));
+        userRepository.save(user); // 显式保存，强制触发更新
     }
 
     // 用户集合

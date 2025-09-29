@@ -1,0 +1,21 @@
+package org.example.pgee.repository;
+
+import org.example.pgee.dox.College;
+import org.example.pgee.dox.MajorCategory;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * @author wuwenjin
+ */
+@Repository
+public interface MajorCategoryRepository extends CrudRepository<MajorCategory, Long> {
+    //boolean existsByName(String name);
+    boolean existsByCollegeIdAndName(Long collegeId, String name);
+
+    // 按学院ID查询所有类别
+    List<MajorCategory> findByCollegeId(Long collegeId);
+}

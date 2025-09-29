@@ -3,6 +3,7 @@ package org.example.pgee.component;
 import lombok.RequiredArgsConstructor;
 import org.example.pgee.interceptor.AdminInterceptor;
 import org.example.pgee.interceptor.LoginInterceptor;
+import org.example.pgee.interceptor.CollegeAdminInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,6 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 /*实现 WebMvcConfigurer 接口，重写 addInterceptors 方法来自定义 Spring MVC 的拦截器规则*/
     private final LoginInterceptor loginInterceptor;
     private final AdminInterceptor adminInterceptor;
+    private final CollegeAdminInterceptor collegeAdminInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -27,5 +29,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(adminInterceptor)
                 .addPathPatterns("/api/admin/**");
+
+        registry.addInterceptor(collegeAdminInterceptor)
+                .addPathPatterns("/api/collegeadmin/**");
     }
 }

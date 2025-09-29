@@ -10,9 +10,8 @@ import org.example.pgee.exception.XException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/**
- • @author wuwenjin
-
+/*
+ *@author wuwenjin
  */
 @Component
 @RequiredArgsConstructor
@@ -35,6 +34,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         String role = decode.getClaim("role").asString();
         request.setAttribute("uid", uid);
         request.setAttribute("role", role);
+
+        // 解析并存储学院id
+        // 先判断Token中是否包含college_id，避免解析空值
+        if (!decode.getClaim("college_id").isMissing()) {
+            Long cid = decode.getClaim("college_id").asLong();
+            request.setAttribute("cid", cid); // 存入request，供控制器获取
+        }
+
         return true;
+
     }
 }

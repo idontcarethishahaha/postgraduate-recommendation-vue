@@ -10,7 +10,7 @@ Content-Type: application/json
 
 #### 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token
 PATCH localhost:8080/api/open/user/password
-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjE0MjExMzQ0MTU5MDY1MjkyODAsInJvbGUiOiJ5SEo3IiwiaWF0IjoxNzU4OTUzOTcwLCJleHAiOjE3NTkwNDAzNzB9.PesYooDlrzngGQ16BzO5rR7MR2HnJwK4oNNxmPJFR4E
+token: {{token}}
 Content-Type: application/json
 
 {
@@ -25,3 +25,24 @@ Content-Type: application/json
   "account": "2023221547",
   "password": "12345678"
 }
+
+> {% client.global.set("token", response.headers.valueOf("token")); %}
+
+### 为学院添加类别
+POST localhost:8080/api/collegeadmin/categories
+token: {{token}}
+Content-Type: application/json
+
+{
+  "collegeId": "101",
+  "name": "信息类",
+  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
+}
+
+### 后续可以改成从token里获取学院id  college_id
+#GET localhost:8080/api/collegeadmin/categories/101
+#token: {{token}}
+
+### 删除学院下的某个类别
+DELETE localhost:8080/api/collegeadmin/categories/1421397273399582720
+token: {{token}}

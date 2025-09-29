@@ -1,21 +1,19 @@
 package org.example.pgee.dto;
 
-/*
- * @author wuwenjin
- */
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 学院的DTO（仅含添加学院所需的字段）
+ * @author wuwenjin
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollegeAddDTO {
+public class MajorAddDTO {
+    private Long collegeId;
+    private Long majorCategoryId;
     private String name;
 }
