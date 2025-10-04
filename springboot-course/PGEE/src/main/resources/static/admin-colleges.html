@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学院管理 - 推免系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .user-info {
+            color: #666;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #fff;
+            border-right: 1px solid #e8e8e8;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            color: #666;
+        }
+
+        .menu-item.active {
+            background: #f0f7ff;
+            border-left-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #fff;
+            margin: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .page-title {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+
+        .btn-danger {
+            background: #ff4d4f;
+            color: white;
+            border-color: #ff4d4f;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1890ff;
+        }
+
+        .stats span {
+            margin-right: 20px;
+            color: #666;
+        }
+
+        .stats strong {
+            color: #1890ff;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #1890ff;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ff4d4f;
+            color: white;
+        }
+
+        .admin-btn {
+            background: #52c41a;
+            color: white;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            min-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .close {
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            display: block; /* 默认显示调试信息 */
+        }
+    </style>
+</head>
+<body>
+<!-- 头部导航 -->
+<div class="header">
+    <h1>推免系统 - 超级管理员</h1>
+    <div class="user-info">
+        <span id="userRoleDisplay">超级管理员</span>
+        <button class="btn" onclick="logout()" style="margin-left: 10px;">退出登录</button>
+    </div>
+</div>
+
+<!-- 主体容器 -->
+<div class="container">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="menu-item active" onclick="navigate('colleges')">学院管理</div>
+        <div class="menu-item" onclick="navigate('users')">用户管理</div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="page-header">
+            <h2 class="page-title">学院管理</h2>
+            <div class="actions">
+                <input type="text" class="search-box" id="searchInput" placeholder="搜索学院...">
+                <button class="btn" onclick="searchColleges()">搜索</button>
+                <button class="btn btn-primary" onclick="showAddCollegeModal()">添加学院</button>
+                <button class="btn" onclick="loadColleges()">刷新</button>
+            </div>
+        </div>
+
+        <!-- 调试信息 -->
+        <div id="debugInfo" class="debug-info">
+            <strong>调试信息 (ID已转换为String处理):</strong>
+            <div id="debugContent"></div>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats" id="statsInfo">
+            学院总数：<strong id="collegeCount">0</strong>
+        </div>
+
+        <!-- 学院表格 -->
+        <table id="collegeTable">
+            <thead>
+            <tr>
+                <th>学院ID</th>
+                <th>学院名称</th>
+                <th>创建时间</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="collegeTableBody">
+            <!-- 动态填充 -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 添加学院模态框 -->
+<div id="addCollegeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>添加学院</h3>
+            <span class="close" onclick="closeAddCollegeModal()">&times;</span>
+        </div>
+        <form id="addCollegeForm">
+            <div class="form-group">
+                <label for="collegeName">学院名称 *</label>
+                <input type="text" id="collegeName" class="form-control" required>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddCollegeModal()">取消</button>
+            <button class="btn btn-primary" onclick="addCollege()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑学院模态框 -->
+<div id="editCollegeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>编辑学院</h3>
+            <span class="close" onclick="closeEditCollegeModal()">&times;</span>
+        </div>
+        <form id="editCollegeForm">
+            <input type="hidden" id="editCollegeId">
+            <div class="form-group">
+                <label for="editCollegeName">学院名称 *</label>
+                <input type="text" id="editCollegeName" class="form-control" required>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeEditCollegeModal()">取消</button>
+            <button class="btn btn-primary" onclick="updateCollege()">确定</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 显示调试信息
+    function showDebugInfo(message) {
+        const debugContent = document.getElementById('debugContent');
+        const timestamp = new Date().toLocaleTimeString();
+        debugContent.innerHTML += `[${timestamp}] ${message}<br>`;
+        console.log(message);
+    }<!DOCTYPE html>
+    <html lang="zh-CN">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>学院管理 - 推免系统</title>
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+        body {
+        font-family: 'Microsoft YaHei', sans-serif;
+        background-color: #f5f5f5;
+    }
+
+        .header {
+        background: #fff;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .header h1 {
+        color: #333;
+        font-size: 20px;
+    }
+
+        .user-info {
+        color: #666;
+    }
+
+        .container {
+        display: flex;
+        min-height: calc(100vh - 60px);
+    }
+
+        .sidebar {
+        width: 200px;
+        background: #fff;
+        border-right: 1px solid #e8e8e8;
+        padding: 20px 0;
+    }
+
+        .menu-item {
+        padding: 12px 20px;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        color: #666;
+    }
+
+        .menu-item.active {
+        background: #f0f7ff;
+        border-left-color: #1890ff;
+        color: #1890ff;
+    }
+
+        .menu-item:hover {
+        background: #f5f5f5;
+    }
+
+        .main-content {
+        flex: 1;
+        padding: 20px;
+        background: #fff;
+        margin: 20px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+        .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+        .page-title {
+        font-size: 18px;
+        color: #333;
+    }
+
+        .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+        .btn {
+        padding: 8px 16px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .btn-primary {
+        background: #1890ff;
+        color: white;
+        border-color: #1890ff;
+    }
+
+        .btn-danger {
+        background: #ff4d4f;
+        color: white;
+        border-color: #ff4d4f;
+    }
+
+        .btn:hover {
+        opacity: 0.8;
+    }
+
+        .search-box {
+        padding: 8px 12px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        width: 200px;
+    }
+
+        .stats {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border-left: 4px solid #1890ff;
+    }
+
+        .stats span {
+        margin-right: 20px;
+        color: #666;
+    }
+
+        .stats strong {
+        color: #1890ff;
+        font-size: 18px;
+    }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+        th, td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+        th {
+        background: #fafafa;
+        font-weight: 600;
+        color: #333;
+    }
+
+        tr:hover {
+        background: #f8f9fa;
+    }
+
+        .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+        .action-btn {
+        padding: 4px 8px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+        .edit-btn {
+        background: #1890ff;
+        color: white;
+    }
+
+        .delete-btn {
+        background: #ff4d4f;
+        color: white;
+    }
+
+        .admin-btn {
+        background: #52c41a;
+        color: white;
+    }
+
+        /* 模态框样式 */
+        .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+        .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 6px;
+        min-width: 400px;
+    }
+
+        .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e8e8e8;
+    }
+
+        .close {
+        font-size: 20px;
+        cursor: pointer;
+        color: #999;
+    }
+
+        .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+        .form-control {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+    }
+
+        .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e8e8e8;
+    }
+
+        .debug-info {
+        background: #f8f9fa;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #666;
+        display: block; /* 默认显示调试信息 */
+    }
+    </style>
+    </head>
+    <body>
+    <!-- 头部导航 -->
+    <div class="header">
+        <h1>推免系统 - 超级管理员</h1>
+        <div class="user-info">
+            <span id="userRoleDisplay">超级管理员</span>
+            <button class="btn" onclick="logout()" style="margin-left: 10px;">退出登录</button>
+        </div>
+    </div>
+
+    <!-- 主体容器 -->
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="menu-item active" onclick="navigate('colleges')">学院管理</div>
+            <div class="menu-item" onclick="navigate('users')">用户管理</div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">学院管理</h2>
+                <div class="actions">
+                    <input type="text" class="search-box" id="searchInput" placeholder="搜索学院...">
+                        <button class="btn" onclick="searchColleges()">搜索</button>
+                        <button class="btn btn-primary" onclick="showAddCollegeModal()">添加学院</button>
+                        <button class="btn" onclick="loadColleges()">刷新</button>
+                </div>
+            </div>
+
+            <!-- 调试信息 -->
+            <div id="debugInfo" class="debug-info">
+                <strong>调试信息 (ID已转换为String处理):</strong>
+                <div id="debugContent"></div>
+            </div>
+
+            <!-- 统计信息 -->
+            <div class="stats" id="statsInfo">
+                学院总数：<strong id="collegeCount">0</strong>
+            </div>
+
+            <!-- 学院表格 -->
+            <table id="collegeTable">
+                <thead>
+                <tr>
+                    <th>学院ID</th>
+                    <th>学院名称</th>
+                    <th>创建时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="collegeTableBody">
+                <!-- 动态填充 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 添加学院模态框 -->
+    <div id="addCollegeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加学院</h3>
+                <span class="close" onclick="closeAddCollegeModal()">&times;</span>
+            </div>
+            <form id="addCollegeForm">
+                <div class="form-group">
+                    <label for="collegeName">学院名称 *</label>
+                    <input type="text" id="collegeName" class="form-control" required>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeAddCollegeModal()">取消</button>
+                <button class="btn btn-primary" onclick="addCollege()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑学院模态框 -->
+    <div id="editCollegeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑学院</h3>
+                <span class="close" onclick="closeEditCollegeModal()">&times;</span>
+            </div>
+            <form id="editCollegeForm">
+                <input type="hidden" id="editCollegeId">
+                    <div class="form-group">
+                        <label for="editCollegeName">学院名称 *</label>
+                        <input type="text" id="editCollegeName" class="form-control" required>
+                    </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeEditCollegeModal()">取消</button>
+                <button class="btn btn-primary" onclick="updateCollege()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 显示调试信息
+        function showDebugInfo(message) {
+        const debugContent = document.getElementById('debugContent');
+        const timestamp = new Date().toLocaleTimeString();
+        debugContent.innerHTML += `[${timestamp}] ${message}<br>`;
+        console.log(message);
+    }
+
+        // 检查登录状态
+        function checkLogin() {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token) {
+        alert('请先登录');
+        window.location.href = 'login.html';
+        return false;
+    }
+
+        if (role !== 'Fr5g') {
+        alert('无权访问此页面');
+        window.location.href = 'login.html';
+        return false;
+    }
+
+        return true;
+    }
+
+        // 获取认证头
+        function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+        'Content-Type': 'application/json',
+        'token': token
+    };
+    }
+
+        // 处理API错误
+        function handleApiError(response, error) {
+        if (response.status === 401) {
+        alert('登录已过期，请重新登录');
+        logout();
+        return true;
+    }
+        console.error('API请求失败:', error);
+        return false;
+    }
+
+        let colleges = [];
+
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+        if (!checkLogin()) {
+        return;
+    }
+        showDebugInfo('页面加载完成，开始加载学院数据...');
+        loadColleges();
+    });
+
+        // 加载学院列表
+        async function loadColleges() {
+        try {
+        showDebugInfo('发送GET请求: /api/admin/colleges');
+        const response = await fetch('/api/admin/colleges', {
+        method: 'GET',
+        headers: getAuthHeaders()
+    });
+
+        if (handleApiError(response)) return;
+
+        const result = await response.json();
+        showDebugInfo(`收到响应: code=${result.code}, 数据长度=${result.data ? result.data.length : 0}`);
+
+        if (result.code === 200) {
+        colleges = result.data;
+
+        // 调试：显示ID信息
+        if (colleges.length > 0) {
+        const firstCollege = colleges[0];
+        showDebugInfo(`第一个学院 - ID类型: ${typeof firstCollege.id}, ID值: ${firstCollege.id}`);
+    }
+
+        renderColleges(colleges);
+        updateStats();
+    } else {
+        alert('加载学院列表失败: ' + result.message);
+    }
+    } catch (error) {
+        console.error('加载学院列表失败:', error);
+        showDebugInfo('加载异常: ' + error.message);
+        alert('加载学院列表失败');
+    }
+    }
+
+        // 渲染学院表格
+        function renderColleges(collegeList) {
+        const tbody = document.getElementById('collegeTableBody');
+        tbody.innerHTML = '';
+
+        collegeList.forEach(college => {
+        const row = document.createElement('tr');
+        // 确保ID是字符串类型
+        const collegeId = String(college.id);
+        showDebugInfo(`渲染学院: ID=${collegeId}, 名称=${college.name}`);
+
+        row.innerHTML = `
+                <td>${collegeId}</td>
+                <td>${college.name}</td>
+                <td>${formatDate(college.createTime)}</td>
+                <td>正常</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editCollege('${collegeId}', '${college.name}')">编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteCollege('${collegeId}', '${college.name}')">删除</button>
+                        <button class="action-btn admin-btn" onclick="manageAdmins('${collegeId}', '${college.name}')">管理员</button>
+                    </div>
+                </td>
+            `;
+        tbody.appendChild(row);
+    });
+    }
+
+        // 更新统计信息
+        function updateStats() {
+        document.getElementById('collegeCount').textContent = colleges.length;
+    }
+
+        // 搜索学院
+        function searchColleges() {
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = colleges.filter(college =>
+        college.name.toLowerCase().includes(keyword)
+        );
+        renderColleges(filtered);
+    }
+
+        // 添加学院模态框
+        function showAddCollegeModal() {
+        document.getElementById('addCollegeModal').style.display = 'block';
+        document.getElementById('collegeName').value = '';
+    }
+
+        function closeAddCollegeModal() {
+        document.getElementById('addCollegeModal').style.display = 'none';
+    }
+
+        // 添加学院
+        async function addCollege() {
+        const name = document.getElementById('collegeName').value.trim();
+
+        if (!name) {
+        alert('请输入学院名称');
+        return;
+    }
+
+        try {
+        showDebugInfo(`发送POST请求添加学院: ${name}`);
+        const response = await fetch('/api/admin/colleges', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ name })
+    });
+
+        if (handleApiError(response)) return;
+
+        const result = await response.json();
+
+        if (result.code === 200) {
+        alert('添加成功');
+        closeAddCollegeModal();
+        loadColleges();
+    } else {
+        alert('添加失败: ' + result.message);
+    }
+    } catch (error) {
+        console.error('添加学院失败:', error);
+        alert('添加学院失败');
+    }
+    }
+
+        // 编辑学院模态框
+        function editCollege(id, name) {
+        showDebugInfo(`打开编辑模态框 - ID: ${id} (类型: ${typeof id}), 名称: ${name}`);
+        document.getElementById('editCollegeModal').style.display = 'block';
+        document.getElementById('editCollegeId').value = id;
+        document.getElementById('editCollegeName').value = name;
+    }
+
+        function closeEditCollegeModal() {
+        document.getElementById('editCollegeModal').style.display = 'none';
+    }
+
+        // 更新学院
+        async function updateCollege() {
+        const id = document.getElementById('editCollegeId').value;
+        const name = document.getElementById('editCollegeName').value.trim();
+
+        showDebugInfo(`发送PUT请求更新学院 - ID: ${id} (类型: ${typeof id}), 新名称: ${name}`);
+        showDebugInfo(`请求URL: /api/admin/colleges/${id}`);
+
+        if (!name) {
+        alert('请输入学院名称');
+        return;
+    }
+
+        try {
+        const response = await fetch(`/api/admin/colleges/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ name })
+    });
+
+        if (handleApiError(response)) return;
+
+        const result = await response.json();
+        showDebugInfo(`更新响应: ${JSON.stringify(result)}`);
+
+        if (result.code === 200) {
+        alert('更新成功');
+        closeEditCollegeModal();
+        loadColleges();
+    } else {
+        alert('更新失败: ' + result.message);
+    }
+    } catch (error) {
+        console.error('更新学院失败:', error);
+        alert('更新学院失败');
+    }
+    }
+
+        // 删除学院
+        async function deleteCollege(id, name) {
+        showDebugInfo(`确认删除学院 - ID: ${id} (类型: ${typeof id}), 名称: ${name}`);
+        showDebugInfo(`请求URL: /api/admin/colleges/${id}`);
+
+        if (!confirm(`确定要删除学院 "${name}" 吗？此操作不可恢复！`)) {
+        return;
+    }
+
+        try {
+        const response = await fetch(`/api/admin/colleges/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+    });
+
+        if (handleApiError(response)) return;
+
+        const result = await response.json();
+        showDebugInfo(`删除响应: ${JSON.stringify(result)}`);
+
+        if (result.code === 200) {
+        alert('删除成功');
+        loadColleges();
+    } else {
+        alert('删除失败: ' + result.message);
+    }
+    } catch (error) {
+        console.error('删除学院失败:', error);
+        alert('删除学院失败');
+    }
+    }
+
+        // 管理学院管理员
+        function manageAdmins(collegeId, collegeName) {
+        showDebugInfo(`跳转到管理员管理 - 学院ID: ${collegeId}`);
+        window.location.href = `admin-college-admins.html?collegeId=${collegeId}&collegeName=${encodeURIComponent(collegeName)}`;
+    }
+
+        // 导航
+        function navigate(page) {
+        if (page === 'users') {
+        window.location.href = 'admin-users.html';
+    }
+    }
+
+        // 退出登录
+        function logout() {
+        if (confirm('确定要退出登录吗？')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
+    }
+
+        // 工具函数：格式化日期
+        function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN');
+    }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+        const addModal = document.getElementById('addCollegeModal');
+        const editModal = document.getElementById('editCollegeModal');
+
+        if (event.target === addModal) {
+        closeAddCollegeModal();
+    }
+        if (event.target === editModal) {
+        closeEditCollegeModal();
+    }
+    }
+
+        // 回车键搜索
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+        searchColleges();
+    }
+    });
+</script>
+</body>
+</html>
+
+    // 检查登录状态
+    function checkLogin() {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        if (!token) {
+            alert('请先登录');
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        if (role !== 'Fr5g') {
+            alert('无权访问此页面');
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        return true;
+    }
+
+    // 获取认证头
+    function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            'token': token
+        };
+    }
+
+    // 处理API错误
+    function handleApiError(response, error) {
+        if (response.status === 401) {
+            alert('登录已过期，请重新登录');
+            logout();
+            return true;
+        }
+        console.error('API请求失败:', error);
+        return false;
+    }
+
+    let colleges = [];
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!checkLogin()) {
+            return;
+        }
+        showDebugInfo('页面加载完成，开始加载学院数据...');
+        loadColleges();
+    });
+
+    // 加载学院列表
+    async function loadColleges() {
+        try {
+            showDebugInfo('发送GET请求: /api/admin/colleges');
+            const response = await fetch('/api/admin/colleges', {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            if (handleApiError(response)) return;
+
+            const result = await response.json();
+            showDebugInfo(`收到响应: code=${result.code}, 数据长度=${result.data ? result.data.length : 0}`);
+
+            if (result.code === 200) {
+                colleges = result.data;
+
+                // 调试：显示ID信息
+                if (colleges.length > 0) {
+                    const firstCollege = colleges[0];
+                    showDebugInfo(`第一个学院 - ID类型: ${typeof firstCollege.id}, ID值: ${firstCollege.id}`);
+                }
+
+                renderColleges(colleges);
+                updateStats();
+            } else {
+                alert('加载学院列表失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('加载学院列表失败:', error);
+            showDebugInfo('加载异常: ' + error.message);
+            alert('加载学院列表失败');
+        }
+    }
+
+    // 渲染学院表格
+    function renderColleges(collegeList) {
+        const tbody = document.getElementById('collegeTableBody');
+        tbody.innerHTML = '';
+
+        collegeList.forEach(college => {
+            const row = document.createElement('tr');
+            // 确保ID是字符串类型
+            const collegeId = String(college.id);
+            showDebugInfo(`渲染学院: ID=${collegeId}, 名称=${college.name}`);
+
+            row.innerHTML = `
+                <td>${collegeId}</td>
+                <td>${college.name}</td>
+                <td>${formatDate(college.createTime)}</td>
+                <td>正常</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editCollege('${collegeId}', '${college.name}')">编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteCollege('${collegeId}', '${college.name}')">删除</button>
+                        <button class="action-btn admin-btn" onclick="manageAdmins('${collegeId}', '${college.name}')">管理员</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // 更新统计信息
+    function updateStats() {
+        document.getElementById('collegeCount').textContent = colleges.length;
+    }
+
+    // 搜索学院
+    function searchColleges() {
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = colleges.filter(college =>
+            college.name.toLowerCase().includes(keyword)
+        );
+        renderColleges(filtered);
+    }
+
+    // 添加学院模态框
+    function showAddCollegeModal() {
+        document.getElementById('addCollegeModal').style.display = 'block';
+        document.getElementById('collegeName').value = '';
+    }
+
+    function closeAddCollegeModal() {
+        document.getElementById('addCollegeModal').style.display = 'none';
+    }
+
+    // 添加学院
+    async function addCollege() {
+        const name = document.getElementById('collegeName').value.trim();
+
+        if (!name) {
+            alert('请输入学院名称');
+            return;
+        }
+
+        try {
+            showDebugInfo(`发送POST请求添加学院: ${name}`);
+            const response = await fetch('/api/admin/colleges', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ name })
+            });
+
+            if (handleApiError(response)) return;
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('添加成功');
+                closeAddCollegeModal();
+                loadColleges();
+            } else {
+                alert('添加失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('添加学院失败:', error);
+            alert('添加学院失败');
+        }
+    }
+
+    // 编辑学院模态框
+    function editCollege(id, name) {
+        showDebugInfo(`打开编辑模态框 - ID: ${id} (类型: ${typeof id}), 名称: ${name}`);
+        document.getElementById('editCollegeModal').style.display = 'block';
+        document.getElementById('editCollegeId').value = id;
+        document.getElementById('editCollegeName').value = name;
+    }
+
+    function closeEditCollegeModal() {
+        document.getElementById('editCollegeModal').style.display = 'none';
+    }
+
+    // 更新学院
+    async function updateCollege() {
+        const id = document.getElementById('editCollegeId').value;
+        const name = document.getElementById('editCollegeName').value.trim();
+
+        showDebugInfo(`发送PUT请求更新学院 - ID: ${id} (类型: ${typeof id}), 新名称: ${name}`);
+        showDebugInfo(`请求URL: /api/admin/colleges/${id}`);
+
+        if (!name) {
+            alert('请输入学院名称');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/colleges/${id}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ name })
+            });
+
+            if (handleApiError(response)) return;
+
+            const result = await response.json();
+            showDebugInfo(`更新响应: ${JSON.stringify(result)}`);
+
+            if (result.code === 200) {
+                alert('更新成功');
+                closeEditCollegeModal();
+                loadColleges();
+            } else {
+                alert('更新失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('更新学院失败:', error);
+            alert('更新学院失败');
+        }
+    }
+
+    // 删除学院
+    async function deleteCollege(id, name) {
+        showDebugInfo(`确认删除学院 - ID: ${id} (类型: ${typeof id}), 名称: ${name}`);
+        showDebugInfo(`请求URL: /api/admin/colleges/${id}`);
+
+        if (!confirm(`确定要删除学院 "${name}" 吗？此操作不可恢复！`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/colleges/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (handleApiError(response)) return;
+
+            const result = await response.json();
+            showDebugInfo(`删除响应: ${JSON.stringify(result)}`);
+
+            if (result.code === 200) {
+                alert('删除成功');
+                loadColleges();
+            } else {
+                alert('删除失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('删除学院失败:', error);
+            alert('删除学院失败');
+        }
+    }
+
+    // 管理学院管理员
+    function manageAdmins(collegeId, collegeName) {
+        showDebugInfo(`跳转到管理员管理 - 学院ID: ${collegeId}`);
+        window.location.href = `admin-college-admins.html?collegeId=${collegeId}&collegeName=${encodeURIComponent(collegeName)}`;
+    }
+
+    // 导航
+    function navigate(page) {
+        if (page === 'users') {
+            window.location.href = 'admin-users.html';
+        }
+    }
+
+    // 退出登录
+    function logout() {
+        if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // 工具函数：格式化日期
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN');
+    }
+
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+        const addModal = document.getElementById('addCollegeModal');
+        const editModal = document.getElementById('editCollegeModal');
+
+        if (event.target === addModal) {
+            closeAddCollegeModal();
+        }
+        if (event.target === editModal) {
+            closeEditCollegeModal();
+        }
+    }
+
+    // 回车键搜索
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchColleges();
+        }
+    });
+</script>
+</body>
+</html>

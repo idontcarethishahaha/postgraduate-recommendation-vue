@@ -14,9 +14,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends ListCrudRepository<User, Long> {
-   // User findByAccount(String account);
    Optional<User> findByAccount(String account);
-//   List<User> findByCollegeId(Long collegeId);
-//   List<User> findByRole(String role);
-//   boolean existsByAccount(String account);
+    boolean existsByAccount(String account);
+   List<User> findByCollegeIdAndRole(Long collegeId, String role);
+   Optional<User> findByIdAndCollegeIdAndRole(Long id, Long collegeId, String role);
+    Optional<User> findById(Long id);
 }

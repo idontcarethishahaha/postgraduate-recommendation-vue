@@ -21,16 +21,34 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final AdminInterceptor adminInterceptor;
     private final CollegeAdminInterceptor collegeAdminInterceptor;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/api/**") // 拦截所有以 /api/ 开头的请求
-                .excludePathPatterns("/api/open/login"); // 排除 /api/open/login 请求（登录接口无需拦截）
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(loginInterceptor)
+//                .addPathPatterns("/api/**") // 拦截所有以 /api/ 开头的请求
+//                .excludePathPatterns("/api/open/login"); // 排除 /api/open/login 请求（登录接口无需拦截）
+//
+//        registry.addInterceptor(adminInterceptor)
+//                .addPathPatterns("/api/admin/**");
+//
+//        registry.addInterceptor(collegeAdminInterceptor)
+//                .addPathPatterns("/api/collegeadmin/**");
+//    }
+@Override
+public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(loginInterceptor)
+            .addPathPatterns("/api/**") // 拦截所有以 /api/ 开头的请求
+            .excludePathPatterns(
+                    "/api/open/login",
+                    "/api/open/register",           // 排除注册接口
+                    "/api/open/register/**",        // 或者排除所有注册相关
+                    "/api/open/colleges",           // 排除学院列表
+                    "/api/open/colleges/*/majors"   // 排除专业列表
+            );
 
-        registry.addInterceptor(adminInterceptor)
-                .addPathPatterns("/api/admin/**");
+    registry.addInterceptor(adminInterceptor)
+            .addPathPatterns("/api/admin/**");
 
-        registry.addInterceptor(collegeAdminInterceptor)
-                .addPathPatterns("/api/collegeadmin/**");
-    }
+    registry.addInterceptor(collegeAdminInterceptor)
+            .addPathPatterns("/api/collegeadmin/**");
+}
 }

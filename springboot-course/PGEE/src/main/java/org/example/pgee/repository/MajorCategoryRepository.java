@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface MajorCategoryRepository extends CrudRepository<MajorCategory, Long> {
     //boolean existsByName(String name);
     boolean existsByCollegeIdAndName(Long collegeId, String name);
-
+    Optional<MajorCategory> findById(Long id);
     // 按学院ID查询所有类别
     List<MajorCategory> findByCollegeId(Long collegeId);
 }

@@ -2,15 +2,20 @@ package org.example.pgee.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.example.pgee.dto.MajorAddDTO;
-import org.example.pgee.dto.MajorCategoryAddDTO;
-import org.example.pgee.dto.MajorCategoryUpdateDTO;
-import org.example.pgee.dto.MajorUpdateDTO;
+import org.example.pgee.dox.College;
+import org.example.pgee.dox.MajorCategory;
+import org.example.pgee.dto.*;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
 import org.example.pgee.service.CollegeService;
+import org.example.pgee.service.UserService;
 import org.example.pgee.vo.ResultVO;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author wuwenjin
@@ -18,17 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
+//@CrossOrigin(origins = "http://localhost:63342")
 public class CollegeController {
 
 
     private final CollegeService collegeService;
+    private final UserService userService;
 
-//    //学院管理员可以为学院添加类别  /api/collegeadmin/categories，POST请求
-//    @PostMapping("collegeadmin/categories")
-//    public ResultVO postMajorCategories(@RequestBody MajorCategoryAddDTO majorCategoryAddDTO) {
-//        collegeService.addMajorCategory(majorCategoryAddDTO);
-//        return ResultVO.ok();
-//    }
 
     // 学院管理员可以为学院添加类别(从token获取学院ID
     @PostMapping("collegeadmin/categories")
@@ -45,14 +46,9 @@ public class CollegeController {
         return ResultVO.ok();
     }
 
-    // 查询自己所在的学院下已有的类别
-//    @GetMapping("collegeadmin/categories/{cid}")
-//    public ResultVO getMajorCategories(@PathVariable Long cid) {
-//        return ResultVO.success(collegeService.listAllMajorCategories(cid));
-//    }
 
 
-    // 查询自己所在学院的类别（核心修改：从request取cid，URL无参数）
+    // 查询自己所在学院的所有类别（核心修改：从request取cid，URL无参数）
     @GetMapping("collegeadmin/categories") // URL移除{cid}
     public ResultVO getMajorCategories(HttpServletRequest request) {
         // 从request中获取拦截器解析的学院ID
@@ -65,12 +61,7 @@ public class CollegeController {
         return ResultVO.success(collegeService.listAllMajorCategories(cid));
     }
 
-    // 删除某个类别
-//    @DeleteMapping("collegeadmin/categories/{mcid}")
-//    public ResultVO deleteMajorCategory(@PathVariable Long mcid) {
-//        collegeService.deleteMajorCategory(mcid);
-//        return ResultVO.ok();
-//    }
+
 
     // 删除某个类别（增加学院权限验证
     @DeleteMapping("collegeadmin/categories/{mcid}")
@@ -122,16 +113,7 @@ public class CollegeController {
         return ResultVO.success(collegeService.listMajorsByCategory(mcid, cid));
     }
 
-    // 查询学院下的所有专业
-    @GetMapping("collegeadmin/majors")
-    public ResultVO getAllMajors(HttpServletRequest request) {
-        Long cid = (Long) request.getAttribute("cid");
-        if (cid == null) {
-            throw XException.builder().code(Code.FORBIDDEN).build();
-        }
 
-        return ResultVO.success(collegeService.listAllMajors(cid));
-    }
 
     // 修改专业信息
     @PutMapping("collegeadmin/majors/{mid}")
@@ -159,6 +141,83 @@ public class CollegeController {
         return ResultVO.ok();
     }
 
-    // 以专业来添加学生
+    // 查询学院下的所有专业
+    @GetMapping("collegeadmin/majors")
+    public ResultVO getAllMajors(HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        return ResultVO.success(collegeService.listAllMajors(cid));
+    }
+
+
+    @GetMapping("user/majors")
+    public ResultVO getMajors(@RequestParam(required = false) Long collegeId,
+                              @RequestParam(required = false) Long majorCategoryId,
+                              HttpServletRequest request) {
+        // 从request获取token中的简写，但使用驼峰命名变量
+        Long userId = (Long) request.getAttribute("uid");        // token中是"uid"
+        String role = (String) request.getAttribute("role");
+        Long collegeIdFromToken = (Long) request.getAttribute("cid");  // token中是"cid"
+
+        return ResultVO.success(collegeService.listMajorsByRole(
+                collegeId, majorCategoryId, userId, role, collegeIdFromToken
+        ));
+    }
+
+    @GetMapping("user/categories")
+    public ResultVO getCategories(@RequestParam(required = false) Long collegeId,
+                                  HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("uid");
+        String role = (String) request.getAttribute("role");
+        Long collegeIdFromToken = (Long) request.getAttribute("cid");
+        List<MajorCategory> categories = collegeService.listCategoriesByRole(
+                collegeId, userId, role, collegeIdFromToken
+        );
+
+        return ResultVO.success(categories);
+    }
+    //-----------------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
+//// 学生注册接口（开放接口，不需要认证）
+//@PostMapping("open/register")
+//public ResultVO registerStudent(@RequestBody StudentRegisterDTO registerDTO) {
+//    userService.registerStudent(registerDTO);
+//    return ResultVO.ok();
+//}
+
+//    // 获取所有学院列表（开放接口）
+//    @GetMapping("open/colleges")
+//    public ResultVO getAllColleges() {
+//        return ResultVO.success(collegeService.listAllColleges());
+//    }
+
+// 在CollegeController中
+@GetMapping("open/colleges")
+public ResultVO getAllColleges() {
+    List<College> colleges = collegeService.listAllColleges();
+
+    // 转换ID为String
+    List<Map<String, Object>> result = colleges.stream()
+            .map(college -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", college.getId().toString());
+                map.put("name", college.getName());
+                return map;
+            })
+            .collect(Collectors.toList());
+
+    return ResultVO.success(result);
+}
+
+    // 根据学院获取专业（开放接口）
+    @GetMapping("open/colleges/{collegeId}/majors")
+    public ResultVO getMajorsByCollege(@PathVariable Long collegeId) {
+        return ResultVO.success(collegeService.listMajorsByCollegeId(collegeId));
+    }
+//----------------------------------------------------------------------------------
 
 }

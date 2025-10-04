@@ -20,7 +20,7 @@ token: {{token}}
 }
 
 ### 9. 删除学院  最后面的一串数是学院id
-DELETE localhost:8080/api/admin/colleges/1421165519489261568
+DELETE localhost:8080/api/admin/colleges/1423592432023429120
 token: {{token}}
 
 ### 创建一个学院级管理员  101是学院id
@@ -50,4 +50,8 @@ Content-Type: application/json
 PUT localhost:8080/api/admin/users/2023221547/password
 token: {{token}}
 Content-Type: application/json
+
+### 在浏览器打开
+http://localhost:8080/login.html
+#http://localhost:8080/admin-colleges.html
 

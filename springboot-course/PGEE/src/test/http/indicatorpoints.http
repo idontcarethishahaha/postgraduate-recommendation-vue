@@ -1,0 +1,29 @@
+### 链表式指标点测试
+
+### 1. 构建链表结构
+POST localhost:8080/api/collegeadmin/indicator-points/build-linked-list?majorCategoryId=1422192039766843392
+token: {{token}}
+
+### 2. 获取链表根节点
+GET localhost:8080/api/collegeadmin/indicator-points/linked-list/root?majorCategoryId=1422192039766843392
+token: {{token}}
+
+> {%
+    client.global.set("root_node_id", response.body.data[0].id);
+%}
+
+### 3. 获取第一个子节点
+GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{root_node_id}}/first-child
+token: {{token}}
+
+> {%
+    client.global.set("first_child_id", response.body.data.id);
+%}
+
+### 4. 获取下一个兄弟节点
+GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{first_child_id}}/next-sibling
+token: {{token}}
+
+### 5. 获取所有直接子节点（替代方案）
+GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{root_node_id}}/children
+token: {{token}}

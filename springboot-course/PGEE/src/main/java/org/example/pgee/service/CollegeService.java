@@ -1,19 +1,17 @@
 package org.example.pgee.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.pgee.dox.College;
-import org.example.pgee.dox.Major;
-import org.example.pgee.dox.MajorCategory;
+import org.example.pgee.dox.*;
 import org.example.pgee.dto.*;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
-import org.example.pgee.repository.CollegeRepository;
-import org.example.pgee.repository.MajorCategoryRepository;
-import org.example.pgee.repository.MajorRepository;
+import org.example.pgee.repository.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -22,6 +20,10 @@ public class CollegeService {
     private final CollegeRepository collegeRepository;
     private final MajorCategoryRepository majorCategoryRepository;
     private final MajorRepository majorRepository;
+    private final CounselorInfoRepository counselorInfoRepository;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     // 添加学院
     @Transactional
@@ -40,12 +42,39 @@ public class CollegeService {
         collegeRepository.save(college);
     }
 
-    // 查询所有学院
-    public List<College> listAllColleges() {
-        List<College> colleges = new ArrayList<>();
-        collegeRepository.findAll().forEach(colleges::add);
-        return colleges;
+//    // 查询所有学院
+//    public List<College> listAllColleges() {
+//        List<College> colleges = new ArrayList<>();
+//        collegeRepository.findAll().forEach(colleges::add);
+//        return colleges;
+//    }
+
+
+
+    // 编辑学院信息
+    @Transactional
+    public void updateCollege(Long id, CollegeUpdateDTO updateDTO) {
+        College college = collegeRepository.findById(id)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("学院不存在")
+                        .build());
+
+        // 检查名称是否重复（排除自身）
+        if (!college.getName().equals(updateDTO.getName())) {
+            boolean nameExists = collegeRepository.existsByName(updateDTO.getName());
+            if (nameExists) {
+                throw XException.builder()
+                        .number(Code.ERROR)
+                        .message("学院名称已存在")
+                        .build();
+            }
+            college.setName(updateDTO.getName());
+            collegeRepository.save(college);
+        }
     }
+
+
 
     // 删除学院
     @Transactional
@@ -59,35 +88,7 @@ public class CollegeService {
         collegeRepository.deleteById(id);
     }
 
-//    // 为学院添加类别
-//    @Transactional
-//    public void addMajorCategory(MajorCategoryAddDTO majorCategoryAddDTO) {
-//        // 学院是否存在
-//        collegeRepository.findById(majorCategoryAddDTO.getCollegeId())
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("学院不存在，无法添加专业类别")
-//                        .build());
-//
-//        // 该学院下是否已存在同名类别
-//        boolean nameExists = majorCategoryRepository.existsByCollegeIdAndName(
-//                majorCategoryAddDTO.getCollegeId(),
-//                majorCategoryAddDTO.getName()
-//        );
-//        if (nameExists) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("该学院下已存在同名类别")
-//                    .build();
-//        }
-//
-//        MajorCategory majorCategory = MajorCategory.builder()
-//                .collegeId(majorCategoryAddDTO.getCollegeId())
-//                .name(majorCategoryAddDTO.getName())
-//                .calculationRule(majorCategoryAddDTO.getCalculationRule())
-//                .build();
-//        majorCategoryRepository.save(majorCategory);
-//    }
+
 
     // 为学院添加类别 - 现在完全从token获取学院ID
     @Transactional
@@ -119,12 +120,7 @@ public class CollegeService {
         majorCategoryRepository.save(majorCategory);
     }
 
-    // 查询某学院下的所有类别
-//    public List<MajorCategory> listAllMajorCategories(Long cid) {
-//        List<MajorCategory> majorCategories = new ArrayList<>();
-//        majorCategoryRepository.findAll().forEach(majorCategories::add);
-//        return majorCategories;
-//    }
+
 
     public List<MajorCategory> listAllMajorCategories(Long cid) {
         // 假设MajorCategory实体有collegeId字段，关联学院ID
@@ -132,17 +128,7 @@ public class CollegeService {
         return majorCategoryRepository.findByCollegeId(cid);
     }
 
-    // 删除学院下的某个类别
-//    @Transactional
-//    public void deleteMajorCategory(Long mcid) {
-//        if (!majorCategoryRepository.existsById(mcid)) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("此类别不存在")
-//                    .build();
-//        }
-//        majorCategoryRepository.deleteById(mcid);
-//    }
+
 
     // 删除学院下的某个类别（增加学院权限验证
     @Transactional
@@ -160,16 +146,6 @@ public class CollegeService {
                     .code(Code.FORBIDDEN) // 403无权限异常
                     .build();
         }
-
-        // 可选：检查类别下是否有专业，如果有则不允许删除
-        // boolean hasMajors = majorRepository.existsByMajorCategoryId(mcid);
-        // if (hasMajors) {
-        //     throw XException.builder()
-        //             .number(Code.ERROR)
-        //             .message("该类别下存在专业，无法删除")
-        //             .build();
-        // }
-
         majorCategoryRepository.deleteById(mcid);
     }
 
@@ -308,6 +284,151 @@ public class CollegeService {
                         .build());
 
         majorRepository.deleteById(majorId);
+    }
+
+
+
+    /**
+     * 根据角色查询专业列表
+     */
+    public List<Major> listMajorsByRole(Long collegeId, Long majorCategoryId,
+                                        Long userId, String role, Long collegeIdFromToken) {
+        switch (role) {
+            case User.STUDENT:
+                return listAllMajorsForStudent();
+            case User.COUNSELOR:
+                return listMajorsForCounselor(userId);
+            case User.COLLEGE_ADMIN:
+                return listMajorsForCollegeAdmin(collegeId, majorCategoryId, collegeIdFromToken);
+            case User.ADMIN:
+                return listMajorsForAdmin(collegeId, majorCategoryId);
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    /**
+     * 根据角色查询类别列表
+     */
+    public List<MajorCategory> listCategoriesByRole(Long collegeId,
+                                                    Long userId, String role, Long collegeIdFromToken) {
+        switch (role) {
+            case User.COUNSELOR:
+                return listCategoriesForCounselor(userId);
+            case User.COLLEGE_ADMIN:
+                return listAllMajorCategories(collegeIdFromToken);
+            case User.ADMIN:
+                return listCategoriesForAdmin(collegeId);
+            default:
+                // 学生看不到类别信息
+                return Collections.emptyList();
+        }
+    }
+
+    // 学生：查看所有专业（用于注册和浏览）
+    private List<Major> listAllMajorsForStudent() {
+        List<Major> majors = new ArrayList<>();
+        majorRepository.findAll().forEach(majors::add);
+        return majors;
+    }
+
+    // 辅导员：查看自己管理的类别下的专业
+    private List<Major> listMajorsForCounselor(Long counselorId) {
+        // 获取辅导员管理的类别ID
+        CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("辅导员信息不存在")
+                        .build());
+
+        return majorRepository.findByMajorCategoryId(counselorInfo.getMajorCategoryId());
+    }
+
+    // 学院管理员：查看自己学院的专业
+    private List<Major> listMajorsForCollegeAdmin(Long collegeId, Long majorCategoryId, Long userCollegeId) {
+        // 确保只能查看自己学院的数据
+        if (collegeId != null && !collegeId.equals(userCollegeId)) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("无权查看其他学院数据")
+                    .build();
+        }
+
+        if (majorCategoryId != null) {
+            // 验证类别属于当前学院
+            MajorCategory category = majorCategoryRepository.findById(majorCategoryId)
+                    .orElseThrow(() -> XException.builder()
+                            .number(Code.ERROR)
+                            .message("类别不存在")
+                            .build());
+
+            if (!category.getCollegeId().equals(userCollegeId)) {
+                throw XException.builder()
+                        .number(Code.ERROR)
+                        .message("无权限")
+                        .build();
+            }
+
+            // 按类别过滤
+            return majorRepository.findByMajorCategoryId(majorCategoryId);
+        } else {
+            // 查看整个学院
+            return majorRepository.findByCollegeId(userCollegeId);
+        }
+    }
+
+    // 超级管理员：查看所有专业
+    private List<Major> listMajorsForAdmin(Long collegeId, Long majorCategoryId) {
+        if (collegeId != null && majorCategoryId != null) {
+            // 按学院和类别过滤
+            return majorRepository.findByCollegeIdAndMajorCategoryId(collegeId, majorCategoryId);
+        } else if (collegeId != null) {
+            // 按学院过滤
+            return majorRepository.findByCollegeId(collegeId);
+        } else if (majorCategoryId != null) {
+            // 按类别过滤
+            return majorRepository.findByMajorCategoryId(majorCategoryId);
+        } else {
+            // 查看所有
+            List<Major> majors = new ArrayList<>();
+            majorRepository.findAll().forEach(majors::add);
+            return majors;
+        }
+    }
+
+    // 辅导员：查看自己管理的类别
+    private List<MajorCategory> listCategoriesForCounselor(Long counselorId) {
+        CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("该类别下已存在同名专业")
+                        .build());
+
+        return majorCategoryRepository.findById(counselorInfo.getMajorCategoryId())
+                .map(Collections::singletonList)
+                .orElse(Collections.emptyList());
+    }
+
+    // 超级管理员：查看所有类别
+    private List<MajorCategory> listCategoriesForAdmin(Long collegeId) {
+        if (collegeId != null) {
+            return majorCategoryRepository.findByCollegeId(collegeId);
+        } else {
+            List<MajorCategory> categories = new ArrayList<>();
+            majorCategoryRepository.findAll().forEach(categories::add);
+            return categories;
+        }
+    }
+    //--------------------------------------------------------------------------------------------------------
+//注册学生用的
+// 获取所有学院
+    public List<College> listAllColleges() {
+        return collegeRepository.findAll(); // ListCrudRepository直接返回List
+    }
+
+    // 根据学院获取专业
+    public List<Major> listMajorsByCollegeId(Long collegeId) {
+        return majorRepository.findByCollegeId(collegeId);
     }
 
 }
