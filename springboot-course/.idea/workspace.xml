@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-colleges.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-colleges.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/login.html" afterDir="false" />
-    </list>
+    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -309,7 +305,7 @@
       <workItem from="1759466678472" duration="15966000" />
       <workItem from="1759542126904" duration="16034000" />
       <workItem from="1759637918278" duration="8023000" />
-      <workItem from="1759646357237" duration="2499000" />
+      <workItem from="1759646357237" duration="3384000" />
     </task>
     <servers />
   </component>
