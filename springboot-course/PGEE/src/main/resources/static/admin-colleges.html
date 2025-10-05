@@ -262,7 +262,7 @@
             border-radius: 4px;
             font-size: 12px;
             color: #666;
-            display: block;
+            display: block; /* 默认显示调试信息 */
         }
     </style>
 </head>
@@ -632,7 +632,7 @@
     // 管理学院管理员
     function manageAdmins(collegeId, collegeName) {
         showDebugInfo(`跳转到管理员管理 - 学院ID: ${collegeId}`);
-        window.location.href = `admin-college-admins.html?collegeId=${collegeId}&collegeName=${encodeURIComponent(collegeName)}`;
+        window.location.href = `admin-collegeadmins.html?collegeId=${collegeId}&collegeName=${encodeURIComponent(collegeName)}`;
     }
 
     // 导航
@@ -680,3 +680,4 @@
 </script>
 </body>
 </html>
+
