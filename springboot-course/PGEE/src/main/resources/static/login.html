@@ -225,6 +225,8 @@
         const token = response.headers.get('token');
         const role = response.headers.get('role');
 
+        console.log('登录成功，角色:', role); // 调试信息
+
         if (!token) {
           showError('登录失败：未获取到token');
           return;
@@ -235,16 +237,13 @@
         localStorage.setItem('role', role);
         localStorage.setItem('user', JSON.stringify(result.data));
 
-        console.log('登录成功，token:', token);
-        console.log('用户角色:', role);
-
         // 根据角色跳转到不同页面
         switch(role) {
           case 'Fr5g': // ADMIN - 超级管理员
             window.location.href = 'admin-colleges.html';
             break;
-          case 'yHJ7': // COLLEGE_ADMIN - 学院管理员
-            window.location.href = 'college-admin-dashboard.html';
+          case 'yHJ7': // COLLEGE_ADMIN - 学院管理员（注意y是小写）
+            window.location.href = 'collegeadmin-dashboard.html';
             break;
           case 'Ca24': // COUNSELOR - 辅导员
             window.location.href = 'counselor-dashboard.html';
@@ -253,7 +252,8 @@
             window.location.href = 'student-dashboard.html';
             break;
           default:
-            showError('未知用户角色');
+            console.error('未知用户角色:', role);
+            showError('未知用户角色: ' + role);
         }
 
       } else {
@@ -276,18 +276,18 @@
   document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('account').focus();
 
-    // 检查是否已登录，如果已登录则直接跳转
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-
-    if (token && role) {
-      switch(role) {
-        case 'Fr5g': window.location.href = 'admin-colleges.html'; break;
-        case 'yHJ7': window.location.href = 'college-admin-dashboard.html'; break;
-        case 'Ca24': window.location.href = 'counselor-dashboard.html'; break;
-        case 'dA5q': window.location.href = 'student-dashboard.html'; break;
-      }
-    }
+    // // 检查是否已登录，如果已登录则直接跳转
+    // const token = localStorage.getItem('token');
+    // const role = localStorage.getItem('role');
+    //
+    // if (token && role) {
+    //   switch(role) {
+    //     case 'Fr5g': window.location.href = 'admin-colleges.html'; break;
+    //     case 'yHJ7': window.location.href = 'collegeadmin-dashboard.html'; break;
+    //     case 'Ca24': window.location.href = 'counselor-dashboard.html'; break;
+    //     case 'dA5q': window.location.href = 'student-dashboard.html'; break;
+    //   }
+    // }
   });
 </script>
 </body>

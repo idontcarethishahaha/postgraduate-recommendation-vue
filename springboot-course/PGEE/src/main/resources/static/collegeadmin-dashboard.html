@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学院管理 - 推免系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background: #fff;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .user-info {
+            color: #666;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #fff;
+            border-right: 1px solid #e8e8e8;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            color: #666;
+        }
+
+        .menu-item.active {
+            background: #f0f7ff;
+            border-left-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #fff;
+            margin: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .page-title {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .breadcrumb {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #1890ff;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+
+        .btn-danger {
+            background: #ff4d4f;
+            color: white;
+            border-color: #ff4d4f;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #52c41a;
+        }
+
+        .stats span {
+            margin-right: 20px;
+            color: #666;
+        }
+
+        .stats strong {
+            color: #52c41a;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #1890ff;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ff4d4f;
+            color: white;
+        }
+
+        .admin-btn {
+            background: #52c41a;
+            color: white;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            min-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .close {
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+        }
+
+        .form-control:focus {
+            border-color: #1890ff;
+            outline: none;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state img {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tree-node {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .tree-node-children {
+            padding-left: 20px;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- 头部导航 -->
+<div class="header">
+    <h1>推免系统 - 学院管理员</h1>
+    <div class="user-info">
+        <span id="userRoleDisplay">学院管理员</span>
+        <button class="btn" onclick="logout()" style="margin-left: 10px;">退出登录</button>
+    </div>
+</div>
+
+<!-- 主体容器 -->
+<div class="container">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="menu-item active" onclick="switchTab('indicator-points')">指标点管理</div>
+        <div class="menu-item" onclick="switchTab('categories')">专业类别管理</div>
+        <div class="menu-item" onclick="switchTab('counselors')">辅导员管理</div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="college-admin-dashboard.html">学院管理</a> &gt;
+            <span id="currentCollegeName">加载中...</span>
+        </div>
+
+        <!-- 标签页容器 -->
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <div class="tab-button active" data-tab="indicator-points">指标点管理</div>
+                <div class="tab-button" data-tab="categories">专业类别管理</div>
+                <div class="tab-button" data-tab="counselors">辅导员管理</div>
+            </div>
+
+            <!-- 指标点管理标签页 -->
+            <div class="tab-content active" id="indicator-points-tab">
+                <div class="page-header">
+                    <h2 class="page-title">指标点管理</h2>
+                    <div class="actions">
+                        <input type="text" class="search-box" id="indicatorSearchInput" placeholder="搜索指标点...">
+                        <button class="btn" onclick="searchIndicatorPoints()">搜索</button>
+                        <button class="btn btn-primary" onclick="showAddIndicatorPointModal()">添加指标点</button>
+                        <button class="btn" onclick="loadIndicatorPoints()">刷新</button>
+                    </div>
+                </div>
+
+                <div class="stats" id="indicatorStats">
+                    当前指标点总数：<strong id="indicatorCount">0</strong>
+                </div>
+
+                <div id="indicatorTreeContainer">
+                    <!-- 树形结构将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- 专业类别管理标签页 -->
+            <div class="tab-content" id="categories-tab">
+                <div class="page-header">
+                    <h2 class="page-title">专业类别管理</h2>
+                    <div class="actions">
+                        <input type="text" class="search-box" id="categorySearchInput" placeholder="搜索类别...">
+                        <button class="btn" onclick="searchCategories()">搜索</button>
+                        <button class="btn btn-primary" onclick="showAddCategoryModal()">添加类别</button>
+                        <button class="btn" onclick="loadCategories()">刷新</button>
+                    </div>
+                </div>
+
+                <div class="stats" id="categoryStats">
+                    当前类别总数：<strong id="categoryCount">0</strong>
+                </div>
+
+                <table id="categoryTable">
+                    <thead>
+                    <tr>
+                        <th>类别名称</th>
+                        <th>计算规则</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    <!-- 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 辅导员管理标签页 -->
+            <div class="tab-content" id="counselors-tab">
+                <div class="page-header">
+                    <h2 class="page-title">辅导员管理</h2>
+                    <div class="actions">
+                        <input type="text" class="search-box" id="counselorSearchInput" placeholder="搜索辅导员...">
+                        <button class="btn" onclick="searchCounselors()">搜索</button>
+                        <button class="btn btn-primary" onclick="showAddCounselorModal()">添加辅导员</button>
+                        <button class="btn" onclick="loadCounselors()">刷新</button>
+                    </div>
+                </div>
+
+                <div class="stats" id="counselorStats">
+                    当前辅导员总数：<strong id="counselorCount">0</strong>
+                </div>
+
+                <table id="counselorTable">
+                    <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>账号</th>
+                        <th>手机号</th>
+                        <th>所属类别</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="counselorTableBody">
+                    <!-- 动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加指标点模态框 -->
+<div id="addIndicatorPointModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>添加指标点</h3>
+            <span class="close" onclick="closeAddIndicatorPointModal()">&times;</span>
+        </div>
+        <form id="addIndicatorPointForm">
+            <div class="form-group">
+                <label for="indicatorPointName">名称 *</label>
+                <input type="text" id="indicatorPointName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="indicatorPointDescription">描述</label>
+                <textarea id="indicatorPointDescription" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="indicatorPointMaxScore">最大分值</label>
+                <input type="number" step="0.01" id="indicatorPointMaxScore" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="indicatorPointParent">父级指标点</label>
+                <select id="indicatorPointParent" class="form-control">
+                    <option value="">无 (一级指标)</option>
+                    <!-- 动态填充 -->
+                </select>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddIndicatorPointModal()">取消</button>
+            <button class="btn btn-primary" onclick="addIndicatorPoint()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑指标点模态框 -->
+<div id="editIndicatorPointModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>编辑指标点</h3>
+            <span class="close" onclick="closeEditIndicatorPointModal()">&times;</span>
+        </div>
+        <form id="editIndicatorPointForm">
+            <input type="hidden" id="editIndicatorPointId">
+            <div class="form-group">
+                <label for="editIndicatorPointName">名称 *</label>
+                <input type="text" id="editIndicatorPointName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editIndicatorPointDescription">描述</label>
+                <textarea id="editIndicatorPointDescription" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editIndicatorPointMaxScore">最大分值</label>
+                <input type="number" step="0.01" id="editIndicatorPointMaxScore" class="form-control">
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeEditIndicatorPointModal()">取消</button>
+            <button class="btn btn-primary" onclick="updateIndicatorPoint()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 添加类别模态框 -->
+<div id="addCategoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>添加专业类别</h3>
+            <span class="close" onclick="closeAddCategoryModal()">&times;</span>
+        </div>
+        <form id="addCategoryForm">
+            <div class="form-group">
+                <label for="categoryName">类别名称 *</label>
+                <input type="text" id="categoryName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="categoryCalculationRule">计算规则</label>
+                <textarea id="categoryCalculationRule" class="form-control" placeholder="JSON格式的计算规则"></textarea>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddCategoryModal()">取消</button>
+            <button class="btn btn-primary" onclick="addCategory()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑类别模态框 -->
+<div id="editCategoryModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>编辑专业类别</h3>
+            <span class="close" onclick="closeEditCategoryModal()">&times;</span>
+        </div>
+        <form id="editCategoryForm">
+            <input type="hidden" id="editCategoryId">
+            <div class="form-group">
+                <label for="editCategoryName">类别名称 *</label>
+                <input type="text" id="editCategoryName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="editCategoryCalculationRule">计算规则</label>
+                <textarea id="editCategoryCalculationRule" class="form-control"></textarea>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeEditCategoryModal()">取消</button>
+            <button class="btn btn-primary" onclick="updateCategory()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 添加辅导员模态框 -->
+<div id="addCounselorModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>添加辅导员</h3>
+            <span class="close" onclick="closeAddCounselorModal()">&times;</span>
+        </div>
+        <form id="addCounselorForm">
+            <div class="form-group">
+                <label for="counselorName">姓名 *</label>
+                <input type="text" id="counselorName" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="counselorAccount">账号 *</label>
+                <input type="text" id="counselorAccount" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="counselorTel">手机号</label>
+                <input type="tel" id="counselorTel" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="counselorCategory">所属类别</label>
+                <select id="counselorCategory" class="form-control">
+                    <!-- 动态填充 -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="counselorPassword">初始密码</label>
+                <input type="text" id="counselorPassword" class="form-control" placeholder="留空则使用账号作为密码">
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddCounselorModal()">取消</button>
+            <button class="btn btn-primary" onclick="addCounselor()">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 调试信息 -->
+<div id="debugInfo" class="debug-info">
+    <strong>调试信息:</strong>
+    <div id="debugContent"></div>
+</div>
+
+<script>
+    // 全局变量
+    let currentCollegeId = null;
+    let currentCollegeName = '';
+    let indicatorPoints = [];
+    let categories = [];
+    let counselors = [];
+    let debugMode = false;
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+        initPage();
+    });
+
+    // 检查登录状态
+    function checkLogin() {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token || role !== 'yHJ7') {
+            alert('请先登录');
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        currentCollegeId = user.collegeId;
+        currentCollegeName = user.collegeName || '当前学院';
+
+        document.getElementById('currentCollegeName').textContent = currentCollegeName;
+        document.getElementById('breadcrumb').innerHTML = `
+            <a href="college-admin-dashboard.html">学院管理</a> &gt;
+            ${currentCollegeName}
+        `;
+
+        return true;
+    }
+
+    // 初始化页面
+    function initPage() {
+        loadIndicatorPoints();
+        loadCategories();
+        loadCounselors();
+    }
+
+    // 切换标签页
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+
+        document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    }
+
+    // 获取认证头
+    function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            'token': token
+        };
+    }
+
+    // 显示调试信息
+    function showDebugInfo(message) {
+        if (debugMode) {
+            const debugContent = document.getElementById('debugContent');
+            const timestamp = new Date().toLocaleTimeString();
+            debugContent.innerHTML += `[${timestamp}] ${message}<br>`;
+            console.log(message);
+        }
+    }
+
+    // 切换调试模式
+    function toggleDebug() {
+        debugMode = !debugMode;
+        document.getElementById('debugInfo').style.display = debugMode ? 'block' : 'none';
+        showDebugInfo(`调试模式 ${debugMode ? '开启' : '关闭'}`);
+    }
+
+    // 退出登录
+    function logout() {
+        if (confirm('确定要退出登录吗？')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // ==================== 指标点管理 ====================
+    async function loadIndicatorPoints() {
+        try {
+            showDebugInfo('开始加载指标点数据...');
+            const response = await fetch(`/api/collegeadmin/indicatorpoints/tree?majorCategoryId=${currentCollegeId}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            showDebugInfo(`指标点加载结果: code=${result.code}, count=${result.data ? result.data.length : 0}`);
+
+            if (result.code === 200) {
+                indicatorPoints = result.data;
+                renderIndicatorTree(indicatorPoints);
+                document.getElementById('indicatorCount').textContent = indicatorPoints.length;
+            } else {
+                alert('加载指标点失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('加载指标点失败:', error);
+            showDebugInfo('加载指标点失败: ' + error.message);
+            alert('加载指标点失败');
+        }
+    }
+
+    function renderIndicatorTree(treeData) {
+        const container = document.getElementById('indicatorTreeContainer');
+        container.innerHTML = '';
+
+        if (!treeData || treeData.length === 0) {
+            container.innerHTML = '<div class="empty-state">暂无指标点，请点击"添加指标点"按钮创建</div>';
+            return;
+        }
+
+        const buildTreeHTML = (nodes, level = 0) => {
+            let html = '';
+            nodes.forEach(node => {
+                const indent = '&nbsp;&nbsp;'.repeat(level * 2);
+                html += `
+                    <div class="tree-node">
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                ${indent}${node.name} (${node.maxScore || 0}分)
+                            </div>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" onclick="editIndicatorPoint('${node.id}', '${escapeHtml(node.name)}', '${escapeHtml(node.description)}', ${node.maxScore})">编辑</button>
+                                <button class="action-btn delete-btn" onclick="deleteIndicatorPoint('${node.id}', '${escapeHtml(node.name)}')">删除</button>
+                                <button class="action-btn" onclick="showAddIndicatorPointModal('${node.id}')">添加子项</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                if (node.children && node.children.length > 0) {
+                    html += `<div class="tree-node-children">${buildTreeHTML(node.children, level + 1)}</div>`;
+                }
+            });
+            return html;
+        };
+
+        container.innerHTML = buildTreeHTML(treeData);
+    }
+
+    function showAddIndicatorPointModal(parentId = '') {
+        const modal = document.getElementById('addIndicatorPointModal');
+        const parentSelect = document.getElementById('indicatorPointParent');
+
+        // 填充父级指标点选择框
+        parentSelect.innerHTML = '<option value="">无 (一级指标)</option>';
+
+        const addOptions = (nodes, level = 0, parentId = '') => {
+            nodes.forEach(node => {
+                const indent = '- '.repeat(level);
+                parentSelect.innerHTML += `<option value="${node.id}" ${parentId === node.id ? 'selected' : ''}>${indent}${node.name}</option>`;
+
+                if (node.children && node.children.length > 0) {
+                    addOptions(node.children, level + 1, parentId);
+                }
+            });
+        };
+
+        addOptions(indicatorPoints);
+
+        if (parentId) {
+            parentSelect.value = parentId;
+        }
+
+        modal.style.display = 'block';
+    }
+
+    function closeAddIndicatorPointModal() {
+        document.getElementById('addIndicatorPointModal').style.display = 'none';
+    }
+
+    async function addIndicatorPoint() {
+        const name = document.getElementById('indicatorPointName').value.trim();
+        const description = document.getElementById('indicatorPointDescription').value.trim();
+        const maxScore = parseFloat(document.getElementById('indicatorPointMaxScore').value) || 0;
+        const parentId = document.getElementById('indicatorPointParent').value;
+
+        if (!name) {
+            alert('请输入指标点名称');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/collegeadmin/indicatorpoints', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name,
+                    description,
+                    maxScore,
+                    parentId: parentId || null,
+                    majorCategoryId: currentCollegeId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('添加成功');
+                closeAddIndicatorPointModal();
+                loadIndicatorPoints();
+            } else {
+                alert('添加失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('添加指标点失败:', error);
+            alert('添加指标点失败');
+        }
+    }
+
+    function editIndicatorPoint(id, name, description, maxScore) {
+        const modal = document.getElementById('editIndicatorPointModal');
+        document.getElementById('editIndicatorPointId').value = id;
+        document.getElementById('editIndicatorPointName').value = name;
+        document.getElementById('editIndicatorPointDescription').value = description || '';
+        document.getElementById('editIndicatorPointMaxScore').value = maxScore || '';
+        modal.style.display = 'block';
+    }
+
+    function closeEditIndicatorPointModal() {
+        document.getElementById('editIndicatorPointModal').style.display = 'none';
+    }
+
+    async function updateIndicatorPoint() {
+        const id = document.getElementById('editIndicatorPointId').value;
+        const name = document.getElementById('editIndicatorPointName').value.trim();
+        const description = document.getElementById('editIndicatorPointDescription').value.trim();
+        const maxScore = parseFloat(document.getElementById('editIndicatorPointMaxScore').value) || 0;
+
+        if (!name) {
+            alert('请输入指标点名称');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/collegeadmin/indicatorpoints/${id}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name,
+                    description,
+                    maxScore
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('更新成功');
+                closeEditIndicatorPointModal();
+                loadIndicatorPoints();
+            } else {
+                alert('更新失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('更新指标点失败:', error);
+            alert('更新指标点失败');
+        }
+    }
+
+    async function deleteIndicatorPoint(id, name) {
+        if (!confirm(`确定要删除指标点 "${name}" 吗？此操作不可恢复！`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/collegeadmin/indicatorpoints/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('删除成功');
+                loadIndicatorPoints();
+            } else {
+                alert('删除失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('删除指标点失败:', error);
+            alert('删除指标点失败');
+        }
+    }
+
+    function searchIndicatorPoints() {
+        const keyword = document.getElementById('indicatorSearchInput').value.toLowerCase();
+        // 这里可以添加搜索逻辑
+        alert('搜索功能待实现，关键词: ' + keyword);
+    }
+
+    // ==================== 类别管理 ====================
+    async function loadCategories() {
+        try {
+            const response = await fetch(`/api/collegeadmin/categories`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                categories = result.data;
+                renderCategories(categories);
+                document.getElementById('categoryCount').textContent = categories.length;
+            } else {
+                alert('加载类别失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('加载类别失败:', error);
+            alert('加载类别失败');
+        }
+    }
+
+    function renderCategories(categoryList) {
+        const tbody = document.getElementById('categoryTableBody');
+        tbody.innerHTML = '';
+
+        if (categoryList.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state">暂无类别，请点击"添加类别"按钮创建</td></tr>';
+            return;
+        }
+
+        categoryList.forEach(category => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${category.name}</td>
+                <td>${category.calculationRule || '默认规则'}</td>
+                <td>${formatDate(category.createTime)}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn edit-btn" onclick="editCategory('${category.id}', '${escapeHtml(category.name)}', '${escapeHtml(category.calculationRule || '')}')">编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteCategory('${category.id}', '${escapeHtml(category.name)}')">删除</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function showAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'block';
+    }
+
+    function closeAddCategoryModal() {
+        document.getElementById('addCategoryModal').style.display = 'none';
+    }
+
+    async function addCategory() {
+        const name = document.getElementById('categoryName').value.trim();
+        const calculationRule = document.getElementById('categoryCalculationRule').value.trim();
+
+        if (!name) {
+            alert('请输入类别名称');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/collegeadmin/categories', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name,
+                    calculationRule,
+                    collegeId: currentCollegeId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('添加成功');
+                closeAddCategoryModal();
+                loadCategories();
+            } else {
+                alert('添加失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('添加类别失败:', error);
+            alert('添加类别失败');
+        }
+    }
+
+    function editCategory(id, name, calculationRule) {
+        const modal = document.getElementById('editCategoryModal');
+        document.getElementById('editCategoryId').value = id;
+        document.getElementById('editCategoryName').value = name;
+        document.getElementById('editCategoryCalculationRule').value = calculationRule;
+        modal.style.display = 'block';
+    }
+
+    function closeEditCategoryModal() {
+        document.getElementById('editCategoryModal').style.display = 'none';
+    }
+
+    async function updateCategory() {
+        const id = document.getElementById('editCategoryId').value;
+        const name = document.getElementById('editCategoryName').value.trim();
+        const calculationRule = document.getElementById('editCategoryCalculationRule').value.trim();
+
+        if (!name) {
+            alert('请输入类别名称');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/collegeadmin/categories/${id}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name,
+                    calculationRule
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('更新成功');
+                closeEditCategoryModal();
+                loadCategories();
+            } else {
+                alert('更新失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('更新类别失败:', error);
+            alert('更新类别失败');
+        }
+    }
+
+    async function deleteCategory(id, name) {
+        if (!confirm(`确定要删除类别 "${name}" 吗？此操作不可恢复！`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/collegeadmin/categories/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('删除成功');
+                loadCategories();
+            } else {
+                alert('删除失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('删除类别失败:', error);
+            alert('删除类别失败');
+        }
+    }
+
+    function searchCategories() {
+        const keyword = document.getElementById('categorySearchInput').value.toLowerCase();
+        // 这里可以添加搜索逻辑
+        alert('搜索功能待实现，关键词: ' + keyword);
+    }
+
+    // ==================== 辅导员管理 ====================
+    async function loadCounselors() {
+        try {
+            const response = await fetch(`/api/collegeadmin/counselors`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                counselors = result.data;
+                renderCounselors(counselors);
+                document.getElementById('counselorCount').textContent = counselors.length;
+            } else {
+                alert('加载辅导员失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('加载辅导员失败:', error);
+            alert('加载辅导员失败');
+        }
+    }
+
+    function renderCounselors(counselorList) {
+        const tbody = document.getElementById('counselorTableBody');
+        tbody.innerHTML = '';
+
+        if (counselorList.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">暂无辅导员，请点击"添加辅导员"按钮创建</td></tr>';
+            return;
+        }
+
+        counselorList.forEach(counselor => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${counselor.name}</td>
+                <td>${counselor.account}</td>
+                <td>${counselor.tel || '-'}</td>
+                <td>${counselor.majorCategoryName || '-'}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="action-btn delete-btn" onclick="deleteCounselor('${counselor.id}', '${escapeHtml(counselor.name)}')">删除</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    function showAddCounselorModal() {
+        const modal = document.getElementById('addCounselorModal');
+        const categorySelect = document.getElementById('counselorCategory');
+
+        // 填充类别选择框
+        categorySelect.innerHTML = '';
+        categories.forEach(category => {
+            categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+        });
+
+        modal.style.display = 'block';
+    }
+
+    function closeAddCounselorModal() {
+        document.getElementById('addCounselorModal').style.display = 'none';
+    }
+
+    async function addCounselor() {
+        const name = document.getElementById('counselorName').value.trim();
+        const account = document.getElementById('counselorAccount').value.trim();
+        const tel = document.getElementById('counselorTel').value.trim();
+        const categoryId = document.getElementById('counselorCategory').value;
+        const password = document.getElementById('counselorPassword').value.trim();
+
+        if (!name || !account) {
+            alert('请输入姓名和账号');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/collegeadmin/counselors', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    name,
+                    account,
+                    tel,
+                    password: password || account,
+                    majorCategoryId: categoryId
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('添加成功');
+                closeAddCounselorModal();
+                loadCounselors();
+            } else {
+                alert('添加失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('添加辅导员失败:', error);
+            alert('添加辅导员失败');
+        }
+    }
+
+    async function deleteCounselor(id, name) {
+        if (!confirm(`确定要删除辅导员 "${name}" 吗？此操作不可恢复！`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/collegeadmin/counselors/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            const result = await response.json();
+
+            if (result.code === 200) {
+                alert('删除成功');
+                loadCounselors();
+            } else {
+                alert('删除失败: ' + result.message);
+            }
+        } catch (error) {
+            console.error('删除辅导员失败:', error);
+            alert('删除辅导员失败');
+        }
+    }
+
+    function searchCounselors() {
+        const keyword = document.getElementById('counselorSearchInput').value.toLowerCase();
+        // 这里可以添加搜索逻辑
+        alert('搜索功能待实现，关键词: ' + keyword);
+    }
+
+    // ==================== 工具函数 ====================
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN');
+    }
+
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+        const modals = [
+            'addIndicatorPointModal',
+            'editIndicatorPointModal',
+            'addCategoryModal',
+            'editCategoryModal',
+            'addCounselorModal'
+        ];
+
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+</script>
+</body>
+</html>
