@@ -1,0 +1,145 @@
+package org.example.pgee.controller;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.example.pgee.dox.IndicatorPoint;
+import org.example.pgee.dto.IndicatorPointDTO;
+import org.example.pgee.dto.IndicatorPointTreeDTO;
+import org.example.pgee.exception.Code;
+import org.example.pgee.exception.XException;
+import org.example.pgee.service.IndicatorPointService;
+import org.example.pgee.vo.ResultVO;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/collegeadmin/indicatorpoints")
+@RequiredArgsConstructor
+public class IndicatorPointController {
+    private final IndicatorPointService indicatorPointService;
+
+    // 统一ID转换方法（处理科学计数法和大数字）
+    private Long parseId(String idStr) {
+        try {
+            if (idStr.contains("E") || idStr.contains("e")) {
+                return Double.valueOf(idStr).longValue();
+            }
+            return Long.parseLong(idStr);
+        } catch (NumberFormatException e) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("ID格式错误: " + idStr)
+                    .build();
+        }
+    }
+
+    // 实体转Map（ID转为String）
+    private Map<String, Object> convertToMap(IndicatorPoint point) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", point.getId().toString());
+        map.put("majorCategoryId", point.getMajorCategoryId().toString());
+        map.put("name", point.getName());
+        map.put("level", point.getLevel());
+        map.put("description", point.getDescription());
+        map.put("maxScore", point.getMaxScore());
+        map.put("itemUpperLimit", point.getItemUpperLimit());
+        map.put("parentId", point.getParentId() != null ? point.getParentId().toString() : null);
+        map.put("isLeaf", point.getIsLeaf());
+        map.put("createTime", point.getCreateTime());
+        map.put("updateTime", point.getUpdateTime());
+        return map;
+    }
+
+    // 树形节点转换
+    private Map<String, Object> convertTreeToMap(IndicatorPointTreeDTO node) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", node.getId().toString());
+        map.put("majorCategoryId", node.getMajorCategoryId().toString());
+        map.put("name", node.getName());
+        map.put("level", node.getLevel());
+        map.put("description", node.getDescription());
+        map.put("maxScore", node.getMaxScore());
+        map.put("itemUpperLimit", node.getItemUpperLimit());
+        map.put("isLeaf", node.getIsLeaf());
+        map.put("createTime", node.getCreateTime());
+        map.put("updateTime", node.getUpdateTime());
+
+        if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+            map.put("children", node.getChildren().stream()
+                    .map(this::convertTreeToMap)
+                    .collect(Collectors.toList()));
+        }
+        return map;
+    }
+
+    @PostMapping
+    public ResultVO addIndicatorPoint(
+            @RequestBody IndicatorPointDTO dto,
+            HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        validateCollegePermission(dto.getMajorCategoryId(), cid);
+
+        IndicatorPoint point = indicatorPointService.addIndicatorPoint(dto);
+        return ResultVO.success(convertToMap(point));
+    }
+
+    @GetMapping("/tree")
+    public ResultVO getIndicatorTree(@RequestParam String majorCategoryId,
+                                     HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        Long categoryId = parseId(majorCategoryId);
+        validateCollegePermission(categoryId, cid);
+
+        List<IndicatorPointTreeDTO> tree = indicatorPointService.getIndicatorTree(categoryId);
+        List<Map<String, Object>> result = tree.stream()
+                .map(this::convertTreeToMap)
+                .collect(Collectors.toList());
+        return ResultVO.success(result);
+    }
+
+    @GetMapping("/{id}/children")
+    public ResultVO getChildren(@PathVariable String id,
+                                HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        Long pointId = parseId(id);
+
+        List<IndicatorPoint> children = indicatorPointService.getChildren(pointId);
+        List<Map<String, Object>> result = children.stream()
+                .map(this::convertToMap)
+                .collect(Collectors.toList());
+        return ResultVO.success(result);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResultVO deleteIndicatorPoint(@PathVariable String id,
+                                         HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        Long pointId = parseId(id);
+
+        indicatorPointService.deleteIndicatorPoint(pointId);
+        return ResultVO.ok();
+    }
+
+    @PutMapping("/{id}")
+    public ResultVO updateIndicatorPoint(@PathVariable String id,
+                                         @RequestBody IndicatorPointDTO dto,
+                                         HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        Long pointId = parseId(id);
+        validateCollegePermission(dto.getMajorCategoryId(), cid);
+
+        IndicatorPoint updated = indicatorPointService.updateIndicatorPoint(pointId, dto);
+        return ResultVO.success(convertToMap(updated));
+    }
+
+    private void validateCollegePermission(Long majorCategoryId, Long collegeId) {
+        if (collegeId == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+        // 添加具体的权限验证逻辑
+    }
+}

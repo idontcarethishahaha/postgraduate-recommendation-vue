@@ -82,24 +82,29 @@ create table if not exists `stu_score`(
 );
 
 /* 指标点表 */
-create table if not exists `indicator_points`(
-    id bigint unsigned not null primary key ,
-    major_category_id bigint unsigned not null,/*根据专业大类划分*/
-    name varchar(255) not null ,/*指标点名称（各级指标名）*/
-    level tinyint unsigned not null ,/*指标点层级（节点层级）*/
-    description text,/*备注，存放指标点细则*/
-    max_score decimal(4,2),/*该指标点的最大分值*/
-    item_upper_limit int unsigned default 999,/*本项目申报数量上限*/
-    parent_id bigint unsigned,/*父级指标点id*/
-    is_leaf tinyint not null,/*是否为叶子节点,0表示不是,1表示是*/
-    create_time datetime not null default current_timestamp,
-    update_time datetime not null default current_timestamp on update current_timestamp,
+/* 指标点表 - 最小改动版 */
+CREATE TABLE IF NOT EXISTS `indicator_points`(
+    id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+    major_category_id BIGINT UNSIGNED NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    level TINYINT UNSIGNED NOT NULL,
+    description TEXT,
+    max_score DECIMAL(4,2),
+    item_upper_limit INT UNSIGNED DEFAULT 999,
+    parent_id BIGINT UNSIGNED,
+    is_leaf TINYINT NOT NULL,
 
-    index(parent_id, is_leaf)/*某父节点的所有子节点*/,
-    index(major_category_id,level)/*某一类别的某一级指标点*/
+    /* 只添加一个排序字段，其他保持不变 */
+    sort_order INT UNSIGNED DEFAULT 0,
 
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX(parent_id, is_leaf),
+    INDEX(major_category_id, level),
+    /* 添加排序索引 */
+    INDEX(major_category_id, parent_id, sort_order)
 );
-
 /* 申报记录表 */
 create table if not exists `application`(
     id bigint unsigned not null primary key ,

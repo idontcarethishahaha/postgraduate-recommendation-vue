@@ -1,29 +1,116 @@
-### 链表式指标点测试
+### 1. 学院管理员登录
+POST localhost:8080/api/open/login
+Content-Type: application/json
 
-### 1. 构建链表结构
-POST localhost:8080/api/collegeadmin/indicator-points/build-linked-list?majorCategoryId=1422192039766843392
+{
+  "account": "2023221547",
+  "password": "2023221547"
+}
+
+> {%
+    // 保存token到环境变量
+    client.global.set("token", response.headers.valueOf("token"));
+    client.global.set("cid", response.body.data.collegeId);
+    client.log("登录成功，token: " + client.global.get("token"));
+    client.log("学院ID: " + client.global.get("cid"));
+%}
+
+### 2. 添加一级指标点（无父节点）
+POST localhost:8080/api/collegeadmin/indicatorpoints
 token: {{token}}
+Content-Type: application/json
 
-### 2. 获取链表根节点
-GET localhost:8080/api/collegeadmin/indicator-points/linked-list/root?majorCategoryId=1422192039766843392
+{
+  "majorCategoryId": 101,
+  "name": "学术能力",
+  "description": "评估学生的学术研究能力",
+  "maxScore": 40.0,
+  "itemUpperLimit": 5
+}
+
+> {%
+    client.global.set("rootPointId", response.body.data.id);
+    client.log("创建一级指标点成功，ID: " + response.body.data.id);
+%}
+
+### 3. 添加二级指标点（有父节点）
+POST localhost:8080/api/collegeadmin/indicatorpoints
+token: {{token}}
+Content-Type: application/json
+
+{
+  "majorCategoryId": 101,
+  "name": "论文发表",
+  "description": "评估学生论文发表情况",
+  "maxScore": 20.0,
+  "itemUpperLimit": 2,
+  "parentId": {{rootPointId}}
+}
+
+> {%
+    client.global.set("childPointId", response.body.data.id);
+    client.log("创建二级指标点成功，ID: " + response.body.data.id);
+%}
+
+#### 4. 获取指标点树形结构
+#GET localhost:8080/api/collegeadmin/indicatorpoints/tree?majorCategoryId=101
+#token: {{token}}
+
+
+### 获取树形结构
+GET localhost:8080/api/collegeadmin/indicatorpoints/tree?majorCategoryId=101
 token: {{token}}
 
 > {%
-    client.global.set("root_node_id", response.body.data[0].id);
+    client.test("验证树形结构", function() {
+        client.assert(response.status === 200, "请求成功");
+        client.assert(response.body.data[0].children !== undefined, "应包含children字段");
+        client.assert(response.body.data[0].children.length > 0, "应包含子节点");
+    });
 %}
 
-### 3. 获取第一个子节点
-GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{root_node_id}}/first-child
+
+### 5. 获取指定节点的子节点
+GET localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}/children
 token: {{token}}
 
-> {%
-    client.global.set("first_child_id", response.body.data.id);
-%}
+### 6. 更新指标点信息
+PUT localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
+token: {{token}}
+Content-Type: application/json
 
-### 4. 获取下一个兄弟节点
-GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{first_child_id}}/next-sibling
+{
+  "name": "论文发表(修改后)",
+  "description": "评估学生论文发表情况(修改后)",
+  "maxScore": 25.0,
+  "itemUpperLimit": 3
+}
+
+### 7. 尝试添加同名指标点（应失败）
+POST localhost:8080/api/collegeadmin/indicatorpoints
+token: {{token}}
+Content-Type: application/json
+
+{
+  "majorCategoryId": 101,
+  "name": "论文发表(修改后)",
+  "description": "重复名称测试",
+  "maxScore": 10.0,
+  "itemUpperLimit": 1,
+  "parentId": {{rootPointId}}
+}
+
+### 8. 删除指标点（有子节点时应失败）
+DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}
 token: {{token}}
 
-### 5. 获取所有直接子节点（替代方案）
-GET localhost:8080/api/collegeadmin/indicator-points/linked-list/{{root_node_id}}/children
+### 9. 先删除子节点再删除父节点
+DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
+token: {{token}}
+###
+DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}
+token: {{token}}
+
+### 10. 验证删除结果
+GET localhost:8080/api/collegeadmin/indicatorpoints/tree?majorCategoryId=101
 token: {{token}}
