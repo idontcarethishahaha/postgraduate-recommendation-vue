@@ -69,7 +69,7 @@
             background: #fff;
             margin: 20px;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .page-header {
@@ -213,7 +213,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
         }
 
@@ -626,9 +626,18 @@
     let debugMode = false;
 
     // 页面加载
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         checkLogin();
         initPage();
+
+        // 添加调试快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                debugCategories();
+                alert('类别调试信息已输出到控制台');
+            }
+        });
     });
 
     // 检查登录状态
@@ -648,7 +657,7 @@
 
         document.getElementById('currentCollegeName').textContent = currentCollegeName;
         document.getElementById('breadcrumb').innerHTML = `
-            <a href="college-admin-dashboard.html">学院管理</a> &gt;
+            <a href="collegeadmin-dashboard.html">学院管理</a> &gt;
             ${currentCollegeName}
         `;
 
@@ -933,15 +942,30 @@
     // ==================== 类别管理 ====================
     async function loadCategories() {
         try {
+            console.log('开始加载类别数据...');
             const response = await fetch(`/api/collegeadmin/categories`, {
                 method: 'GET',
                 headers: getAuthHeaders()
             });
 
             const result = await response.json();
+            console.log('类别加载原始结果:', result);
 
             if (result.code === 200) {
                 categories = result.data;
+
+                // 关键修复：确保ID是字符串格式，避免精度丢失
+                categories = categories.map(cat => {
+                    // 如果后端返回的是数字，直接转换为字符串
+                    // 如果已经是字符串，保持不变
+                    const idStr = typeof cat.id === 'number' ? cat.id.toString() : String(cat.id);
+                    return {
+                        ...cat,
+                        id: idStr
+                    };
+                });
+
+                console.log('处理后的类别列表:', categories);
                 renderCategories(categories);
                 document.getElementById('categoryCount').textContent = categories.length;
             } else {
@@ -952,6 +976,8 @@
             alert('加载类别失败');
         }
     }
+
+
 
     function renderCategories(categoryList) {
         const tbody = document.getElementById('categoryTableBody');
@@ -964,14 +990,18 @@
 
         categoryList.forEach(category => {
             const row = document.createElement('tr');
+            // 确保ID是字符串格式
+            const categoryId = category.id.toString();
+            console.log(`渲染类别: ${category.name}, ID: ${categoryId}, 类型: ${typeof categoryId}`);
+
             row.innerHTML = `
                 <td>${category.name}</td>
                 <td>${category.calculationRule || '默认规则'}</td>
                 <td>${formatDate(category.createTime)}</td>
                 <td>
                     <div class="action-buttons">
-                        <button class="action-btn edit-btn" onclick="editCategory('${category.id}', '${escapeHtml(category.name)}', '${escapeHtml(category.calculationRule || '')}')">编辑</button>
-                        <button class="action-btn delete-btn" onclick="deleteCategory('${category.id}', '${escapeHtml(category.name)}')">删除</button>
+                        <button class="action-btn edit-btn" onclick="editCategory('${categoryId}', '${escapeHtml(category.name)}', '${escapeHtml(category.calculationRule || '')}')">编辑</button>
+                        <button class="action-btn delete-btn" onclick="deleteCategory('${categoryId}', '${escapeHtml(category.name)}')">删除</button>
                     </div>
                 </td>
             `;
@@ -1155,9 +1185,24 @@
 
         // 填充类别选择框
         categorySelect.innerHTML = '';
+        console.log('可用类别:', categories);
+
         categories.forEach(category => {
-            categorySelect.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+            // 确保使用字符串ID
+            const categoryId = category.id;
+            console.log(`添加选项: ${category.name}, ID: ${categoryId}, 类型: ${typeof categoryId}`);
+
+            // 创建option元素并设置值
+            const option = document.createElement('option');
+            option.value = categoryId; // 这里应该是正确的字符串ID
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
         });
+
+        if (categories.length === 0) {
+            categorySelect.innerHTML = '<option value="">暂无可用类别</option>';
+            alert('请先创建专业类别再添加辅导员');
+        }
 
         modal.style.display = 'block';
     }
@@ -1170,28 +1215,75 @@
         const name = document.getElementById('counselorName').value.trim();
         const account = document.getElementById('counselorAccount').value.trim();
         const tel = document.getElementById('counselorTel').value.trim();
-        const categoryId = document.getElementById('counselorCategory').value;
+        const categorySelect = document.getElementById('counselorCategory');
+        const categoryId = categorySelect.value;
         const password = document.getElementById('counselorPassword').value.trim();
+
+        // 详细的调试信息
+        console.log('=== 完整的调试信息 ===');
+        console.log('1. 选择的类别ID:', categoryId);
+        console.log('2. 类别ID类型:', typeof categoryId);
+        console.log('3. 下拉框的options:');
+        Array.from(categorySelect.options).forEach((option, index) => {
+            console.log(`   Option ${index}: value="${option.value}", text="${option.text}"`);
+        });
+
+        // 检查当前选择的option
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        console.log('4. 当前选择的option:', {
+            value: selectedOption.value,
+            text: selectedOption.text,
+            valueType: typeof selectedOption.value
+        });
+
+        // 检查本地categories数组
+        console.log('5. 本地categories数组:', categories);
+
+        // 查找匹配的类别
+        const selectedCategory = categories.find(cat => {
+            console.log(`   比较: 选择的值="${categoryId}" vs 本地ID="${cat.id}" (类型: ${typeof cat.id})`);
+            return cat.id == categoryId; // 使用宽松相等
+        });
+
+        if (!selectedCategory) {
+            console.error('6. 错误：在本地categories中找不到匹配的类别');
+            alert('错误：选择的类别无效，请刷新页面重试');
+            return;
+        }
+        console.log('6. 找到匹配的类别:', selectedCategory);
 
         if (!name || !account) {
             alert('请输入姓名和账号');
             return;
         }
 
+        if (!categoryId) {
+            alert('请选择所属类别');
+            return;
+        }
+
         try {
+            // 关键：使用多种方式确保是字符串
+            const requestData = {
+                name,
+                account,
+                tel,
+                password: password || account,
+                majorCategoryId: String(categoryId)  // 强制转换为字符串
+            };
+
+            console.log('7. 最终发送的请求数据:', JSON.stringify(requestData, null, 2));
+            console.log('8. majorCategoryId在请求中的实际值:', requestData.majorCategoryId);
+            console.log('9. majorCategoryId在请求中的类型:', typeof requestData.majorCategoryId);
+
             const response = await fetch('/api/collegeadmin/counselors', {
                 method: 'POST',
                 headers: getAuthHeaders(),
-                body: JSON.stringify({
-                    name,
-                    account,
-                    tel,
-                    password: password || account,
-                    majorCategoryId: categoryId
-                })
+                body: JSON.stringify(requestData)
             });
 
             const result = await response.json();
+            console.log('10. 后端响应:', result);
 
             if (result.code === 200) {
                 alert('添加成功');
@@ -1199,19 +1291,25 @@
                 loadCounselors();
             } else {
                 alert('添加失败: ' + result.message);
+                console.error('添加失败详情:', result);
             }
         } catch (error) {
             console.error('添加辅导员失败:', error);
-            alert('添加辅导员失败');
+            alert('添加辅导员失败: ' + error.message);
         }
     }
 
+
+
+    // 在前端删除按钮中
     async function deleteCounselor(id, name) {
         if (!confirm(`确定要删除辅导员 "${name}" 吗？此操作不可恢复！`)) {
             return;
         }
 
         try {
+            console.log('删除辅导员ID:', id, '类型:', typeof id);
+
             const response = await fetch(`/api/collegeadmin/counselors/${id}`, {
                 method: 'DELETE',
                 headers: getAuthHeaders()
@@ -1253,8 +1351,23 @@
         return date.toLocaleDateString('zh-CN');
     }
 
+    // 调试函数：显示当前所有类别信息
+    function debugCategories() {
+        console.log('=== 类别调试信息 ===');
+        console.log('当前学院ID:', currentCollegeId);
+        console.log('类别列表:', categories);
+        categories.forEach((cat, index) => {
+            console.log(`类别${index + 1}:`, {
+                id: cat.id,
+                id类型: typeof cat.id,
+                name: cat.name,
+                collegeId: cat.collegeId
+            });
+        });
+    }
+
     // 点击模态框外部关闭
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         const modals = [
             'addIndicatorPointModal',
             'editIndicatorPointModal',

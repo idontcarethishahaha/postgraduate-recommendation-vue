@@ -18,4 +18,5 @@ public class IndicatorPointDTO {
     private BigDecimal maxScore;
     private Integer itemUpperLimit;
     private Long parentId;
+    private Boolean isLeaf;
 }

@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CounselorAddDTO {
     //private Long collegeId;
-    private Long majorCategoryId;
+   // private Long majorCategoryId;
+    private String majorCategoryId;
     private String name;
     private String account;
     private String password;

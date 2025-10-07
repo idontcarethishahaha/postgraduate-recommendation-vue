@@ -37,28 +37,28 @@ public class AdminController {
         return ResultVO.ok();
     }
 
-    // 查询用户
-    @GetMapping("admin/users")
-    public ResultVO getUsers() {
-        List<User> users = userService.listUsers();
-
-        // 转换用户ID为String
-        List<Map<String, Object>> result = users.stream()
-                .map(user -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("id", user.getId().toString());
-                    map.put("name", user.getName());
-                    map.put("account", user.getAccount());
-                    map.put("tel", user.getTel());
-                    map.put("role", user.getRole());
-                    map.put("collegeId", user.getCollegeId() != null ? user.getCollegeId().toString() : null);
-                    map.put("createTime", user.getCreateTime());
-                    return map;
-                })
-                .collect(Collectors.toList());
-
-        return ResultVO.success(result);
-    }
+//    // 查询用户
+//    @GetMapping("admin/users")
+//    public ResultVO getUsers() {
+//        List<User> users = userService.listUsers();
+//
+//        // 转换用户ID为String
+//        List<Map<String, Object>> result = users.stream()
+//                .map(user -> {
+//                    Map<String, Object> map = new HashMap<>();
+//                    map.put("id", user.getId().toString());
+//                    map.put("name", user.getName());
+//                    map.put("account", user.getAccount());
+//                    map.put("tel", user.getTel());
+//                    map.put("role", user.getRole());
+//                    map.put("collegeId", user.getCollegeId() != null ? user.getCollegeId().toString() : null);
+//                    map.put("createTime", user.getCreateTime());
+//                    return map;
+//                })
+//                .collect(Collectors.toList());
+//
+//        return ResultVO.success(result);
+//    }
 
     //---------------------------------------------------------------------------------------------------
     // 学院管理
@@ -191,40 +191,10 @@ public class AdminController {
         }
     }
 
-//    // 重置学院管理员密码
-//    @PutMapping("admin/colleges/{collegeId}/collegeadmins/{userId}/password")
-//    public ResultVO resetCollegeAdminPassword(@PathVariable String collegeId,
-//                                              @PathVariable String userId) {
-//        try {
-//            Long collegeIdLong = Long.parseLong(collegeId);
-//            Long userIdLong = Long.parseLong(userId);
-//
-//            userService.validateCollegeAdmin(collegeIdLong, userIdLong);
-//            User user = userService.getUserById(userIdLong);
-//            userService.updateUserPassword(user.getAccount());
-//
-//            return ResultVO.ok();
-//        } catch (NumberFormatException e) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("ID格式错误")
-//                    .build();
-//        }
-//    }
 
-    //----------------------------------------------------------------------------------------------
-    // 学院管理员为类别添加辅导员
-    @PostMapping("collegeadmin/counselors")
-    public ResultVO addCounselor(@RequestBody CounselorAddDTO counselorAddDTO, HttpServletRequest request) {
-        Long cid = (Long) request.getAttribute("cid");
-        if (cid == null) {
-            throw XException.builder().code(Code.FORBIDDEN).build();
-        }
-        userService.addCounselor(cid, counselorAddDTO);
-        return ResultVO.ok();
-    }
+    // 下方为学院管理员功能---------------------------------------------------------------------------
 
-    // 学院管理员查询本学院的辅导员列表
+    // 获取所有辅导员
     @GetMapping("collegeadmin/counselors")
     public ResultVO getCounselors(HttpServletRequest request) {
         Long collegeId = (Long) request.getAttribute("cid");
@@ -234,4 +204,63 @@ public class AdminController {
         List<CounselorVO> counselors = userService.getCounselorsWithCategory(collegeId);
         return ResultVO.success(counselors);
     }
+
+    // 添加辅导员"时指定其所属类别
+//    @PostMapping("collegeadmin/counselors")
+//    public ResultVO addCounselor(@RequestBody CounselorAddDTO counselorAddDTO, HttpServletRequest request) {
+//        Long cid = (Long) request.getAttribute("cid");
+//        if (cid == null) {
+//            throw XException.builder().code(Code.FORBIDDEN).build();
+//        }
+//        userService.addCounselor(cid, counselorAddDTO);
+//        return ResultVO.ok();
+//    }
+
+    // 为特定类别添加辅导员
+    @PostMapping("collegeadmin/counselors")
+    public ResultVO addCounselor(@RequestBody CounselorAddDTO counselorAddDTO, HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        // 调用Service层添加辅导员
+        CounselorVO counselor = userService.addCounselor(cid, counselorAddDTO);
+
+        // 将ID转换为String返回给前端
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", counselor.getId().toString());
+        result.put("name", counselor.getName());
+        result.put("account", counselor.getAccount());
+        result.put("tel", counselor.getTel());
+        result.put("majorCategoryId", counselor.getMajorCategoryId().toString());
+        result.put("majorCategoryName", counselor.getMajorCategoryName());
+        result.put("createTime", counselor.getCreateTime());
+
+        return ResultVO.success(result);
+    }
+
+    // 删除辅导员
+    // 删除辅导员
+    @DeleteMapping("collegeadmin/counselors/{counselorId}")
+    public ResultVO deleteCounselor(@PathVariable String counselorId,
+                                    HttpServletRequest request) {
+        try {
+            Long cid = (Long) request.getAttribute("cid");
+            if (cid == null) {
+                throw XException.builder().code(Code.FORBIDDEN).build();
+            }
+
+            // 直接传递String类型的ID
+            userService.deleteCounselor(counselorId, cid);
+            return ResultVO.ok();
+        } catch (Exception e) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("删除辅导员失败: " + e.getMessage())
+                    .build();
+        }
+    }
+
 }
+

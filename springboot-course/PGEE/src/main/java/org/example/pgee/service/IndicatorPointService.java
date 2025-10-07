@@ -41,6 +41,26 @@ public class IndicatorPointService {
                                 .message("父节点不存在")
                                 .build());
 
+        // 验证叶子节点逻辑 - 新增的验证逻辑
+        if (Boolean.TRUE.equals(dto.getIsLeaf()) && dto.getParentId() != null) {
+            // 检查父节点是否存在且是否为叶子节点
+            IndicatorPoint parent = indicatorPointRepository.findById(dto.getParentId())
+                    .orElseThrow(() -> XException.builder()
+                            .number(Code.ERROR)
+                            .message("父节点不存在")
+                            .build());
+
+            if (Boolean.TRUE.equals(parent.getIsLeaf())) {
+                throw XException.builder()
+                        .number(Code.ERROR)
+                        .message("不能在叶子节点下添加子节点")
+                        .build();
+            }
+        }
+
+        // 设置默认的叶子节点状态
+        Boolean isLeaf = dto.getIsLeaf() != null ? dto.getIsLeaf() : true;
+
         IndicatorPoint point = IndicatorPoint.builder()
                 .majorCategoryId(dto.getMajorCategoryId())
                 .name(dto.getName())
@@ -49,13 +69,13 @@ public class IndicatorPointService {
                 .maxScore(dto.getMaxScore())
                 .itemUpperLimit(dto.getItemUpperLimit())
                 .parentId(dto.getParentId())
-                .isLeaf(true)
+                .isLeaf(isLeaf)  // 使用传入的isLeaf值，默认为true
                 .build();
 
         IndicatorPoint saved = indicatorPointRepository.save(point);
 
-        // 如果父节点存在，更新父节点为非叶子节点
-        if (saved.getParentId() != null) {
+        // 如果父节点存在且新节点不是叶子节点，更新父节点为非叶子节点
+        if (saved.getParentId() != null && Boolean.FALSE.equals(saved.getIsLeaf())) {
             indicatorPointRepository.updateLeafStatus(saved.getParentId(), false);
         }
 
@@ -83,12 +103,34 @@ public class IndicatorPointService {
                     .build();
         }
 
+        // 验证叶子节点状态变更 - 新增的验证逻辑
+        if (Boolean.TRUE.equals(dto.getIsLeaf()) && !Boolean.TRUE.equals(point.getIsLeaf())) {
+            // 检查是否有子节点
+            if (indicatorPointRepository.existsByParentId(id)) {
+                throw XException.builder()
+                        .number(Code.ERROR)
+                        .message("该指标点存在子节点，不能改为叶子节点")
+                        .build();
+            }
+        }
+
         point.setName(dto.getName());
         point.setDescription(dto.getDescription());
         point.setMaxScore(dto.getMaxScore());
         point.setItemUpperLimit(dto.getItemUpperLimit());
+        point.setIsLeaf(dto.getIsLeaf());  // 更新叶子节点状态
 
-        return indicatorPointRepository.save(point);
+        IndicatorPoint updated = indicatorPointRepository.save(point);
+
+        // 如果从非叶子节点变为叶子节点，需要检查是否有子节点
+        if (Boolean.TRUE.equals(dto.getIsLeaf()) && indicatorPointRepository.existsByParentId(id)) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("该指标点存在子节点，不能设置为叶子节点")
+                    .build();
+        }
+
+        return updated;
     }
 
     @Transactional
@@ -143,7 +185,7 @@ public class IndicatorPointService {
                 .description(point.getDescription())
                 .maxScore(point.getMaxScore())
                 .itemUpperLimit(point.getItemUpperLimit())
-                .isLeaf(point.getIsLeaf())
+                .isLeaf(point.getIsLeaf())  // 包含叶子节点信息
                 .createTime(point.getCreateTime())
                 .updateTime(point.getUpdateTime())
                 .build();
@@ -160,15 +202,6 @@ public class IndicatorPointService {
 
         return dto;
     }
-
-//    private void buildTree(IndicatorPoint parent, Map<Long, List<IndicatorPoint>> childrenMap) {
-//        List<IndicatorPoint> children = childrenMap.get(parent.getId());
-//        if (children != null) {
-//            children.forEach(child -> {
-//                buildTree(child, childrenMap);
-//            });
-//        }
-//    }
 
     public List<IndicatorPoint> getChildren(Long parentId) {
         return indicatorPointRepository.findByParentId(parentId);

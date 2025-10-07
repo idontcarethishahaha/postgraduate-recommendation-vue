@@ -18,4 +18,5 @@ public interface MajorCategoryRepository extends CrudRepository<MajorCategory, L
     Optional<MajorCategory> findById(Long id);
     // 按学院ID查询所有类别
     List<MajorCategory> findByCollegeId(Long collegeId);
+
 }

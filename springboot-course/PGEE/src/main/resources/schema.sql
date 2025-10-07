@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS `indicator_points`(
     /* 添加排序索引 */
     INDEX(major_category_id, parent_id, sort_order)
 );
+
 /* 申报记录表 */
 create table if not exists `application`(
     id bigint unsigned not null primary key ,

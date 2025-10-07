@@ -4,7 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="" />
+    <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/counselor-management.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/CounselorAddDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/CounselorAddDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/CounselorInfoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/CounselorInfoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/MajorCategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/MajorCategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/CounselorVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/CounselorVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -305,7 +319,9 @@
       <workItem from="1759466678472" duration="15966000" />
       <workItem from="1759542126904" duration="16034000" />
       <workItem from="1759637918278" duration="8023000" />
-      <workItem from="1759646357237" duration="3384000" />
+      <workItem from="1759646357237" duration="10313000" />
+      <workItem from="1759726000516" duration="17080000" />
+      <workItem from="1759831822041" duration="7182000" />
     </task>
     <servers />
   </component>

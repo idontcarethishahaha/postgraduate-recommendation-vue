@@ -161,10 +161,18 @@ public class UserService {
     }
 
     //-----------------------------------------------------------------------------------
+
     // 添加辅导员
     @Transactional
-    public void addCounselor(Long collegeId, CounselorAddDTO counselorAddDTO) {
-        //检查账号是否已存在
+    public CounselorVO addCounselor(Long collegeId, CounselorAddDTO counselorAddDTO) {
+
+        // 使用String类型直接处理，避免Long精度问题
+        String majorCategoryIdStr = counselorAddDTO.getMajorCategoryId();
+
+        System.out.println("接收到的类别ID字符串: " + majorCategoryIdStr);
+        System.out.println("学院ID: " + collegeId);
+
+        // 检查账号是否已存在
         if(userRepository.existsByAccount(counselorAddDTO.getAccount())){
             throw XException.builder()
                     .number(Code.ERROR)
@@ -172,18 +180,30 @@ public class UserService {
                     .build();
         }
 
-        // 验证专业类别是否存在且属于当前学院
-        MajorCategory category = majorCategoryRepository.findById(counselorAddDTO.getMajorCategoryId())
-                .orElseThrow(() -> XException.builder()
-                        .number(Code.ERROR)
-                        .message("学院下不存在该类别")
-                        .build());
+        // 直接使用String类型的ID查询，避免精度转换问题
+        List<MajorCategory> categories = majorCategoryRepository.findByCollegeId(collegeId);
+        System.out.println("学院下的所有类别: " + categories.stream().map(c -> c.getId() + ":" + c.getName()).collect(Collectors.toList()));
 
-        if (!category.getCollegeId().equals(collegeId)) {
+        // 查找匹配的类别
+        MajorCategory category = null;
+        for (MajorCategory cat : categories) {
+            String categoryIdStr = cat.getId().toString();
+            System.out.println("比较: 前端ID=" + majorCategoryIdStr + " vs 数据库ID=" + categoryIdStr);
+            if (categoryIdStr.equals(majorCategoryIdStr)) {
+                category = cat;
+                break;
+            }
+        }
+
+        if (category == null) {
+            System.out.println("未找到匹配的类别，前端ID: " + majorCategoryIdStr);
             throw XException.builder()
-                    .code(Code.FORBIDDEN)//无权操作其他学院
+                    .number(Code.ERROR)
+                    .message("学院下不存在该类别，ID: " + majorCategoryIdStr)
                     .build();
         }
+
+        System.out.println("找到匹配的类别: " + category.getName() + ", ID: " + category.getId());
 
         // 创建用户
         User user = User.builder()
@@ -193,8 +213,9 @@ public class UserService {
                 .role(User.COUNSELOR)
                 .collegeId(collegeId)
                 .build();
+
         //设置默认密码
-        String password = user.getPassword() != null ? user.getPassword() : user.getAccount();
+        String password = counselorAddDTO.getPassword() != null ? counselorAddDTO.getPassword() : counselorAddDTO.getAccount();
         user.setPassword(passwordEncoder.encode(password));
 
         User savedUser = userRepository.save(user);
@@ -202,44 +223,100 @@ public class UserService {
         // 创建辅导员信息关联
         CounselorInfo counselorInfo = CounselorInfo.builder()
                 .userId(savedUser.getId())
-                .majorCategoryId(counselorAddDTO.getMajorCategoryId())
+                .majorCategoryId(category.getId())  // 使用数据库中的Long类型ID
                 .build();
 
         counselorInfoRepository.save(counselorInfo);
+
+        // 构建并返回CounselorVO
+        return CounselorVO.builder()
+                .id(savedUser.getId().toString())
+                .name(savedUser.getName())
+                .account(savedUser.getAccount())
+                .tel(savedUser.getTel())
+                .majorCategoryName(category.getName())
+                .majorCategoryId(category.getId().toString())  // 转换为String
+                .createTime(savedUser.getCreateTime())
+                .build();
     }
 
-    // 学院管理员查询辅导员及其类别信息
+    // 删除辅导员
+    // 删除辅导员
+    @Transactional
+    public void deleteCounselor(String counselorIdStr, Long collegeId) {
+        try {
+            // 将String类型的ID转换为Long
+            Long counselorId = Long.parseLong(counselorIdStr);
+
+            User user = userRepository.findById(counselorId)
+                    .orElseThrow(() -> XException.builder()
+                            .number(Code.ERROR)
+                            .message("辅导员不存在")
+                            .build());
+
+            // 验证辅导员属于当前学院
+            if (!user.getCollegeId().equals(collegeId) || !User.COUNSELOR.equals(user.getRole())) {
+                throw XException.builder()
+                        .code(Code.FORBIDDEN)
+                        .build();
+            }
+
+            // 删除辅导员信息记录
+            counselorInfoRepository.deleteByUserId(counselorId);
+            // 删除用户记录
+            userRepository.delete(user);
+
+        } catch (NumberFormatException e) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("辅导员ID格式错误: " + counselorIdStr)
+                    .build();
+        } catch (Exception e) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("删除辅导员失败: " + e.getMessage())
+                    .build();
+        }
+    }
+
+
+    // 辅导员查询方法，返回完整信息
+    // 辅导员查询方法，返回完整信息
     @Transactional(readOnly = true)
     public List<CounselorVO> getCounselorsWithCategory(Long collegeId) {
         try {
-            // 查询该学院的所有辅导员信息记录
-            List<CounselorInfo> counselorInfos = counselorInfoRepository.findCounselorsByCollegeAndRole(collegeId, User.COUNSELOR);
+            // 查询该学院的所有辅导员用户
+            List<User> counselorUsers = userRepository.findByCollegeIdAndRole(collegeId, User.COUNSELOR);
 
-            if (counselorInfos.isEmpty()) {
+            if (counselorUsers.isEmpty()) {
                 return Collections.emptyList();
             }
 
             List<CounselorVO> result = new ArrayList<>();
 
-            for (CounselorInfo counselorInfo : counselorInfos) {
-                // 查询辅导员用户信息
-                User user = userRepository.findById(counselorInfo.getUserId())
-                        .orElse(null);
-                if (user == null) {
-                    continue; // 如果用户不存在，跳过
-                }
+            for (User user : counselorUsers) {
+                // 查询辅导员信息
+                CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(user.getId())
+                        .orElse(CounselorInfo.builder().majorCategoryId(null).build());
 
                 // 查询专业类别信息
                 String categoryName = "未分配";
-                Optional<MajorCategory> category = majorCategoryRepository.findById(counselorInfo.getMajorCategoryId());
-                if (category.isPresent()) {
-                    categoryName = category.get().getName();
+                String majorCategoryIdStr = null;
+                if (counselorInfo.getMajorCategoryId() != null) {
+                    Optional<MajorCategory> category = majorCategoryRepository.findById(counselorInfo.getMajorCategoryId());
+                    if (category.isPresent()) {
+                        categoryName = category.get().getName();
+                        majorCategoryIdStr = category.get().getId().toString(); // 转换为String
+                    }
                 }
 
                 result.add(CounselorVO.builder()
+                        .id(user.getId().toString()) // 转换为String
                         .name(user.getName())
+                        .account(user.getAccount())
                         .tel(user.getTel())
-                        .categoryName(categoryName)
+                        .majorCategoryName(categoryName)
+                        .majorCategoryId(majorCategoryIdStr)
                         .build());
             }
 
@@ -279,4 +356,6 @@ public class UserService {
         studentInfoRepository.save(studentInfo);
     }
     //------------------------------------------------------------------------------
+
+
 }
