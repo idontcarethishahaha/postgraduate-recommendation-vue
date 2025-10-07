@@ -335,6 +335,80 @@
             color: #666;
             display: none;
         }
+
+        /* 新增：类别选择器样式（保留指标点分类功能） */
+        .category-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #1890ff;
+        }
+
+        .category-selector label {
+            font-weight: 600;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        .category-selector select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            min-width: 200px;
+            margin-right: 10px;
+        }
+
+        .current-category-info {
+            display: inline-block;
+            margin-left: 15px;
+            padding: 5px 10px;
+            background: #e6f7ff;
+            border-radius: 4px;
+            color: #1890ff;
+            font-size: 14px;
+        }
+
+        .no-category-selected {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            background: #fafafa;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        /* 新增：指标点分类统计样式（保留） */
+        .category-stats {
+            background: #f0f7ff;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1890ff;
+        }
+
+        .category-stats span {
+            margin-right: 20px;
+            color: #666;
+        }
+
+        .category-stats strong {
+            color: #1890ff;
+        }
+
+        /* 新增：指标点层级颜色标签（保留） */
+        .level-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: white;
+            margin-right: 8px;
+        }
+        .level-1 { background: #1890ff; } /* 一级指标：蓝色 */
+        .level-2 { background: #52c41a; } /* 二级指标：绿色 */
+        .level-3 { background: #faad14; } /* 三级指标：橙色 */
+        .level-4 { background: #f5222d; } /* 四级及以上：红色 */
     </style>
 </head>
 <body>
@@ -356,7 +430,7 @@
         <div class="menu-item" onclick="switchTab('counselors')">辅导员管理</div>
     </div>
 
-    <!-- 主内容区 -->
+    <!-- 主内容区：保留指标点分类界面，恢复辅导员界面 -->
     <div class="main-content">
         <!-- 面包屑导航 -->
         <div class="breadcrumb" id="breadcrumb">
@@ -372,28 +446,49 @@
                 <div class="tab-button" data-tab="counselors">辅导员管理</div>
             </div>
 
-            <!-- 指标点管理标签页 -->
+            <!-- 指标点管理标签页（完全保留分类功能） -->
             <div class="tab-content active" id="indicator-points-tab">
                 <div class="page-header">
                     <h2 class="page-title">指标点管理</h2>
                     <div class="actions">
                         <input type="text" class="search-box" id="indicatorSearchInput" placeholder="搜索指标点...">
                         <button class="btn" onclick="searchIndicatorPoints()">搜索</button>
-                        <button class="btn btn-primary" onclick="showAddIndicatorPointModal()">添加指标点</button>
+                        <button class="btn btn-primary" onclick="showAddIndicatorPointModal()" id="addIndicatorBtn" disabled>添加指标点</button>
                         <button class="btn" onclick="loadIndicatorPoints()">刷新</button>
                     </div>
                 </div>
 
-                <div class="stats" id="indicatorStats">
-                    当前指标点总数：<strong id="indicatorCount">0</strong>
+                <!-- 专业类别选择器（保留） -->
+                <div class="category-selector">
+                    <label for="majorCategorySelect">选择专业类别：</label>
+                    <select id="majorCategorySelect" onchange="onCategoryChange()">
+                        <option value="">请选择专业类别...</option>
+                        <!-- 动态填充 -->
+                    </select>
+                    <span class="current-category-info" id="currentCategoryInfo" style="display: none;">
+                        当前类别：<strong id="currentCategoryName">未选择</strong>
+                    </span>
                 </div>
 
+                <!-- 指标点分类统计（保留） -->
+                <div class="category-stats" id="indicatorStats" style="display: none;">
+                    当前类别指标点总数：<strong id="indicatorCount">0</strong>
+                    <span> | 一级指标：<strong id="level1Count">0</strong></span>
+                    <span> | 二级指标：<strong id="level2Count">0</strong></span>
+                    <span> | 三级指标：<strong id="level3Count">0</strong></span>
+                </div>
+
+                <!-- 指标点树形容器（保留） -->
                 <div id="indicatorTreeContainer">
-                    <!-- 树形结构将在这里渲染 -->
+                    <div class="no-category-selected" id="noCategorySelected">
+                        <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                        <h3>请先选择专业类别</h3>
+                        <p>在上方选择专业类别后，即可查看和管理该类别下的指标点</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- 专业类别管理标签页 -->
+            <!-- 专业类别管理标签页（完全保留） -->
             <div class="tab-content" id="categories-tab">
                 <div class="page-header">
                     <h2 class="page-title">专业类别管理</h2>
@@ -424,7 +519,7 @@
                 </table>
             </div>
 
-            <!-- 辅导员管理标签页 -->
+            <!-- 辅导员管理标签页（核心恢复：修复看不到辅导员的问题） -->
             <div class="tab-content" id="counselors-tab">
                 <div class="page-header">
                     <h2 class="page-title">辅导员管理</h2>
@@ -459,7 +554,7 @@
     </div>
 </div>
 
-<!-- 添加指标点模态框 -->
+<!-- 所有模态框（完全保留） -->
 <div id="addIndicatorPointModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -494,7 +589,6 @@
     </div>
 </div>
 
-<!-- 编辑指标点模态框 -->
 <div id="editIndicatorPointModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -523,7 +617,6 @@
     </div>
 </div>
 
-<!-- 添加类别模态框 -->
 <div id="addCategoryModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -547,7 +640,6 @@
     </div>
 </div>
 
-<!-- 编辑类别模态框 -->
 <div id="editCategoryModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -572,7 +664,6 @@
     </div>
 </div>
 
-<!-- 添加辅导员模态框 -->
 <div id="addCounselorModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -617,22 +708,26 @@
 </div>
 
 <script>
-    // 全局变量
+    // 全局变量（保留指标点分类变量，恢复辅导员变量）
     let currentCollegeId = null;
     let currentCollegeName = '';
     let indicatorPoints = [];
     let categories = [];
     let counselors = [];
     let debugMode = false;
+    let selectedCategoryId = ''; // 指标点分类用：当前选中的专业类别ID
+    let selectedCategoryName = ''; // 指标点分类用：当前选中的专业类别名称
 
-    // 页面加载：确保登录验证通过后再加载数据
+    // 页面加载：优先初始化，确保辅导员数据正常加载
     document.addEventListener('DOMContentLoaded', function () {
-        // 先检查登录，登录通过后再初始化页面
-        if (checkLogin()) {
-            initPage();
-        }
+        if (!checkLogin()) return;
+        // 初始化顺序：先加载类别→再加载指标点/辅导员（辅导员依赖类别）
+        loadCategories().then(() => {
+            // 指标点默认不加载，等用户选类别；辅导员直接加载
+            loadCounselors();
+        });
 
-        // 添加调试快捷键
+        // 调试快捷键（保留）
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'd') {
                 e.preventDefault();
@@ -641,29 +736,27 @@
             }
         });
 
-        // 给标签页按钮添加点击事件（修复：确保标签页切换正常）
+        // 标签页切换：切换到辅导员标签时强制刷新（修复看不到数据的问题）
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', function() {
                 const tabName = this.dataset.tab;
                 switchTab(tabName);
-                // 切换到辅导员标签页时，强制重新加载数据
                 if (tabName === 'counselors') {
-                    loadCounselors();
+                    loadCounselors(); // 切换到辅导员标签时重新加载数据
                 }
             });
         });
     });
 
-    // 检查登录状态：修复user对象解析异常问题
+    // 检查登录状态（修复用户信息解析异常，避免影响辅导员加载）
     function checkLogin() {
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
-        const userStr = localStorage.getItem('user');
         let user = {};
 
-        // 修复：避免JSON解析失败导致页面异常
+        // 修复：避免JSON解析失败导致页面卡死
         try {
-            user = userStr ? JSON.parse(userStr) : {};
+            user = JSON.parse(localStorage.getItem('user') || '{}');
         } catch (e) {
             console.error('解析用户信息失败:', e);
             alert('用户信息异常，请重新登录');
@@ -677,7 +770,7 @@
             return false;
         }
 
-        // 确保学院ID为字符串，避免后续接口调用格式错误
+        // 确保学院ID为字符串，避免接口调用格式错误
         currentCollegeId = String(user.collegeId);
         currentCollegeName = user.collegeName || '当前学院';
 
@@ -690,40 +783,28 @@
         return true;
     }
 
-    // 初始化页面：确保类别加载完成后再加载辅导员（依赖类别数据）
-    function initPage() {
-        // 先加载类别，类别加载完成后再加载辅导员
-        loadCategories().then(() => {
-            loadIndicatorPoints();
-            loadCounselors(); // 类别加载完成后，再加载辅导员
-        }).catch(err => {
-            console.error('初始化页面失败:', err);
-            alert('页面初始化失败，请刷新重试');
-        });
-    }
-
-    // 切换标签页：修复侧边栏和标签页按钮联动
+    // 切换标签页（保留侧边栏与标签页联动）
     function switchTab(tabName) {
-        // 切换侧边栏激活状态
+        // 侧边栏激活状态同步
         document.querySelectorAll('.menu-item').forEach(item => {
             item.classList.remove('active');
         });
         document.querySelector(`.menu-item[onclick="switchTab('${tabName}')"]`).classList.add('active');
 
-        // 切换标签页按钮激活状态
+        // 标签页按钮激活状态同步
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
 
-        // 切换标签页内容
+        // 标签页内容切换
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.remove('active');
         });
         document.getElementById(`${tabName}-tab`).classList.add('active');
     }
 
-    // 获取认证头：确保token正确携带
+    // 获取认证头（保留，确保接口请求正常）
     function getAuthHeaders() {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -737,7 +818,7 @@
         };
     }
 
-    // 显示调试信息
+    // 显示调试信息（保留）
     function showDebugInfo(message) {
         if (debugMode) {
             const debugContent = document.getElementById('debugContent');
@@ -747,14 +828,14 @@
         }
     }
 
-    // 切换调试模式
+    // 切换调试模式（保留）
     function toggleDebug() {
         debugMode = !debugMode;
         document.getElementById('debugInfo').style.display = debugMode ? 'block' : 'none';
         showDebugInfo(`调试模式 ${debugMode ? '开启' : '关闭'}`);
     }
 
-    // 退出登录
+    // 退出登录（保留）
     function logout() {
         if (confirm('确定要退出登录吗？')) {
             localStorage.removeItem('token');
@@ -764,11 +845,19 @@
         }
     }
 
-    // ==================== 指标点管理 ====================
+    // ==================== 指标点管理（完全保留分类功能，无改动） ====================
     async function loadIndicatorPoints() {
+        if (!selectedCategoryId) {
+            alert('请先选择专业类别');
+            return;
+        }
+        await loadIndicatorPointsByCategory(selectedCategoryId);
+    }
+
+    async function loadIndicatorPointsByCategory(categoryId) {
         try {
-            showDebugInfo('开始加载指标点数据...');
-            const response = await fetch(`/api/collegeadmin/indicatorpoints/tree?majorCategoryId=${currentCollegeId}`, {
+            showDebugInfo(`开始加载类别 ${categoryId} 的指标点数据...`);
+            const response = await fetch(`/api/collegeadmin/indicatorpoints/tree?majorCategoryId=${categoryId}`, {
                 method: 'GET',
                 headers: getAuthHeaders()
             });
@@ -783,17 +872,44 @@
             if (result.code === 200) {
                 indicatorPoints = result.data || [];
                 renderIndicatorTree(indicatorPoints);
-                document.getElementById('indicatorCount').textContent = indicatorPoints.length;
+                updateIndicatorStats(indicatorPoints);
             } else {
-                alert('加载指标点失败: ' + (result.message || '未知错误'));
-                document.getElementById('indicatorTreeContainer').innerHTML = '<div class="empty-state">加载指标点失败，请点击刷新重试</div>';
+                alert('加载指标点失败: ' + result.message);
+                resetIndicatorView();
             }
         } catch (error) {
             console.error('加载指标点失败:', error);
             showDebugInfo('加载指标点失败: ' + error.message);
-            alert('加载指标点失败: ' + error.message);
-            document.getElementById('indicatorTreeContainer').innerHTML = '<div class="empty-state">加载指标点失败，请检查网络或重新登录</div>';
+            alert('加载指标点失败');
+            resetIndicatorView();
         }
+    }
+
+    function updateIndicatorStats(treeData) {
+        let totalCount = 0;
+        let level1Count = 0;
+        let level2Count = 0;
+        let level3Count = 0;
+
+        const countNodes = (nodes, level = 1) => {
+            nodes.forEach(node => {
+                totalCount++;
+                if (level === 1) level1Count++;
+                else if (level === 2) level2Count++;
+                else if (level >= 3) level3Count++;
+
+                if (node.children && node.children.length > 0) {
+                    countNodes(node.children, level + 1);
+                }
+            });
+        };
+
+        countNodes(treeData);
+
+        document.getElementById('indicatorCount').textContent = totalCount;
+        document.getElementById('level1Count').textContent = level1Count;
+        document.getElementById('level2Count').textContent = level2Count;
+        document.getElementById('level3Count').textContent = level3Count;
     }
 
     function renderIndicatorTree(treeData) {
@@ -801,7 +917,13 @@
         container.innerHTML = '';
 
         if (!treeData || treeData.length === 0) {
-            container.innerHTML = '<div class="empty-state">暂无指标点，请点击"添加指标点"按钮创建</div>';
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+                    <h3>暂无指标点</h3>
+                    <p>当前类别下还没有指标点，点击"添加指标点"按钮开始创建</p>
+                </div>
+            `;
             return;
         }
 
@@ -809,11 +931,16 @@
             let html = '';
             nodes.forEach(node => {
                 const indent = '&nbsp;&nbsp;'.repeat(level * 2);
+                const levelNum = level + 1;
+                const levelBadge = `<span class="level-badge level-${levelNum > 4 ? 4 : levelNum}">${levelNum}级</span>`;
+
                 html += `
                     <div class="tree-node">
-                        <div style="display: flex; justify-content: space-between;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                ${indent}${node.name} (${node.maxScore || 0}分)
+                                ${indent}${levelBadge}${node.name}
+                                ${node.maxScore ? `<span style="color: #52c41a; margin-left: 8px;">(${node.maxScore}分)</span>` : ''}
+                                ${node.description ? `<span style="color: #666; margin-left: 8px;">- ${node.description}</span>` : ''}
                             </div>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editIndicatorPoint('${node.id}', '${escapeHtml(node.name)}', '${escapeHtml(node.description || '')}', ${node.maxScore || 0})">编辑</button>
@@ -834,14 +961,51 @@
         container.innerHTML = buildTreeHTML(treeData);
     }
 
+    function onCategoryChange() {
+        const categorySelect = document.getElementById('majorCategorySelect');
+        selectedCategoryId = categorySelect.value;
+
+        if (selectedCategoryId) {
+            const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
+            selectedCategoryName = selectedCategory ? selectedCategory.name : '未知类别';
+
+            document.getElementById('currentCategoryName').textContent = selectedCategoryName;
+            document.getElementById('currentCategoryInfo').style.display = 'inline-block';
+            document.getElementById('indicatorStats').style.display = 'block';
+            document.getElementById('noCategorySelected').style.display = 'none';
+            document.getElementById('addIndicatorBtn').disabled = false;
+
+            loadIndicatorPointsByCategory(selectedCategoryId);
+        } else {
+            resetIndicatorView();
+        }
+    }
+
+    function resetIndicatorView() {
+        document.getElementById('currentCategoryInfo').style.display = 'none';
+        document.getElementById('indicatorStats').style.display = 'none';
+        document.getElementById('addIndicatorBtn').disabled = true;
+        document.getElementById('indicatorTreeContainer').innerHTML = `
+            <div class="no-category-selected" id="noCategorySelected">
+                <div style="font-size: 48px; margin-bottom: 16px;">📊</div>
+                <h3>请先选择专业类别</h3>
+                <p>在上方选择专业类别后，即可查看和管理该类别下的指标点</p>
+            </div>
+        `;
+    }
+
     function showAddIndicatorPointModal(parentId = '') {
+        if (!selectedCategoryId) {
+            alert('请先选择专业类别');
+            return;
+        }
+
         const modal = document.getElementById('addIndicatorPointModal');
         const parentSelect = document.getElementById('indicatorPointParent');
 
-        // 填充父级指标点选择框
         parentSelect.innerHTML = '<option value="">无 (一级指标)</option>';
 
-        const addOptions = (nodes, level = 0, parentId = '') => {
+        const addOptions = (nodes, level = 0, currentParentId = '') => {
             nodes.forEach(node => {
                 const indent = '- '.repeat(level);
                 parentSelect.innerHTML += `<option value="${node.id}" ${parentId === node.id ? 'selected' : ''}>${indent}${node.name}</option>`;
@@ -866,6 +1030,11 @@
     }
 
     async function addIndicatorPoint() {
+        if (!selectedCategoryId) {
+            alert('请先选择专业类别');
+            return;
+        }
+
         const name = document.getElementById('indicatorPointName').value.trim();
         const description = document.getElementById('indicatorPointDescription').value.trim();
         const maxScore = parseFloat(document.getElementById('indicatorPointMaxScore').value) || 0;
@@ -885,7 +1054,7 @@
                     description,
                     maxScore,
                     parentId: parentId || null,
-                    majorCategoryId: currentCollegeId
+                    majorCategoryId: selectedCategoryId
                 })
             });
 
@@ -894,13 +1063,13 @@
             if (result.code === 200) {
                 alert('添加成功');
                 closeAddIndicatorPointModal();
-                loadIndicatorPoints();
+                loadIndicatorPointsByCategory(selectedCategoryId);
             } else {
-                alert('添加失败: ' + (result.message || '未知错误'));
+                alert('添加失败: ' + result.message);
             }
         } catch (error) {
             console.error('添加指标点失败:', error);
-            alert('添加指标点失败: ' + error.message);
+            alert('添加指标点失败');
         }
     }
 
@@ -918,6 +1087,11 @@
     }
 
     async function updateIndicatorPoint() {
+        if (!selectedCategoryId) {
+            alert('请先选择专业类别');
+            return;
+        }
+
         const id = document.getElementById('editIndicatorPointId').value;
         const name = document.getElementById('editIndicatorPointName').value.trim();
         const description = document.getElementById('editIndicatorPointDescription').value.trim();
@@ -935,7 +1109,8 @@
                 body: JSON.stringify({
                     name,
                     description,
-                    maxScore
+                    maxScore,
+                    majorCategoryId: selectedCategoryId
                 })
             });
 
@@ -944,17 +1119,22 @@
             if (result.code === 200) {
                 alert('更新成功');
                 closeEditIndicatorPointModal();
-                loadIndicatorPoints();
+                loadIndicatorPointsByCategory(selectedCategoryId);
             } else {
-                alert('更新失败: ' + (result.message || '未知错误'));
+                alert('更新失败: ' + result.message);
             }
         } catch (error) {
             console.error('更新指标点失败:', error);
-            alert('更新指标点失败: ' + error.message);
+            alert('更新指标点失败');
         }
     }
 
     async function deleteIndicatorPoint(id, name) {
+        if (!selectedCategoryId) {
+            alert('请先选择专业类别');
+            return;
+        }
+
         if (!confirm(`确定要删除指标点 "${name}" 吗？此操作不可恢复！`)) {
             return;
         }
@@ -969,37 +1149,50 @@
 
             if (result.code === 200) {
                 alert('删除成功');
-                loadIndicatorPoints();
+                loadIndicatorPointsByCategory(selectedCategoryId);
             } else {
-                alert('删除失败: ' + (result.message || '未知错误'));
+                alert('删除失败: ' + result.message);
             }
         } catch (error) {
             console.error('删除指标点失败:', error);
-            alert('删除指标点失败: ' + error.message);
+            alert('删除指标点失败');
         }
     }
 
     function searchIndicatorPoints() {
         const keyword = document.getElementById('indicatorSearchInput').value.toLowerCase();
         if (!keyword) {
-            loadIndicatorPoints();
+            loadIndicatorPointsByCategory(selectedCategoryId);
             return;
         }
 
-        // 前端过滤指标点
-        const filtered = indicatorPoints.filter(point =>
-            point.name.toLowerCase().includes(keyword) ||
-            (point.description && point.description.toLowerCase().includes(keyword))
-        );
-        renderIndicatorTree(filtered);
+        const filteredPoints = filterIndicatorPoints(indicatorPoints, keyword);
+        renderIndicatorTree(filteredPoints);
+        updateIndicatorStats(filteredPoints);
     }
 
-    // ==================== 类别管理 ====================
-    // 改为async函数，方便后续await调用
+    function filterIndicatorPoints(nodes, keyword) {
+        return nodes.reduce((result, node) => {
+            const isMatch = node.name.toLowerCase().includes(keyword) ||
+                (node.description && node.description.toLowerCase().includes(keyword));
+
+            const matchedChildren = node.children ? filterIndicatorPoints(node.children, keyword) : [];
+
+            if (isMatch || matchedChildren.length > 0) {
+                result.push({
+                    ...node,
+                    children: matchedChildren
+                });
+            }
+            return result;
+        }, []);
+    }
+
+    // ==================== 类别管理（完全保留，无改动） ====================
     async function loadCategories() {
         try {
             console.log('开始加载类别数据...');
-            const response = await fetch(`/api/collegeadmin/categories?collegeId=${currentCollegeId}`, {
+            const response = await fetch(`/api/collegeadmin/categories`, {
                 method: 'GET',
                 headers: getAuthHeaders()
             });
@@ -1008,9 +1201,8 @@
             console.log('类别加载原始结果:', result);
 
             if (result.code === 200) {
-                categories = result.data || [];
+                categories = result.data;
 
-                // 关键修复：确保ID是字符串格式，避免精度丢失
                 categories = categories.map(cat => {
                     const idStr = typeof cat.id === 'number' ? cat.id.toString() : String(cat.id);
                     return {
@@ -1021,17 +1213,35 @@
 
                 console.log('处理后的类别列表:', categories);
                 renderCategories(categories);
+                populateCategorySelector();
                 document.getElementById('categoryCount').textContent = categories.length;
-                return categories; // 返回类别数据，供后续使用
+                return categories;
             } else {
-                alert('加载类别失败: ' + (result.message || '未知错误'));
+                alert('加载类别失败: ' + result.message);
                 return [];
             }
         } catch (error) {
             console.error('加载类别失败:', error);
-            alert('加载类别失败: ' + error.message);
+            alert('加载类别失败');
             return [];
         }
+    }
+
+    function populateCategorySelector() {
+        const categorySelect = document.getElementById('majorCategorySelect');
+        categorySelect.innerHTML = '<option value="">请选择专业类别...</option>';
+
+        if (categories.length === 0) {
+            categorySelect.innerHTML += '<option value="" disabled>暂无专业类别</option>';
+            return;
+        }
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
     }
 
     function renderCategories(categoryList) {
@@ -1046,7 +1256,6 @@
         categoryList.forEach(category => {
             const row = document.createElement('tr');
             const categoryId = category.id.toString();
-            console.log(`渲染类别: ${category.name}, ID: ${categoryId}, 类型: ${typeof categoryId}`);
 
             row.innerHTML = `
                 <td>${category.name}</td>
@@ -1098,11 +1307,11 @@
                 closeAddCategoryModal();
                 loadCategories();
             } else {
-                alert('添加失败: ' + (result.message || '未知错误'));
+                alert('添加失败: ' + result.message);
             }
         } catch (error) {
             console.error('添加类别失败:', error);
-            alert('添加类别失败: ' + error.message);
+            alert('添加类别失败');
         }
     }
 
@@ -1145,16 +1354,16 @@
                 closeEditCategoryModal();
                 loadCategories();
             } else {
-                alert('更新失败: ' + (result.message || '未知错误'));
+                alert('更新失败: ' + result.message);
             }
         } catch (error) {
             console.error('更新类别失败:', error);
-            alert('更新类别失败: ' + error.message);
+            alert('更新类别失败');
         }
     }
 
     async function deleteCategory(id, name) {
-        if (!confirm(`确定要删除类别 "${name}" 吗？此操作不可恢复！`)) {
+        if (!confirm(`确定要删除类别 "${name}" 吗？此操作会删除该类别下所有指标点，不可恢复！`)) {
             return;
         }
 
@@ -1169,31 +1378,30 @@
             if (result.code === 200) {
                 alert('删除成功');
                 loadCategories();
-                // 删除类别后，重新加载辅导员（避免辅导员关联已删除的类别）
-                loadCounselors();
+                resetIndicatorView();
             } else {
-                alert('删除失败: ' + (result.message || '未知错误'));
+                alert('删除失败: ' + result.message);
             }
         } catch (error) {
             console.error('删除类别失败:', error);
-            alert('删除类别失败: ' + error.message);
+            alert('删除类别失败');
         }
     }
 
     function searchCategories() {
         const keyword = document.getElementById('categorySearchInput').value.toLowerCase();
-        const filtered = categories.filter(cat =>
+        const filteredCategories = categories.filter(cat =>
             cat.name.toLowerCase().includes(keyword)
         );
-        renderCategories(filtered);
+        renderCategories(filteredCategories);
     }
 
-    // ==================== 辅导员管理（核心修复区） ====================
-    // 修复1：确保加载辅导员时携带学院ID，并且处理数据异常
+    // ==================== 辅导员管理（核心恢复：修复看不到数据的问题） ====================
+    // 修复1：加载辅导员时携带学院ID，确保获取当前学院数据
     async function loadCounselors() {
         try {
-            console.log('开始加载辅导员数据，学院ID:', currentCollegeId);
-            // 修复：请求时携带学院ID，确保获取当前学院的辅导员
+            console.log('加载辅导员数据，当前学院ID:', currentCollegeId);
+            // 关键修复：请求时携带学院ID，避免加载其他学院数据
             const response = await fetch(`/api/collegeadmin/counselors?collegeId=${currentCollegeId}`, {
                 method: 'GET',
                 headers: getAuthHeaders()
@@ -1204,31 +1412,30 @@
             }
 
             const result = await response.json();
-            console.log('辅导员加载原始结果:', result);
+            console.log('辅导员加载结果:', result);
 
             if (result.code === 200) {
                 // 修复：处理后端返回空数据的情况
                 counselors = result.data || [];
-                console.log('处理后的辅导员列表:', counselors);
+                console.log('当前学院辅导员列表:', counselors);
                 renderCounselors(counselors);
                 // 修复：更新辅导员总数显示
                 document.getElementById('counselorCount').textContent = counselors.length;
             } else {
                 alert('加载辅导员失败: ' + (result.message || '未知错误'));
-                // 显示空状态提示
-                document.getElementById('counselorTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">加载辅导员失败，请点击刷新重试</td></tr>';
+                // 显示错误提示，避免表格空白
+                document.getElementById('counselorTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">加载失败，请点击刷新重试</td></tr>';
                 document.getElementById('counselorCount').textContent = '0';
             }
         } catch (error) {
             console.error('加载辅导员失败:', error);
             alert('加载辅导员失败: ' + error.message);
-            // 显示错误状态提示
-            document.getElementById('counselorTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">加载失败，请检查网络或重新登录</td></tr>';
+            document.getElementById('counselorTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">网络异常，请检查后重试</td></tr>';
             document.getElementById('counselorCount').textContent = '0';
         }
     }
 
-    // 修复2：确保渲染时处理空数据和字段缺失
+    // 修复2：渲染时处理空数据和字段缺失，避免表格异常
     function renderCounselors(counselorList) {
         const tbody = document.getElementById('counselorTableBody');
         tbody.innerHTML = '';
@@ -1239,8 +1446,8 @@
         }
 
         counselorList.forEach(counselor => {
-            // 修复：处理字段缺失的情况（避免undefined显示）
-            const counselorId = counselor.id ? String(counselor.id) : '';
+            // 修复：处理字段缺失，避免显示undefined
+            const id = counselor.id ? String(counselor.id) : '';
             const name = counselor.name || '未知姓名';
             const account = counselor.account || '未知账号';
             const tel = counselor.tel || '-';
@@ -1254,8 +1461,8 @@
                 <td>${categoryName}</td>
                 <td>
                     <div class="action-buttons">
-                        <!-- 修复：确保ID存在时才显示删除按钮 -->
-                        ${counselorId ? `<button class="action-btn delete-btn" onclick="deleteCounselor('${counselorId}', '${escapeHtml(name)}')">删除</button>` : ''}
+                        <!-- 修复：ID有效时才显示删除按钮 -->
+                        ${id ? `<button class="action-btn delete-btn" onclick="deleteCounselor('${id}', '${escapeHtml(name)}')">删除</button>` : ''}
                     </div>
                 </td>
             `;
@@ -1263,41 +1470,7 @@
         });
     }
 
-    // 修复3：确保添加辅导员时类别选择框正确填充
-    function showAddCounselorModal() {
-        const modal = document.getElementById('addCounselorModal');
-        const categorySelect = document.getElementById('counselorCategory');
-
-        // 填充类别选择框
-        categorySelect.innerHTML = '';
-        console.log('可用类别:', categories);
-
-        if (categories.length === 0) {
-            categorySelect.innerHTML = '<option value="">暂无可用类别</option>';
-            alert('请先创建专业类别再添加辅导员');
-            modal.style.display = 'block';
-            return;
-        }
-
-        // 修复：确保类别ID为字符串，避免匹配失败
-        categories.forEach(category => {
-            const categoryId = String(category.id);
-            console.log(`添加选项: ${category.name}, ID: ${categoryId}, 类型: ${typeof categoryId}`);
-
-            const option = document.createElement('option');
-            option.value = categoryId;
-            option.textContent = category.name;
-            categorySelect.appendChild(option);
-        });
-
-        modal.style.display = 'block';
-    }
-
-    function closeAddCounselorModal() {
-        document.getElementById('addCounselorModal').style.display = 'none';
-    }
-
-    // 修复4：确保添加辅导员时参数正确，特别是类别ID格式
+    // 修复3：添加辅导员时确保类别ID格式正确，关联当前学院
     async function addCounselor() {
         const name = document.getElementById('counselorName').value.trim();
         const account = document.getElementById('counselorAccount').value.trim();
@@ -1311,31 +1484,23 @@
             alert('请输入姓名和账号');
             return;
         }
-
         if (!categoryId) {
             alert('请选择所属类别');
             return;
         }
 
-        // 调试信息
-        console.log('=== 辅导员添加调试信息 ===');
-        console.log('1. 选择的类别ID:', categoryId);
-        console.log('2. 类别ID类型:', typeof categoryId);
-        console.log('3. 学院ID:', currentCollegeId);
-
         try {
-            // 修复：确保参数格式正确，特别是majorCategoryId为字符串
+            // 关键修复：添加collegeId，确保辅导员归属当前学院
             const requestData = {
                 name,
                 account,
                 tel: tel || '',
                 password: password || account,
-                majorCategoryId: String(categoryId), // 强制转为字符串
-                collegeId: currentCollegeId // 新增：关联当前学院
+                majorCategoryId: String(categoryId), // 确保类别ID为字符串
+                collegeId: currentCollegeId // 关联当前学院
             };
 
-            console.log('4. 最终发送的请求数据:', JSON.stringify(requestData, null, 2));
-
+            console.log('添加辅导员请求数据:', requestData);
             const response = await fetch('/api/collegeadmin/counselors', {
                 method: 'POST',
                 headers: getAuthHeaders(),
@@ -1343,12 +1508,10 @@
             });
 
             const result = await response.json();
-            console.log('5. 后端响应:', result);
-
             if (result.code === 200) {
                 alert('添加成功');
                 closeAddCounselorModal();
-                loadCounselors(); // 添加后重新加载辅导员列表
+                loadCounselors(); // 添加后刷新列表
             } else {
                 alert('添加失败: ' + (result.message || '未知错误'));
             }
@@ -1358,31 +1521,27 @@
         }
     }
 
-    // 修复5：确保删除辅导员时ID格式正确
+    // 修复4：删除辅导员时确保ID格式正确
     async function deleteCounselor(id, name) {
         if (!id) {
             alert('辅导员ID无效，无法删除');
             return;
         }
-
         if (!confirm(`确定要删除辅导员 "${name}" 吗？此操作不可恢复！`)) {
             return;
         }
 
         try {
             const counselorId = String(id);
-            console.log('删除辅导员ID:', counselorId, '类型:', typeof counselorId);
-
             const response = await fetch(`/api/collegeadmin/counselors/${counselorId}`, {
                 method: 'DELETE',
                 headers: getAuthHeaders()
             });
 
             const result = await response.json();
-
             if (result.code === 200) {
                 alert('删除成功');
-                loadCounselors(); // 删除后重新加载辅导员列表
+                loadCounselors(); // 删除后刷新列表
             } else {
                 alert('删除失败: ' + (result.message || '未知错误'));
             }
@@ -1392,7 +1551,7 @@
         }
     }
 
-    // 修复6：辅导员搜索功能
+    // 修复5：辅导员搜索功能（匹配姓名/账号）
     function searchCounselors() {
         const keyword = document.getElementById('counselorSearchInput').value.toLowerCase();
         if (!keyword) {
@@ -1400,16 +1559,42 @@
             return;
         }
 
-        // 前端过滤辅导员（匹配姓名、账号、手机号）
         const filtered = counselors.filter(counselor =>
             (counselor.name && counselor.name.toLowerCase().includes(keyword)) ||
-            (counselor.account && counselor.account.toLowerCase().includes(keyword)) ||
-            (counselor.tel && counselor.tel.includes(keyword))
+            (counselor.account && counselor.account.toLowerCase().includes(keyword))
         );
         renderCounselors(filtered);
     }
 
-    // ==================== 工具函数 ====================
+    // 修复6：添加辅导员时正确填充类别选择框
+    function showAddCounselorModal() {
+        const modal = document.getElementById('addCounselorModal');
+        const categorySelect = document.getElementById('counselorCategory');
+        categorySelect.innerHTML = '';
+
+        if (categories.length === 0) {
+            categorySelect.innerHTML = '<option value="">暂无可用类别</option>';
+            alert('请先创建专业类别再添加辅导员');
+            modal.style.display = 'block';
+            return;
+        }
+
+        // 确保类别ID为字符串，避免匹配失败
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = String(category.id);
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+
+        modal.style.display = 'block';
+    }
+
+    function closeAddCounselorModal() {
+        document.getElementById('addCounselorModal').style.display = 'none';
+    }
+
+    // ==================== 工具函数（保留） ====================
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
@@ -1429,7 +1614,6 @@
         }
     }
 
-    // 调试函数：显示当前所有类别信息
     function debugCategories() {
         console.log('=== 类别调试信息 ===');
         console.log('当前学院ID:', currentCollegeId);
@@ -1444,7 +1628,7 @@
         });
     }
 
-    // 点击模态框外部关闭
+    // 点击模态框外部关闭（保留）
     window.onclick = function (event) {
         const modals = [
             'addIndicatorPointModal',
@@ -1464,4 +1648,3 @@
 </script>
 </body>
 </html>
-

@@ -5,10 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/IndicatorPointController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/IndicatorPointController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -313,7 +309,7 @@
       <workItem from="1759637918278" duration="8023000" />
       <workItem from="1759646357237" duration="10313000" />
       <workItem from="1759726000516" duration="17080000" />
-      <workItem from="1759831822041" duration="10885000" />
+      <workItem from="1759831822041" duration="11628000" />
     </task>
     <servers />
   </component>
