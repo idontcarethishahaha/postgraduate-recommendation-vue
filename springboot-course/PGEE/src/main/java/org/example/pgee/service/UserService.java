@@ -281,7 +281,6 @@ public class UserService {
 
 
     // 辅导员查询方法，返回完整信息
-    // 辅导员查询方法，返回完整信息
     @Transactional(readOnly = true)
     public List<CounselorVO> getCounselorsWithCategory(Long collegeId) {
         try {

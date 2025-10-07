@@ -3,10 +3,12 @@ package org.example.pgee.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.pgee.dox.IndicatorPoint;
+import org.example.pgee.dox.MajorCategory;
 import org.example.pgee.dto.IndicatorPointDTO;
 import org.example.pgee.dto.IndicatorPointTreeDTO;
 import org.example.pgee.exception.Code;
 import org.example.pgee.exception.XException;
+import org.example.pgee.service.CollegeService;
 import org.example.pgee.service.IndicatorPointService;
 import org.example.pgee.vo.ResultVO;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,64 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class IndicatorPointController {
     private final IndicatorPointService indicatorPointService;
+    private final CollegeService collegeService;
+
+    @GetMapping("/categories")
+    public ResultVO getCategories(HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+        if (cid == null) {
+            throw XException.builder().code(Code.FORBIDDEN).build();
+        }
+
+        // 直接使用现有的方法获取真实数据
+        List<MajorCategory> categories = collegeService.listAllMajorCategories(cid);
+
+        // 转换为前端需要的格式
+        List<Map<String, Object>> result = categories.stream()
+                .map(category -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", category.getId().toString());
+                    map.put("name", category.getName());
+                    map.put("calculationRule", category.getCalculationRule());
+                    map.put("createTime", category.getCreateTime());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        return ResultVO.success(result);
+    }
+
+    @GetMapping("/byCategory")
+    public ResultVO getIndicatorsByCategory(@RequestParam String majorCategoryId,
+                                            HttpServletRequest request) {
+        Long cid = (Long) request.getAttribute("cid");
+
+        // 直接使用字符串ID调用Service
+        List<IndicatorPointTreeDTO> tree = indicatorPointService.getIndicatorTree(Long.valueOf(majorCategoryId));
+        List<Map<String, Object>> result = tree.stream()
+                .map(this::convertTreeToMap)
+                .collect(Collectors.toList());
+
+        // 获取专业类别名称
+        String majorCategoryName = getCategoryNameByIdString(majorCategoryId, cid);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("majorCategoryId", majorCategoryId);
+        response.put("majorCategoryName", majorCategoryName);
+        response.put("indicators", result);
+
+        return ResultVO.success(response);
+    }
+
+    // 辅助方法：根据字符串ID获取类别名称
+    private String getCategoryNameByIdString(String majorCategoryId, Long collegeId) {
+        List<MajorCategory> categories = collegeService.listAllMajorCategories(collegeId);
+        return categories.stream()
+                .filter(cat -> cat.getId().toString().equals(majorCategoryId))
+                .findFirst()
+                .map(MajorCategory::getName)
+                .orElse("未知类别");
+    }
 
     // 统一ID转换方法（处理科学计数法和大数字）
     private Long parseId(String idStr) {

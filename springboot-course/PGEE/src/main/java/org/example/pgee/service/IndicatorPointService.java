@@ -90,8 +90,8 @@ public class IndicatorPointService {
                         .message("指标点不存在")
                         .build());
 
-        // 验证同级同名
-        boolean existsSameName = indicatorPointRepository.findByParentId(dto.getParentId())
+        // 验证同级同名（排除自身）
+        boolean existsSameName = indicatorPointRepository.findByParentId(point.getParentId()) // 使用原parentId
                 .stream()
                 .filter(p -> !p.getId().equals(id))
                 .anyMatch(p -> p.getName().equals(dto.getName()));
@@ -103,7 +103,7 @@ public class IndicatorPointService {
                     .build();
         }
 
-        // 验证叶子节点状态变更 - 新增的验证逻辑
+        // 验证叶子节点状态变更
         if (Boolean.TRUE.equals(dto.getIsLeaf()) && !Boolean.TRUE.equals(point.getIsLeaf())) {
             // 检查是否有子节点
             if (indicatorPointRepository.existsByParentId(id)) {
@@ -114,23 +114,14 @@ public class IndicatorPointService {
             }
         }
 
+        // 只更新允许修改的字段，不更新层级和父节点
         point.setName(dto.getName());
         point.setDescription(dto.getDescription());
         point.setMaxScore(dto.getMaxScore());
         point.setItemUpperLimit(dto.getItemUpperLimit());
-        point.setIsLeaf(dto.getIsLeaf());  // 更新叶子节点状态
+        point.setIsLeaf(dto.getIsLeaf());
 
-        IndicatorPoint updated = indicatorPointRepository.save(point);
-
-        // 如果从非叶子节点变为叶子节点，需要检查是否有子节点
-        if (Boolean.TRUE.equals(dto.getIsLeaf()) && indicatorPointRepository.existsByParentId(id)) {
-            throw XException.builder()
-                    .number(Code.ERROR)
-                    .message("该指标点存在子节点，不能设置为叶子节点")
-                    .build();
-        }
-
-        return updated;
+        return indicatorPointRepository.save(point);
     }
 
     @Transactional
@@ -173,6 +164,8 @@ public class IndicatorPointService {
                 .map(root -> convertToTreeDTO(root, childrenMap))
                 .collect(Collectors.toList());
     }
+
+
 
     private IndicatorPointTreeDTO convertToTreeDTO(IndicatorPoint point,
                                                    Map<Long, List<IndicatorPoint>> childrenMap) {
