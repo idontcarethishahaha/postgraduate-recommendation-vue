@@ -11,12 +11,10 @@ import java.util.Optional;
  * @author wuwenjin
  */
 //持久层接口
-
 @Repository
 public interface UserRepository extends ListCrudRepository<User, Long> {
     Optional<User> findByAccount(String account);
     boolean existsByAccount(String account);
     List<User> findByCollegeIdAndRole(Long collegeId, String role);
-    Optional<User> findByIdAndCollegeIdAndRole(Long id, Long collegeId, String role);
     Optional<User> findById(Long id);
 }

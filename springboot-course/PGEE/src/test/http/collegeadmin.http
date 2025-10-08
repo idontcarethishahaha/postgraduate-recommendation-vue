@@ -32,16 +32,6 @@ Content-Type: application/json
   "password": "12345678"
 }
 
-### 为学院添加类别  后续可以改成从token里获取学院id
-#POST localhost:8080/api/collegeadmin/categories
-#token: {{token}}
-#Content-Type: application/json
-#
-#{
-#  "collegeId": "101",
-#  "name": "信息类",
-#  "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
-#}
 
 ### 为学院添加类别  后续可以改成从token里获取学院id
 POST localhost:8080/api/collegeadmin/categories
@@ -53,9 +43,6 @@ Content-Type: application/json
   "calculationRule": "{\"weighted_score_ratio\": 0.8, \"comprehensive_score_ratio\": 0.2}"
 }
 
-### 后续可以改成从token里获取学院id  college_id
-#GET localhost:8080/api/collegeadmin/categories/101
-#token: {{token}}
 
 ###  查询自己所在学院下的所有类别  从学院管理员的token中获取学院id
 GET localhost:8080/api/collegeadmin/categories
@@ -86,9 +73,6 @@ Content-Type: application/json
   "majorCategoryId": 10101
 }
 
-#### 查询某类别下的专业
-#GET localhost:8080/api/collegeadmin/categories/10101/majors
-#token: {{token}}
 
 ### 学院管理员查看特定类别的专业
 GET localhost:8080/api/user/majors?majorCategoryId=10101

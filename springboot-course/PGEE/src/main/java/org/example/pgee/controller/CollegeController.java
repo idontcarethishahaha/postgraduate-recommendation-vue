@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:63342")
 public class CollegeController {
 
 

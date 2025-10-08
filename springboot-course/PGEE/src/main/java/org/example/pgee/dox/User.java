@@ -24,8 +24,8 @@ public class User {
     public static final String COUNSELOR = "Ca24";
     public static final String STUDENT = "dA5q";
 
-    @Id // 持久层相应注解
-    @CreatedBy // 雪花算法生成主键
+    @Id
+    @CreatedBy
     private Long id; // bigint 对应 long
     private String name;
     private Long collegeId;

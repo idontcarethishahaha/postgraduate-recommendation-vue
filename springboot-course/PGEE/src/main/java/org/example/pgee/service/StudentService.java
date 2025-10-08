@@ -1,201 +1,130 @@
-//package org.example.pgee.service;
-//
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.example.pgee.dox.*;
-//import org.example.pgee.dto.ApplicationDTO;
-//import org.example.pgee.exception.Code;
-//import org.example.pgee.exception.XException;
-//import org.example.pgee.repository.*;
-//import org.example.pgee.vo.ProfileVO;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.math.BigDecimal;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.stream.Collectors;
-//
-///**
-// * @author wuwenjin
-// */
-//@Slf4j
-//@Service
-//@RequiredArgsConstructor
-//public class StudentService {
-//
-//    private final StuScoreRepository stuScoreRepository;
-//    private final ApplicationRepository applicationRepository;
-//    private final ApplicationEvidenceRepository evidenceRepository;
-//    private final IndicatorPointRepository indicatorPointRepository;
-//    private final UserRepository userRepository;
-//    private final StudentInfoRepository studentInfoRepository;
-//    private final MajorRepository majorRepository;
-//
-//    // ==================== 指标点查询 ====================
-//
-//    public List<IndicatorPoint> getFirstLevelIndicators(Long userId) {
-//        // 先获取学生的专业信息
-//        StudentInfo studentInfo = studentInfoRepository.findByUserId(userId)
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("学生信息不存在")
-//                        .build());
-//
-//        // 获取专业信息
-//        Major major = majorRepository.findById(studentInfo.getMajorId())
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("专业信息不存在")
-//                        .build());
-//
-//        // 根据专业类别ID查找指标点
-//        return indicatorPointRepository.findFirstLevelByMajorCategoryId(major.getMajorCategoryId());
-//    }
-//
-//    // 或者使用原来的方法（如果student_info表结构允许）
-//    public List<IndicatorPoint> getFirstLevelIndicatorsAlternative(Long userId) {
-//        return indicatorPointRepository.findFirstLevelByUserId(userId);
-//    }
-//
-//    public List<IndicatorPoint> getLeafIndicators(Long parentId) {
-//        return indicatorPointRepository.findLeafNodesByParentId(parentId);
-//    }
-//
-//    // ==================== 其他方法保持不变 ====================
-//
-//    @Transactional
-//    public Application submitApplication(ApplicationDTO dto, Long userId) {
-//        // 验证指标点是否存在且是叶子节点
-//        IndicatorPoint indicator = indicatorPointRepository.findById(dto.getIndicatorId())
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("指标点不存在")
-//                        .build());
-//
-//        if (!Boolean.TRUE.equals(indicator.getIsLeaf())) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("只能申报叶子节点指标点")
-//                    .build();
-//        }
-//
-//        // 检查学生是否有权限申报该指标点（属于同一专业类别）
-//        StudentInfo studentInfo = studentInfoRepository.findByUserId(userId)
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("学生信息不存在")
-//                        .build());
-//
-//        Major major = majorRepository.findById(studentInfo.getMajorId())
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("专业信息不存在")
-//                        .build());
-//
-//        if (!indicator.getMajorCategoryId().equals(major.getMajorCategoryId())) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("无权申报该专业类别的指标点")
-//                    .build();
-//        }
-//
-//        // 检查是否已申报过该指标点（排除被拒绝的）
-//        if (applicationRepository.existsByUserIdAndIndicatorId(userId, dto.getIndicatorId())) {
-//            throw XException.builder()
-//                    .number(Code.ERROR)
-//                    .message("已申报过该指标点，请勿重复申报")
-//                    .build();
-//        }
-//
-//        // 查找一级指标点（递归查找父节点直到一级）
-//        Long firstIndicatorId = findFirstIndicatorId(indicator);
-//
-//        // 创建申报记录
-//        Application application = Application.builder()
-//                .userId(userId)
-//                .firstIndicator(firstIndicatorId)
-//                .indicatorId(dto.getIndicatorId())
-//                .itemName(dto.getItemName())
-//                .description(dto.getDescription())
-//                .status("pending")
-//                .build();
-//
-//        Application savedApplication = applicationRepository.save(application);
-//
-//        // 保存证明材料
-//        if (dto.getEvidences() != null && !dto.getEvidences().isEmpty()) {
-//            List<ApplicationEvidence> evidences = dto.getEvidences().stream()
-//                    .map(evidence -> ApplicationEvidence.builder()
-//                            .applicationId(savedApplication.getId())
-//                            .fileName(evidence.getFileName())
-//                            .fileUrl(evidence.getFileUrl())
-//                            .build())
-//                    .collect(Collectors.toList());
-//
-//            evidenceRepository.saveAll(evidences);
-//        }
-//
-//        return savedApplication;
-//    }
-//
-//    // ==================== 个人中心数据 ====================
-//
-//    public ProfileVO getProfile(Long userId) {
-//        // 获取用户基本信息
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("用户不存在")
-//                        .build());
-//
-//        // 获取学生详细信息
-//        StudentInfo studentInfo = studentInfoRepository.findByUserId(userId)
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("学生信息不存在")
-//                        .build());
-//
-//        Major major = majorRepository.findById(studentInfo.getMajorId())
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("专业信息不存在")
-//                        .build());
-//
-//        // 获取成绩信息
-//        StuScore score = stuScoreRepository.findByUserId(userId).orElse(null);
-//
-//        // 获取申报统计
-//        List<Object[]> statusCounts = applicationRepository.countApplicationsByStatus(userId);
-//        Map<String, Integer> statusMap = new HashMap<>();
-//        int totalApplications = 0;
-//
-//        for (Object[] row : statusCounts) {
-//            String status = (String) row[0];
-//            Long count = (Long) row[1];
-//            statusMap.put(status, count.intValue());
-//            totalApplications += count.intValue();
-//        }
-//
-//        // 计算综合分数
-//        BigDecimal totalScore = calculateTotalScore(userId, score);
-//
-//        return ProfileVO.builder()
-//                .studentId(user.getNumber())
-//                .name(user.getName())
-//                .college(user.getCollegeName())
-//                .major(major.getName())
-//                .weightedScore(score != null ? score.getWeightedScore() : null)
-//                .majorRank(score != null ? score.getMajorRank() : null)
-//                .scoreStatus(score != null ? (score.getStatus() == 1 ? "已认定" : "待审核") : "未提交")
-//                .pendingCount(statusMap.getOrDefault("pending", 0))
-//                .approvedCount(statusMap.getOrDefault("approved", 0))
-//                .rejectedCount(statusMap.getOrDefault("rejected", 0))
-//                .totalApplications(totalApplications)
-//                .totalScore(totalScore)
-//                .build();
-//    }
-//
-//    // 其他方法保持不变...
-//}
+package org.example.pgee.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.pgee.dox.StuScore;
+import org.example.pgee.dox.User;
+import org.example.pgee.dto.StuScoreDTO;
+import org.example.pgee.exception.Code;
+import org.example.pgee.exception.XException;
+import org.example.pgee.repository.StuScoreRepository;
+import org.example.pgee.repository.StudentInfoRepository;
+import org.example.pgee.repository.UserRepository;
+import org.example.pgee.vo.StuScoreVO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class StudentService {
+    private final StuScoreRepository stuScoreRepository;
+    private final StudentInfoRepository studentInfoRepository;
+    private final UserRepository userRepository;
+
+    //提交成绩
+    //只提交一次成绩，不可重复提交,可以修改
+    @Transactional
+    public StuScoreVO submitScore(StuScoreDTO dto, Long userId) {
+        // 1. 校验学生是否存在
+        validateStudentExists(userId);
+
+        // 是否已有成绩记录（待审核/已认定都不允许重复提交）
+        if (stuScoreRepository.existsByUserId(userId)) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("您已提交过成绩，不可重复提交")
+                    .build();
+        }
+
+        //构建成绩记录,默认待审核状态
+        StuScore stuScore = StuScore.builder()
+                .userId(userId)
+                .weightedScore(dto.getWeightedScore())
+                .majorRank(dto.getMajorRank())
+                .status(StuScore.STATUS_PENDING)
+                .build();
+
+        StuScore saved = stuScoreRepository.save(stuScore);
+        return convertToVO(saved);
+    }
+
+    //修改成绩（仅待审核状态可修改）
+     //已认定状态不可修改，待审核状态可修改成绩和排名
+    @Transactional
+    public StuScoreVO updateScore(StuScoreDTO dto, Long userId) {
+        //学生是否存在
+        validateStudentExists(userId);
+
+        //查询学生已有成绩记录
+        StuScore existingScore = stuScoreRepository.findByUserId(userId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("您尚未提交成绩，无法修改")
+                        .build());
+
+        //校验状态,已认定不可修改
+        if (existingScore.getStatus().equals(StuScore.STATUS_APPROVED)) {
+            throw XException.builder()
+                    .number(Code.ERROR)
+                    .message("成绩已认定，不可修改")
+                    .build();
+        }
+
+        //更新成绩
+        existingScore.setWeightedScore(dto.getWeightedScore());
+        existingScore.setMajorRank(dto.getMajorRank());
+        //状态仍为待审核
+
+        //保存并返回VO
+        StuScore updated = stuScoreRepository.save(existingScore);
+        return convertToVO(updated);
+    }
+
+     //查询学生个人成绩
+    public StuScoreVO getStudentScore(Long userId) {
+        //学生是否存在
+        validateStudentExists(userId);
+
+        //查询成绩
+        StuScore stuScore = stuScoreRepository.findByUserId(userId).orElse(null);
+        return stuScore != null ? convertToVO(stuScore) : null;
+    }
+//------------------------------------------------------------------------------------
+     //校验学生是否存在（用户表+学生信息表）
+    private void validateStudentExists(Long userId) {
+        // 用户是否存在且角色为学生
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("用户不存在")
+                        .build());
+        if (!User.STUDENT.equals(user.getRole())) {
+            throw XException.builder()
+                    .code(Code.FORBIDDEN)
+                    .message("仅学生可操作成绩申报")
+                    .build();
+        }
+
+        //学生信息是否存在（关联student_info表）
+        studentInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> XException.builder()
+                        .number(Code.ERROR)
+                        .message("学生信息未完善，无法提交成绩")
+                        .build());
+    }
+
+    private StuScoreVO convertToVO(StuScore stuScore) {
+        String statusDesc = stuScore.getStatus().equals(StuScore.STATUS_PENDING)
+                ? "待审核"
+                : "已认定";
+
+        return StuScoreVO.builder()
+                .id(stuScore.getId())
+                .weightedScore(stuScore.getWeightedScore())
+                .majorRank(stuScore.getMajorRank())
+                .status(stuScore.getStatus())
+                .statusDesc(statusDesc)
+                .build();
+    }
+}

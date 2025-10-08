@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
  * @author wuwenjin
  */
 @Repository
-public class ApplicationLoggingRepository {
+public interface ApplicationLoggingRepository {
 }

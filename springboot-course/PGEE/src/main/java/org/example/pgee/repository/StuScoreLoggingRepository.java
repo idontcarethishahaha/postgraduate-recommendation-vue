@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
  * @author wuwenjin
  */
 @Repository
-public class StuScoreLoggingRepository {
+public interface StuScoreLoggingRepository {
 }
