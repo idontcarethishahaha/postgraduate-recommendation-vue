@@ -24,13 +24,4 @@ public class ApplicationVO {
     private String status;
     private LocalDateTime createTime;
     private List<EvidenceVO> evidences;
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class EvidenceVO {
-        private String fileName;
-        private String fileUrl;
-    }
 }

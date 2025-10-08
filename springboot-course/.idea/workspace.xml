@@ -5,31 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/StudentController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/ApplicationEvidence.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/StuScore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/ApplicationDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/StuScoreDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationEvidenceRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationLoggingRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreLoggingRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/FileStorageService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/StudentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ApplicationVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ProfileVO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-category.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-counselor.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-indicator.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/RegisterController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/counselor-management.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/EvidenceVO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ApplicationVO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ApplicationVO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -331,7 +308,7 @@
       <workItem from="1759646357237" duration="10313000" />
       <workItem from="1759726000516" duration="17080000" />
       <workItem from="1759831822041" duration="12236000" />
-      <workItem from="1759904756131" duration="10175000" />
+      <workItem from="1759904756131" duration="10428000" />
     </task>
     <servers />
   </component>
