@@ -28,7 +28,7 @@
         <input type="tel" id="tel" required>
     </div>
 
-    <!-- 添加学院选择框 -->
+    <!--学院选择框-->
     <div class="form-group">
         <label for="collegeSelect">学院:</label>
         <select id="collegeSelect" required onchange="loadMajors(this.value)">
@@ -36,7 +36,7 @@
         </select>
     </div>
 
-    <!-- 添加专业选择框 -->
+    <!--专业选择框-->
     <div class="form-group">
         <label for="majorSelect">专业:</label>
         <select id="majorSelect" required disabled>
@@ -53,17 +53,16 @@
 </form>
 
 <script>
-    // 页面加载时自动加载学院
+    //页面加载时自动加载学院
     document.addEventListener('DOMContentLoaded', function() {
         console.log('页面加载完成，开始加载学院数据...');
         loadColleges();
     });
 
-    // 加载学院列表
+    //加载学院列表
     async function loadColleges() {
         try {
             console.log('开始加载学院列表...');
-            // 添加完整的后端地址
             const response = await fetch('http://localhost:8080/api/open/colleges');
             console.log('响应状态:', response.status);
 
@@ -77,9 +76,6 @@
             if (result.code === 200) {
                 const collegeSelect = document.getElementById('collegeSelect');
                 collegeSelect.innerHTML = '<option value="">请选择学院</option>';
-
-                console.log('学院数据:', result.data);
-                console.log('学院数量:', result.data.length);
 
                 if (result.data && result.data.length > 0) {
                     result.data.forEach(college => {
@@ -101,7 +97,7 @@
         }
     }
 
-    // 根据学院加载专业
+    //根据学院加载专业
     async function loadMajors(collegeId) {
         const majorSelect = document.getElementById('majorSelect');
 
@@ -116,7 +112,6 @@
             majorSelect.disabled = true;
             majorSelect.innerHTML = '<option value="">加载中...</option>';
 
-            // 添加完整的后端地址
             const response = await fetch(`http://localhost:8080/api/open/colleges/${collegeId}/majors`);
 
             if (!response.ok) {
@@ -166,7 +161,6 @@
 
         console.log('提交的数据:', formData);
 
-        // 前端验证
         if (!formData.name || !formData.account || !formData.tel || !formData.password || !formData.collegeId || !formData.majorId) {
             alert('请填写所有必填字段');
             return;
@@ -174,7 +168,7 @@
 
         try {
             console.log('开始注册请求...');
-            // 添加完整的后端地址
+
             const response = await fetch('http://localhost:8080/api/open/register', {
                 method: 'POST',
                 headers: {
@@ -193,7 +187,7 @@
             if (result.code === 200) {
                 alert('注册成功！');
                 document.getElementById('registerForm').reset();
-                loadColleges(); // 重置选择
+                loadColleges(); //重置选择
             } else {
                 alert('注册失败: ' + (result.message || '未知错误'));
             }

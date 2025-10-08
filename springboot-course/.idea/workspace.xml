@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/StuScoreVO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/StudentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/StudentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/StuScore.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/StuScore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationLoggingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationLoggingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreLoggingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreLoggingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/StudentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/StudentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ProfileVO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-colleges.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-colleges.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,7 +308,7 @@
       <workItem from="1759646357237" duration="10313000" />
       <workItem from="1759726000516" duration="17080000" />
       <workItem from="1759831822041" duration="12236000" />
-      <workItem from="1759904756131" duration="13845000" />
+      <workItem from="1759904756131" duration="14854000" />
     </task>
     <servers />
   </component>
