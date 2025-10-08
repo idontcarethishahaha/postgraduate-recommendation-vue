@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class RegisterController {
     private final UserService userService;
     // 学生注册接口（开放接口，不需要认证）
-    @PostMapping("open/register")  // 改为与前端匹配的路径
+    @PostMapping("open/register")
     public ResultVO registerStudent(@RequestBody StudentRegisterDTO registerDTO) {
         userService.registerStudent(registerDTO);
         return ResultVO.ok();

@@ -32,10 +32,8 @@ public class IndicatorPointController {
             throw XException.builder().code(Code.FORBIDDEN).build();
         }
 
-        // 直接使用现有的方法获取真实数据
         List<MajorCategory> categories = collegeService.listAllMajorCategories(cid);
 
-        // 转换为前端需要的格式
         List<Map<String, Object>> result = categories.stream()
                 .map(category -> {
                     Map<String, Object> map = new HashMap<>();
@@ -55,13 +53,13 @@ public class IndicatorPointController {
                                             HttpServletRequest request) {
         Long cid = (Long) request.getAttribute("cid");
 
-        // 直接使用字符串ID调用Service
+        // 使用字符串ID调用Service
         List<IndicatorPointTreeDTO> tree = indicatorPointService.getIndicatorTree(Long.valueOf(majorCategoryId));
         List<Map<String, Object>> result = tree.stream()
                 .map(this::convertTreeToMap)
                 .collect(Collectors.toList());
 
-        // 获取专业类别名称
+        //获取专业类别名称
         String majorCategoryName = getCategoryNameByIdString(majorCategoryId, cid);
 
         Map<String, Object> response = new HashMap<>();
@@ -72,7 +70,7 @@ public class IndicatorPointController {
         return ResultVO.success(response);
     }
 
-    // 辅助方法：根据字符串ID获取类别名称
+    //根据字符串ID获取类别名称
     private String getCategoryNameByIdString(String majorCategoryId, Long collegeId) {
         List<MajorCategory> categories = collegeService.listAllMajorCategories(collegeId);
         return categories.stream()
@@ -82,7 +80,7 @@ public class IndicatorPointController {
                 .orElse("未知类别");
     }
 
-    // 统一ID转换方法（处理科学计数法和大数字）
+    // 统一ID转换方法（处理大数字）
     private Long parseId(String idStr) {
         try {
             if (idStr.contains("E") || idStr.contains("e")) {
@@ -200,6 +198,6 @@ public class IndicatorPointController {
         if (collegeId == null) {
             throw XException.builder().code(Code.FORBIDDEN).build();
         }
-        // 添加具体的权限验证逻辑
+        //权限验证。。。
     }
 }

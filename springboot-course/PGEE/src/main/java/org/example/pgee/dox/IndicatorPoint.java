@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Table(name="indicator_points")
 public class IndicatorPoint {
     @Id
-    @CreatedBy // 使用雪花算法生成主键
+    @CreatedBy
     private Long id;
 
     private Long majorCategoryId;

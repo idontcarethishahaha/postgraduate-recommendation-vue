@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Table(name = "college")
 public class College {
     @Id
-    @CreatedBy // 雪花算法生成主键
+    @CreatedBy //雪花算法生成主键
     private Long id;
 
     private String name;

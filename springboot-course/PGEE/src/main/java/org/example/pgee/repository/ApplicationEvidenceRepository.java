@@ -12,9 +12,4 @@ import java.util.List;
 @Repository
 public interface ApplicationEvidenceRepository extends CrudRepository<ApplicationEvidence, Long> {
 
-    // 根据申报ID查找所有证明材料
-    List<ApplicationEvidence> findByApplicationId(Long applicationId);
-
-    // 根据申报ID删除证明材料
-    void deleteByApplicationId(Long applicationId);
 }

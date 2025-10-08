@@ -26,7 +26,7 @@ public class User {
 
     @Id
     @CreatedBy
-    private Long id; // bigint 对应 long
+    private Long id; //bigint对应long
     private String name;
     private Long collegeId;
     private String account;
@@ -34,7 +34,7 @@ public class User {
     private String password;
     private String role;
     private String tel;
-    @ReadOnlyProperty // 由数据库来声明
+    @ReadOnlyProperty
     private LocalDateTime createTime;
     @ReadOnlyProperty
     private LocalDateTime updateTime;

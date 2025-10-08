@@ -6,39 +6,28 @@ import org.example.pgee.dto.StuScoreDTO;
 import org.example.pgee.service.StudentService;
 import org.example.pgee.vo.ResultVO;
 import org.example.pgee.vo.StuScoreVO;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 学生成绩申报接口
- * 路径：/api/student/score
- */
 @RestController
 @RequestMapping("/api/student/")
 @RequiredArgsConstructor
-@Validated // 开启参数校验
 public class StudentController {
     private final StudentService studentService;
 
-    /**
-     * 提交成绩（首次提交）
-     * POST /api/student/score
-     */
+
+     //提交成绩
     @PostMapping("score")
     public ResultVO submitScore(
              @RequestBody StuScoreDTO dto,
             HttpServletRequest request
     ) {
-        // 从请求中获取拦截器解析的学生ID（uid）
+        //从请求中获取拦截器解析的学生ID（uid）
         Long userId = (Long) request.getAttribute("uid");
         StuScoreVO result = studentService.submitScore(dto, userId);
         return ResultVO.ok();
     }
 
-    /**
-     * 修改成绩（仅待审核状态可修改）
-     * PUT /api/student/score
-     */
+   //修改成绩（仅待审核状态可修改）
     @PutMapping("score")
     public ResultVO updateScore(
            @RequestBody StuScoreDTO dto,
@@ -49,10 +38,8 @@ public class StudentController {
         return ResultVO.ok();
     }
 
-    /**
-     * 查询个人成绩
-     * GET /api/student/score
-     */
+
+    //查询个人成绩
     @GetMapping("score")
     public ResultVO getScore(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("uid");

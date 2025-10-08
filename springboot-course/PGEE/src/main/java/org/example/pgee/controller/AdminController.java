@@ -37,32 +37,9 @@ public class AdminController {
         return ResultVO.ok();
     }
 
-//    // 查询用户
-//    @GetMapping("admin/users")
-//    public ResultVO getUsers() {
-//        List<User> users = userService.listUsers();
-//
-//        // 转换用户ID为String
-//        List<Map<String, Object>> result = users.stream()
-//                .map(user -> {
-//                    Map<String, Object> map = new HashMap<>();
-//                    map.put("id", user.getId().toString());
-//                    map.put("name", user.getName());
-//                    map.put("account", user.getAccount());
-//                    map.put("tel", user.getTel());
-//                    map.put("role", user.getRole());
-//                    map.put("collegeId", user.getCollegeId() != null ? user.getCollegeId().toString() : null);
-//                    map.put("createTime", user.getCreateTime());
-//                    return map;
-//                })
-//                .collect(Collectors.toList());
-//
-//        return ResultVO.success(result);
-//    }
-
     //---------------------------------------------------------------------------------------------------
-    // 学院管理
 
+    // 学院管理
     // 获取所有学院
     @GetMapping("admin/colleges")
     public ResultVO getColleges() {
@@ -205,16 +182,6 @@ public class AdminController {
         return ResultVO.success(counselors);
     }
 
-    // 添加辅导员"时指定其所属类别
-//    @PostMapping("collegeadmin/counselors")
-//    public ResultVO addCounselor(@RequestBody CounselorAddDTO counselorAddDTO, HttpServletRequest request) {
-//        Long cid = (Long) request.getAttribute("cid");
-//        if (cid == null) {
-//            throw XException.builder().code(Code.FORBIDDEN).build();
-//        }
-//        userService.addCounselor(cid, counselorAddDTO);
-//        return ResultVO.ok();
-//    }
 
     // 为特定类别添加辅导员
     @PostMapping("collegeadmin/counselors")
@@ -241,7 +208,6 @@ public class AdminController {
     }
 
     // 删除辅导员
-    // 删除辅导员
     @DeleteMapping("collegeadmin/counselors/{counselorId}")
     public ResultVO deleteCounselor(@PathVariable String counselorId,
                                     HttpServletRequest request) {
@@ -251,7 +217,7 @@ public class AdminController {
                 throw XException.builder().code(Code.FORBIDDEN).build();
             }
 
-            // 直接传递String类型的ID
+            //直接传递String类型的ID
             userService.deleteCounselor(counselorId, cid);
             return ResultVO.ok();
         } catch (Exception e) {

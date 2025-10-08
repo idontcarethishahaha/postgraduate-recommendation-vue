@@ -16,11 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class InitService {
 
-    // 注入持久层组件
+    //注入持久层组件
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional // 事务
+    @Transactional //事务
     @EventListener(ApplicationReadyEvent.class)
     public void init(){
         String account = "admin";

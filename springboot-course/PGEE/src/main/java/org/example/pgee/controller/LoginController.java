@@ -42,22 +42,6 @@ public class LoginController {
             return ResultVO.error(Code.LOGIN_ERROR);
         }
 
-//        // 获取用户对象
-//        User userR = userOpt.get();
-//
-//        // 生成JWT token
-//        String token = jwtComponent.encode(Map.of(
-//                "uid", userR.getId(),
-//                "role", userR.getRole(),
-//                "college_id",userR.getCollegeId()
-//        ));
-//
-//        // 设置响应头
-//        response.setHeader("token", token);
-//        response.setHeader("role", userR.getRole());
-//        response.setHeader("college_id", String.valueOf(userR.getCollegeId()));
-//
-//        return ResultVO.success(userR);
         User userR = userOpt.get();
         String role = userR.getRole();
 

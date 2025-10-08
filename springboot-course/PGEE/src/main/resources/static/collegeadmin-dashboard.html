@@ -1011,7 +1011,6 @@
         container.innerHTML = buildTreeHTML(treeData);
     }
     function editIndicatorPointById(id) {
-        // 从全局数据中查找节点信息
         const node = findIndicatorPointById(id);
         if (node) {
             editIndicatorPoint(
@@ -1030,7 +1029,7 @@
         const categorySelect = document.getElementById('majorCategorySelect');
         selectedCategoryId = categorySelect.value;
 
-        // 添加安全检查
+        //安全检查
         const currentCategoryInfo = document.getElementById('currentCategoryInfo');
         const indicatorStats = document.getElementById('indicatorStats');
         const noCategorySelected = document.getElementById('noCategorySelected');

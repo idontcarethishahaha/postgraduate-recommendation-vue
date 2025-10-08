@@ -24,7 +24,7 @@ public class IndicatorPointService {
 
     @Transactional
     public IndicatorPoint addIndicatorPoint(IndicatorPointDTO dto) {
-        // 验证同级同名
+        //验证同级同名
         if (indicatorPointRepository.existsByParentIdAndName(dto.getParentId(), dto.getName())) {
             throw XException.builder()
                     .number(Code.ERROR)
@@ -32,7 +32,7 @@ public class IndicatorPointService {
                     .build();
         }
 
-        // 自动设置层级
+        //自动设置层级
         Integer level = dto.getParentId() == null ? 1 :
                 indicatorPointRepository.findById(dto.getParentId())
                         .map(p -> p.getLevel() + 1)
@@ -41,7 +41,7 @@ public class IndicatorPointService {
                                 .message("父节点不存在")
                                 .build());
 
-        // 验证叶子节点逻辑 - 新增的验证逻辑
+        //验证叶子节点逻辑
         if (Boolean.TRUE.equals(dto.getIsLeaf()) && dto.getParentId() != null) {
             // 检查父节点是否存在且是否为叶子节点
             IndicatorPoint parent = indicatorPointRepository.findById(dto.getParentId())
@@ -58,7 +58,7 @@ public class IndicatorPointService {
             }
         }
 
-        // 设置默认的叶子节点状态
+        //设置默认的叶子节点状态
         Boolean isLeaf = dto.getIsLeaf() != null ? dto.getIsLeaf() : true;
 
         IndicatorPoint point = IndicatorPoint.builder()
@@ -69,12 +69,12 @@ public class IndicatorPointService {
                 .maxScore(dto.getMaxScore())
                 .itemUpperLimit(dto.getItemUpperLimit())
                 .parentId(dto.getParentId())
-                .isLeaf(isLeaf)  // 使用传入的isLeaf值，默认为true
+                .isLeaf(isLeaf)  //使用传入的isLeaf值，默认为true
                 .build();
 
         IndicatorPoint saved = indicatorPointRepository.save(point);
 
-        // 如果父节点存在且新节点不是叶子节点，更新父节点为非叶子节点
+        //如果父节点存在且新节点不是叶子节点，更新父节点为非叶子节点
         if (saved.getParentId() != null && Boolean.FALSE.equals(saved.getIsLeaf())) {
             indicatorPointRepository.updateLeafStatus(saved.getParentId(), false);
         }
@@ -114,7 +114,7 @@ public class IndicatorPointService {
             }
         }
 
-        // 只更新允许修改的字段，不更新层级和父节点
+        //只更新允许修改的字段，不更新层级和父节点
         point.setName(dto.getName());
         point.setDescription(dto.getDescription());
         point.setMaxScore(dto.getMaxScore());
@@ -132,7 +132,7 @@ public class IndicatorPointService {
                         .message("指标点不存在")
                         .build());
 
-        // 检查是否有子节点
+        //检查是否有子节点
         if (indicatorPointRepository.existsByParentId(id)) {
             throw XException.builder()
                     .number(Code.ERROR)
@@ -150,15 +150,15 @@ public class IndicatorPointService {
     }
 
     public List<IndicatorPointTreeDTO> getIndicatorTree(Long majorCategoryId) {
-        // 1. 查询所有相关指标点
+        //查询所有相关指标点
         List<IndicatorPoint> allPoints = indicatorPointRepository.findByMajorCategoryId(majorCategoryId);
 
-        // 2. 构建父节点ID到子节点列表的映射
+        //构建父节点ID到子节点列表的映射
         Map<Long, List<IndicatorPoint>> childrenMap = allPoints.stream()
                 .filter(point -> point.getParentId() != null)
                 .collect(Collectors.groupingBy(IndicatorPoint::getParentId));
 
-        // 3. 找出所有根节点（parentId为null的节点）
+        //找出所有根节点（parentId为null的节点）
         return allPoints.stream()
                 .filter(point -> point.getParentId() == null)
                 .map(root -> convertToTreeDTO(root, childrenMap))
@@ -169,7 +169,6 @@ public class IndicatorPointService {
 
     private IndicatorPointTreeDTO convertToTreeDTO(IndicatorPoint point,
                                                    Map<Long, List<IndicatorPoint>> childrenMap) {
-        // 转换基础字段
         IndicatorPointTreeDTO dto = IndicatorPointTreeDTO.builder()
                 .id(point.getId())
                 .majorCategoryId(point.getMajorCategoryId())
@@ -178,7 +177,7 @@ public class IndicatorPointService {
                 .description(point.getDescription())
                 .maxScore(point.getMaxScore())
                 .itemUpperLimit(point.getItemUpperLimit())
-                .isLeaf(point.getIsLeaf())  // 包含叶子节点信息
+                .isLeaf(point.getIsLeaf())
                 .createTime(point.getCreateTime())
                 .updateTime(point.getUpdateTime())
                 .build();

@@ -42,15 +42,6 @@ public class CollegeService {
         collegeRepository.save(college);
     }
 
-//    // 查询所有学院
-//    public List<College> listAllColleges() {
-//        List<College> colleges = new ArrayList<>();
-//        collegeRepository.findAll().forEach(colleges::add);
-//        return colleges;
-//    }
-
-
-
     // 编辑学院信息
     @Transactional
     public void updateCollege(Long id, CollegeUpdateDTO updateDTO) {
@@ -90,7 +81,7 @@ public class CollegeService {
 
 
 
-    // 为学院添加类别 - 现在完全从token获取学院ID
+    // 为学院添加类别,从token获取学院ID
     @Transactional
     public void addMajorCategory(MajorCategoryAddDTO majorCategoryAddDTO, Long collegeId) {
         // 学院是否存在（使用从token获取的collegeId）
@@ -131,14 +122,14 @@ public class CollegeService {
     // 删除学院下的某个类别（增加学院权限验证
     @Transactional
     public void deleteMajorCategory(Long mcid, Long collegeId) {
-        // 先查询类别是否存在且属于当前学院
+        //类别是否存在且属于当前学院
         MajorCategory category = majorCategoryRepository.findById(mcid)
                 .orElseThrow(() -> XException.builder()
                         .number(Code.ERROR)
                         .message("类别不存在")
                         .build());
 
-        // 验证类别是否属于当前学院
+        //类别是否属于当前学院
         if (!category.getCollegeId().equals(collegeId)) {
             throw XException.builder()
                     .code(Code.FORBIDDEN) //无权限
@@ -305,21 +296,7 @@ public class CollegeService {
         }
     }
 
-      //根据角色查询类别列表
-//    public List<MajorCategory> listCategoriesByRole(Long collegeId,
-//                                                    Long userId, String role, Long collegeIdFromToken) {
-//        switch (role) {
-//            case User.COUNSELOR:
-//                return listCategoriesForCounselor(userId);
-//            case User.COLLEGE_ADMIN:
-//                return listAllMajorCategories(collegeIdFromToken);
-//            case User.ADMIN:
-//                return listCategoriesForAdmin(collegeId);
-//            default:
-//                // 学生看不到类别信息
-//                return Collections.emptyList();
-//        }
-//    }
+
 
     // 学生：查看所有专业（用于注册和浏览）
     private List<Major> listAllMajorsForStudent() {
@@ -416,7 +393,7 @@ public class CollegeService {
         }
     }
     //--------------------------------------------------------------------------------------------------------
-//注册学生用的
+//注册学生
 // 获取所有学院
     public List<College> listAllColleges() {
         return collegeRepository.findAll(); // ListCrudRepository直接返回List

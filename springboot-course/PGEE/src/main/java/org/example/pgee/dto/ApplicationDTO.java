@@ -19,5 +19,4 @@ public class ApplicationDTO {
     private String itemName;
     private String description;
     //private List<FileEvidence> evidences;
-
 }

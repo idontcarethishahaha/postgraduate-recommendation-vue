@@ -21,18 +21,4 @@ public class MajorCategoryAddDTO {
     //private Long collegeId;
     private String name;
     private String calculationRule;
-
-  /*
-    // 或者保留字段但添加setter供后端设置
-    private Long collegeId;
-
-    public void setCollegeId(Long collegeId) {
-        this.collegeId = collegeId;
-    }
-
-    public Long getCollegeId() {
-        return this.collegeId;
-    }
-
-   */
 }

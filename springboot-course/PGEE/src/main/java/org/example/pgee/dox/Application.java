@@ -25,9 +25,9 @@ public class Application {
     private Long id;
 
     private Long userId;
-    private Long firstIndicator; // 一级指标点ID
-    private Long indicatorId;    // 叶子节点指标点ID
-    private String status;       // pending, approved, rejected
+    private Long firstIndicator; //一级指标点ID
+    private Long indicatorId;    //叶子节点指标点ID
+    private String status;       //pending, approved, rejected
     private String itemName;
     private String description;
 
