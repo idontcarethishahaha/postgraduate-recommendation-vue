@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:63342")
 public class RegisterController {
     private final UserService userService;
     // 学生注册接口（开放接口，不需要认证）

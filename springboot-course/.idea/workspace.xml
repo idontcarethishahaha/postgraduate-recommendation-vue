@@ -5,7 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/StudentController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/Application.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/ApplicationEvidence.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/StuScore.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/ApplicationDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/StuScoreDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationEvidenceRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationLoggingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/ApplicationRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreLoggingRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/StuScoreRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/FileStorageService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/StudentService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ApplicationVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ProfileVO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-category.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-counselor.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-indicator.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/RegisterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/RegisterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/collegeadmin-dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/counselor-management.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/admin.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +41,8 @@
       <list>
         <option value="Enum" />
         <option value="Interface" />
-        <option value="Class" />
         <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -174,7 +198,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.PgeeApplication">
-    <configuration name="collegeadmin | 添加专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="添加专业" index="8" runType="Run single request">
+    <configuration name="collegeadmin | 为学院添加类别" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="为学院添加类别" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="collegeadmin | 查询某类别下的专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询某类别下的专业" index="9" runType="Run single request">
@@ -201,22 +225,19 @@
     <configuration name="collegeadmin | 测试密码是否被成功修改" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="测试密码是否被成功修改" index="3" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="collegeadmin | 为学院添加类别" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="为学院添加类别" index="4" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="indicatorpoints | 10. 验证删除结果" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="10. 验证删除结果" index="11" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="indicatorpoints | 1. 学院管理员登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="1. 学院管理员登录" runType="Run single request">
-      <method v="2" />
-    </configuration>
     <configuration name="indicatorpoints | 2. 添加一级指标点（无父节点）" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="2. 添加一级指标点（无父节点）" index="2" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="indicatorpoints | 3. 添加二级指标点（有父节点）" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="3. 添加二级指标点（有父节点）" index="3" runType="Run single request">
+    <configuration name="indicatorpoints | 4. 获取指标点树形结构" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="4. 获取指标点树形结构" index="4" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="indicatorpoints | #10" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="#10" index="10" runType="Run single request">
+    <configuration name="indicatorpoints | 5. 获取指定节点的子节点" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="5. 获取指定节点的子节点" index="5" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="indicatorpoints | 7. 尝试添加同名指标点（应失败）" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="7. 尝试添加同名指标点（应失败）" index="6" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="indicatorpoints | 9. 先删除子节点再删除父节点" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="9. 先删除子节点再删除父节点" index="6" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="BackendExamplesApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
@@ -249,11 +270,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.indicatorpoints | 3. 添加二级指标点（有父节点）" />
+        <item itemvalue="HTTP Request.indicatorpoints | 9. 先删除子节点再删除父节点" />
+        <item itemvalue="HTTP Request.indicatorpoints | 5. 获取指定节点的子节点" />
+        <item itemvalue="HTTP Request.indicatorpoints | 7. 尝试添加同名指标点（应失败）" />
+        <item itemvalue="HTTP Request.indicatorpoints | 4. 获取指标点树形结构" />
         <item itemvalue="HTTP Request.indicatorpoints | 2. 添加一级指标点（无父节点）" />
-        <item itemvalue="HTTP Request.indicatorpoints | 1. 学院管理员登录" />
-        <item itemvalue="HTTP Request.indicatorpoints | 10. 验证删除结果" />
-        <item itemvalue="HTTP Request.indicatorpoints | #10" />
       </list>
     </recent_temporary>
   </component>
@@ -309,7 +330,8 @@
       <workItem from="1759637918278" duration="8023000" />
       <workItem from="1759646357237" duration="10313000" />
       <workItem from="1759726000516" duration="17080000" />
-      <workItem from="1759831822041" duration="11628000" />
+      <workItem from="1759831822041" duration="12236000" />
+      <workItem from="1759904756131" duration="10175000" />
     </task>
     <servers />
   </component>

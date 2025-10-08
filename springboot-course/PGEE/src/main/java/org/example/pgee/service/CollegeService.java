@@ -123,8 +123,6 @@ public class CollegeService {
 
 
     public List<MajorCategory> listAllMajorCategories(Long cid) {
-        // 假设MajorCategory实体有collegeId字段，关联学院ID
-        // 调用Repository按学院ID查询（需在MajorCategoryRepository中定义方法）
         return majorCategoryRepository.findByCollegeId(cid);
     }
 
@@ -143,7 +141,7 @@ public class CollegeService {
         // 验证类别是否属于当前学院
         if (!category.getCollegeId().equals(collegeId)) {
             throw XException.builder()
-                    .code(Code.FORBIDDEN) // 403无权限异常
+                    .code(Code.FORBIDDEN) //无权限
                     .build();
         }
         majorCategoryRepository.deleteById(mcid);
@@ -307,23 +305,21 @@ public class CollegeService {
         }
     }
 
-    /**
-     * 根据角色查询类别列表
-     */
-    public List<MajorCategory> listCategoriesByRole(Long collegeId,
-                                                    Long userId, String role, Long collegeIdFromToken) {
-        switch (role) {
-            case User.COUNSELOR:
-                return listCategoriesForCounselor(userId);
-            case User.COLLEGE_ADMIN:
-                return listAllMajorCategories(collegeIdFromToken);
-            case User.ADMIN:
-                return listCategoriesForAdmin(collegeId);
-            default:
-                // 学生看不到类别信息
-                return Collections.emptyList();
-        }
-    }
+      //根据角色查询类别列表
+//    public List<MajorCategory> listCategoriesByRole(Long collegeId,
+//                                                    Long userId, String role, Long collegeIdFromToken) {
+//        switch (role) {
+//            case User.COUNSELOR:
+//                return listCategoriesForCounselor(userId);
+//            case User.COLLEGE_ADMIN:
+//                return listAllMajorCategories(collegeIdFromToken);
+//            case User.ADMIN:
+//                return listCategoriesForAdmin(collegeId);
+//            default:
+//                // 学生看不到类别信息
+//                return Collections.emptyList();
+//        }
+//    }
 
     // 学生：查看所有专业（用于注册和浏览）
     private List<Major> listAllMajorsForStudent() {

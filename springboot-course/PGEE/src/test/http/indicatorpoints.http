@@ -70,47 +70,47 @@ token: {{token}}
 %}
 
 
-### 5. 获取指定节点的子节点
-GET localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}/children
-token: {{token}}
+#### 5. 获取指定节点的子节点
+#GET localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}/children
+#token: {{token}}
 
-### 6. 更新指标点信息
-PUT localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
-token: {{token}}
-Content-Type: application/json
-
-{
-  "name": "论文发表(修改后)",
-  "description": "评估学生论文发表情况(修改后)",
-  "maxScore": 25.0,
-  "itemUpperLimit": 3
-}
+#### 6. 更新指标点信息
+#PUT localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
+#token: {{token}}
+#Content-Type: application/json
+#
+#{
+#  "name": "论文发表(修改后)",
+#  "description": "评估学生论文发表情况(修改后)",
+#  "maxScore": 25.0,
+#  "itemUpperLimit": 3
+#}
 
 ### 7. 尝试添加同名指标点（应失败）
-POST localhost:8080/api/collegeadmin/indicatorpoints
-token: {{token}}
-Content-Type: application/json
-
-{
-  "majorCategoryId": 101,
-  "name": "论文发表(修改后)",
-  "description": "重复名称测试",
-  "maxScore": 10.0,
-  "itemUpperLimit": 1,
-  "parentId": {{rootPointId}}
-}
+#POST localhost:8080/api/collegeadmin/indicatorpoints
+#token: {{token}}
+#Content-Type: application/json
+#
+#{
+#  "majorCategoryId": 101,
+#  "name": "论文发表(修改后)",
+#  "description": "重复名称测试",
+#  "maxScore": 10.0,
+#  "itemUpperLimit": 1,
+#  "parentId": {{rootPointId}}
+#}
 
 ### 8. 删除指标点（有子节点时应失败）
 DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}
 token: {{token}}
 
-### 9. 先删除子节点再删除父节点
-DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
-token: {{token}}
-###
-DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}
-token: {{token}}
+#### 9. 先删除子节点再删除父节点
+#DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{childPointId}}
+#token: {{token}}
+####
+#DELETE localhost:8080/api/collegeadmin/indicatorpoints/{{rootPointId}}
+#token: {{token}}
 
-### 10. 验证删除结果
-GET localhost:8080/api/collegeadmin/indicatorpoints/tree?majorCategoryId=101
-token: {{token}}
+#### 10. 验证删除结果
+#GET localhost:8080/api/collegeadmin/indicatorpoints/tree?majorCategoryId=101
+#token: {{token}}
