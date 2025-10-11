@@ -28,7 +28,7 @@ public class MajorCategory {
 
     private Long collegeId;
 
-    private String calculationRule; // json字段可存为String或用json工具类映射
+    private String calculationRule; //在数据库中是json
 
     @ReadOnlyProperty
     private LocalDateTime createTime;

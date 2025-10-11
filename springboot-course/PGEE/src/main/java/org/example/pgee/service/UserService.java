@@ -243,7 +243,7 @@ public class UserService {
     // 删除辅导员
     // 删除辅导员
     @Transactional
-    public void deleteCounselor(String counselorIdStr, Long collegeId) {
+    public void removeCounselor(String counselorIdStr, Long collegeId) {
         try {
             // 将String类型的ID转换为Long
             Long counselorId = Long.parseLong(counselorIdStr);

@@ -24,7 +24,6 @@ public class IndicatorPointService {
 
     @Transactional
     public IndicatorPoint addIndicatorPoint(IndicatorPointDTO dto) {
-        //验证同级同名
         if (indicatorPointRepository.existsByParentIdAndName(dto.getParentId(), dto.getName())) {
             throw XException.builder()
                     .number(Code.ERROR)
@@ -32,7 +31,8 @@ public class IndicatorPointService {
                     .build();
         }
 
-        //自动设置层级
+        //根据父节点自动计算当前节点在树形结构中的层级深度
+        //当前节点的层级为父节点层级加1
         Integer level = dto.getParentId() == null ? 1 :
                 indicatorPointRepository.findById(dto.getParentId())
                         .map(p -> p.getLevel() + 1)
@@ -41,9 +41,7 @@ public class IndicatorPointService {
                                 .message("父节点不存在")
                                 .build());
 
-        //验证叶子节点逻辑
         if (Boolean.TRUE.equals(dto.getIsLeaf()) && dto.getParentId() != null) {
-            // 检查父节点是否存在且是否为叶子节点
             IndicatorPoint parent = indicatorPointRepository.findById(dto.getParentId())
                     .orElseThrow(() -> XException.builder()
                             .number(Code.ERROR)
@@ -58,26 +56,22 @@ public class IndicatorPointService {
             }
         }
 
-        //设置默认的叶子节点状态
+        //如果前端有传值就用，没有的话默认是叶子节点
         Boolean isLeaf = dto.getIsLeaf() != null ? dto.getIsLeaf() : true;
 
+        //构建指标点
         IndicatorPoint point = IndicatorPoint.builder()
                 .majorCategoryId(dto.getMajorCategoryId())
                 .name(dto.getName())
                 .level(level)
                 .description(dto.getDescription())
                 .maxScore(dto.getMaxScore())
-                .itemUpperLimit(dto.getItemUpperLimit())
+                .itemUpperLimit(dto.getItemUpperLimit())//申报上限
                 .parentId(dto.getParentId())
-                .isLeaf(isLeaf)  //使用传入的isLeaf值，默认为true
+                .isLeaf(isLeaf)
                 .build();
 
         IndicatorPoint saved = indicatorPointRepository.save(point);
-
-        //如果父节点存在且新节点不是叶子节点，更新父节点为非叶子节点
-        if (saved.getParentId() != null && Boolean.FALSE.equals(saved.getIsLeaf())) {
-            indicatorPointRepository.updateLeafStatus(saved.getParentId(), false);
-        }
 
         return saved;
     }

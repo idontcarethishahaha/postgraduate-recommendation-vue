@@ -85,7 +85,7 @@ public class AdminController {
 
     // 删除学院
     @DeleteMapping("admin/colleges/{collegeId}")
-    public ResultVO deleteCollege(@PathVariable String collegeId) {
+    public ResultVO removeCollege(@PathVariable String collegeId) {
         try {
             Long id = Long.parseLong(collegeId);
             collegeService.deleteCollege(id);
@@ -209,7 +209,7 @@ public class AdminController {
 
     // 删除辅导员
     @DeleteMapping("collegeadmin/counselors/{counselorId}")
-    public ResultVO deleteCounselor(@PathVariable String counselorId,
+    public ResultVO removeCounselor(@PathVariable String counselorId,
                                     HttpServletRequest request) {
         try {
             Long cid = (Long) request.getAttribute("cid");
@@ -218,7 +218,7 @@ public class AdminController {
             }
 
             //直接传递String类型的ID
-            userService.deleteCounselor(counselorId, cid);
+            userService.removeCounselor(counselorId, cid);
             return ResultVO.ok();
         } catch (Exception e) {
             throw XException.builder()
@@ -227,6 +227,5 @@ public class AdminController {
                     .build();
         }
     }
-
 }
 

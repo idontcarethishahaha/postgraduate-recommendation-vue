@@ -22,4 +22,5 @@ public class UserController {
         userService.updateUserPasswordById(uid,user.getPassword());
         return ResultVO.ok();
     }
+    /*为了防止水平越权，如用户修改他人的密码，有的信息不应由前端传入，需要从token拿*/
 }

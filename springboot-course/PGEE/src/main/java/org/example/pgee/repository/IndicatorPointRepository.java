@@ -16,7 +16,6 @@ public interface IndicatorPointRepository extends CrudRepository<IndicatorPoint,
     boolean existsByParentIdAndName(Long parentId, String name);
     boolean existsByParentId(Long parentId);
     @Modifying
-    @Query("UPDATE indicator_points SET is_leaf = :isLeaf WHERE id = :id")
+    @Query("update indicator_points set is_leaf = :isLeaf where id = :id")
     void updateLeafStatus(@Param("id") Long id, @Param("isLeaf") boolean isLeaf);
-
 }

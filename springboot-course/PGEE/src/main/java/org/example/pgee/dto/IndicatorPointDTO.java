@@ -16,7 +16,7 @@ public class IndicatorPointDTO {
     private String name;
     private String description;
     private BigDecimal maxScore;
-    private Integer itemUpperLimit;
+    private Integer itemUpperLimit;//限项
     private Long parentId;
     private Boolean isLeaf;
 }

@@ -82,28 +82,20 @@ create table if not exists `stu_score`(
 );
 
 /* 指标点表 */
-/* 指标点表 - 最小改动版 */
-CREATE TABLE IF NOT EXISTS `indicator_points`(
-    id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
-    major_category_id BIGINT UNSIGNED NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    level TINYINT UNSIGNED NOT NULL,
-    description TEXT,
-    max_score DECIMAL(4,2),
-    item_upper_limit INT UNSIGNED DEFAULT 999,
-    parent_id BIGINT UNSIGNED,
-    is_leaf TINYINT NOT NULL,
-
-    /* 只添加一个排序字段，其他保持不变 */
-    sort_order INT UNSIGNED DEFAULT 0,
-
-    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    INDEX(parent_id, is_leaf),
-    INDEX(major_category_id, level),
-    /* 添加排序索引 */
-    INDEX(major_category_id, parent_id, sort_order)
+create table if not exists `indicator_points`(
+    id bigint unsigned not null primary key,
+    major_category_id bigint unsigned not null,
+    name varchar(255) not null,
+    level tinyint unsigned not null,
+    description text,
+    max_score decimal(4,2),
+    item_upper_limit int unsigned default 999,
+    parent_id bigint unsigned,
+    is_leaf tinyint not null,
+    create_time datetime not null default current_timestamp,
+    update_time datetime not null default current_timestamp on update current_timestamp,
+    index(parent_id, is_leaf),
+    index(major_category_id, level)
 );
 
 /* 申报记录表 */

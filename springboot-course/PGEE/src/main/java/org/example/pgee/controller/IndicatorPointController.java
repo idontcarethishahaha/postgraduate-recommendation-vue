@@ -53,13 +53,13 @@ public class IndicatorPointController {
                                             HttpServletRequest request) {
         Long cid = (Long) request.getAttribute("cid");
 
-        // 使用字符串ID调用Service
+        //用字符串id调用Service
         List<IndicatorPointTreeDTO> tree = indicatorPointService.getIndicatorTree(Long.valueOf(majorCategoryId));
         List<Map<String, Object>> result = tree.stream()
                 .map(this::convertTreeToMap)
                 .collect(Collectors.toList());
 
-        //获取专业类别名称
+        //获取类别名
         String majorCategoryName = getCategoryNameByIdString(majorCategoryId, cid);
 
         Map<String, Object> response = new HashMap<>();
@@ -80,7 +80,7 @@ public class IndicatorPointController {
                 .orElse("未知类别");
     }
 
-    // 统一ID转换方法（处理大数字）
+    // id转换，防止精度丢失
     private Long parseId(String idStr) {
         try {
             if (idStr.contains("E") || idStr.contains("e")) {
@@ -95,7 +95,7 @@ public class IndicatorPointController {
         }
     }
 
-    // 实体转Map（ID转为String）
+    //实体转Map，id转换成string
     private Map<String, Object> convertToMap(IndicatorPoint point) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", point.getId().toString());
@@ -112,7 +112,7 @@ public class IndicatorPointController {
         return map;
     }
 
-    // 树形节点转换
+    //树形节点转换
     private Map<String, Object> convertTreeToMap(IndicatorPointTreeDTO node) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", node.getId().toString());
@@ -194,10 +194,11 @@ public class IndicatorPointController {
         return ResultVO.success(convertToMap(updated));
     }
 
+    //验证学院权限
     private void validateCollegePermission(Long majorCategoryId, Long collegeId) {
         if (collegeId == null) {
             throw XException.builder().code(Code.FORBIDDEN).build();
         }
-        //权限验证。。。
+        //权限验证逻辑
     }
 }

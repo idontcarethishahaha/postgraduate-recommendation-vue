@@ -27,5 +27,5 @@ public class IndicatorPointTreeDTO {
     private Boolean isLeaf;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private List<IndicatorPointTreeDTO> children; // 关键：嵌套子节点
+    private List<IndicatorPointTreeDTO> children;//子节点
 }
