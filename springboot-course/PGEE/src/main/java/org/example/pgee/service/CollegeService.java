@@ -264,7 +264,7 @@ public class CollegeService {
 
     // 删除专业
     @Transactional
-    public void deleteMajor(Long majorId, Long collegeId) {
+    public void removeMajor(Long majorId, Long collegeId) {
         // 查询专业是否存在且属于当前学院
         Major major = majorRepository.findByIdAndCollegeId(majorId, collegeId)
                 .orElseThrow(() -> XException.builder()
@@ -369,29 +369,29 @@ public class CollegeService {
         }
     }
 
-    // 辅导员：查看自己管理的类别
-    private List<MajorCategory> listCategoriesForCounselor(Long counselorId) {
-        CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
-                .orElseThrow(() -> XException.builder()
-                        .number(Code.ERROR)
-                        .message("该类别下已存在同名专业")
-                        .build());
-
-        return majorCategoryRepository.findById(counselorInfo.getMajorCategoryId())
-                .map(Collections::singletonList)
-                .orElse(Collections.emptyList());
-    }
-
-    // 超级管理员：查看所有类别
-    private List<MajorCategory> listCategoriesForAdmin(Long collegeId) {
-        if (collegeId != null) {
-            return majorCategoryRepository.findByCollegeId(collegeId);
-        } else {
-            List<MajorCategory> categories = new ArrayList<>();
-            majorCategoryRepository.findAll().forEach(categories::add);
-            return categories;
-        }
-    }
+//    // 辅导员：查看自己管理的类别
+//    private List<MajorCategory> listCategoriesForCounselor(Long counselorId) {
+//        CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
+//                .orElseThrow(() -> XException.builder()
+//                        .number(Code.ERROR)
+//                        .message("该类别下已存在同名专业")
+//                        .build());
+//
+//        return majorCategoryRepository.findById(counselorInfo.getMajorCategoryId())
+//                .map(Collections::singletonList)
+//                .orElse(Collections.emptyList());
+//    }
+//
+//    // 超级管理员：查看所有类别
+//    private List<MajorCategory> listCategoriesForAdmin(Long collegeId) {
+//        if (collegeId != null) {
+//            return majorCategoryRepository.findByCollegeId(collegeId);
+//        } else {
+//            List<MajorCategory> categories = new ArrayList<>();
+//            majorCategoryRepository.findAll().forEach(categories::add);
+//            return categories;
+//        }
+//    }
     //--------------------------------------------------------------------------------------------------------
 //注册学生
 // 获取所有学院

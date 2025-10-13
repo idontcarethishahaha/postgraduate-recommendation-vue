@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class IndicatorPointService {
     private final IndicatorPointRepository indicatorPointRepository;
 
+    //添加指标点
     @Transactional
     public IndicatorPoint addIndicatorPoint(IndicatorPointDTO dto) {
         if (indicatorPointRepository.existsByParentIdAndName(dto.getParentId(), dto.getName())) {
@@ -76,6 +77,7 @@ public class IndicatorPointService {
         return saved;
     }
 
+    //更新指标点
     @Transactional
     public IndicatorPoint updateIndicatorPoint(Long id, IndicatorPointDTO dto) {
         IndicatorPoint point = indicatorPointRepository.findById(id)
@@ -118,8 +120,9 @@ public class IndicatorPointService {
         return indicatorPointRepository.save(point);
     }
 
+
     @Transactional
-    public void deleteIndicatorPoint(Long id) {
+    public void removeIndicatorPoint(Long id) {
         IndicatorPoint point = indicatorPointRepository.findById(id)
                 .orElseThrow(() -> XException.builder()
                         .number(Code.ERROR)

@@ -141,13 +141,13 @@ public class CollegeController {
 
     // 删除专业
     @DeleteMapping("collegeadmin/majors/{mid}")
-    public ResultVO deleteMajor(@PathVariable Long mid, HttpServletRequest request) {
+    public ResultVO removeMajor(@PathVariable Long mid, HttpServletRequest request) {
         Long cid = (Long) request.getAttribute("cid");
         if (cid == null) {
             throw XException.builder().code(Code.FORBIDDEN).build();
         }
 
-        collegeService.deleteMajor(mid, cid);
+        collegeService.removeMajor(mid, cid);
         return ResultVO.ok();
     }
 

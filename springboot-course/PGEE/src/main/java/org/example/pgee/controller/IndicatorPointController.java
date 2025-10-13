@@ -173,12 +173,12 @@ public class IndicatorPointController {
     }
 
     @DeleteMapping("/{id}")
-    public ResultVO deleteIndicatorPoint(@PathVariable String id,
+    public ResultVO removeIndicatorPoint(@PathVariable String id,
                                          HttpServletRequest request) {
         Long cid = (Long) request.getAttribute("cid");
         Long pointId = parseId(id);
 
-        indicatorPointService.deleteIndicatorPoint(pointId);
+        indicatorPointService.removeIndicatorPoint(pointId);
         return ResultVO.ok();
     }
 

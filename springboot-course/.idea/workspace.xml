@@ -5,20 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d9e073e-8cd2-4c58-a346-a2b740e3222b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/AdminController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/component/JacksonConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/CollegeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/IndicatorPointController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/IndicatorPointController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/MajorCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dox/MajorCategory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointTreeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/dto/IndicatorPointTreeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/repository/IndicatorPointRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/CollegeService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/IndicatorPointService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/ApplicationVO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/java/org/example/pgee/vo/EvidenceVO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/schema.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-collegeadmins.html" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/main/resources/static/admin-collegeadmins.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" beforeDir="false" afterPath="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,126 +46,126 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "HTTP Request.admin | #1.executor": "Run",
-    "HTTP Request.admin | #4.executor": "Run",
-    "HTTP Request.admin | #5.executor": "Run",
-    "HTTP Request.admin | 9. 删除学院  最后面的一串数是学院id.executor": "Run",
-    "HTTP Request.admin | user对象不存在，请求成功但返回为空.executor": "Run",
-    "HTTP Request.admin | 创建一个学院级管理员  101是学院id#1.executor": "Run",
-    "HTTP Request.admin | 创建一个学院级管理员  101是学院id#2.executor": "Run",
-    "HTTP Request.admin | 创建一个学院级管理员  101是学院id.executor": "Run",
-    "HTTP Request.admin | 创建一个学院级管理员.executor": "Run",
-    "HTTP Request.admin | 添加学院.executor": "Run",
-    "HTTP Request.admin | 管理员重置密码  重置账号为 2023221547.executor": "Run",
-    "HTTP Request.admin | 管理员重置密码  重置账号为 666.executor": "Run",
-    "HTTP Request.admin | 超级管理员登录.executor": "Run",
-    "HTTP Request.college | 9. 删除学院  最后面的一串数是学院id.executor": "Run",
-    "HTTP Request.college | 9. 删除学院.executor": "Run",
-    "HTTP Request.college | 查询学院所有专业.executor": "Run",
-    "HTTP Request.college | 查询所有学院.executor": "Run",
-    "HTTP Request.collegeadmin | #5.executor": "Run",
-    "HTTP Request.collegeadmin | -----------------------------------------------.executor": "Run",
-    "HTTP Request.collegeadmin | 2. 统一接口测试 - 查询专业（根据角色返回不同数据）.executor": "Run",
-    "HTTP Request.collegeadmin | 3. 统一接口测试 - 查询类别（根据角色返回不同数据）.executor": "Run",
-    "HTTP Request.collegeadmin | 为学院添加类别  后续可以改成从token里获取学院id.executor": "Run",
-    "HTTP Request.collegeadmin | 为学院添加类别.executor": "Run",
-    "HTTP Request.collegeadmin | 修改专业.executor": "Run",
-    "HTTP Request.collegeadmin | 修改类别.executor": "Run",
-    "HTTP Request.collegeadmin | 删除专业.executor": "Run",
-    "HTTP Request.collegeadmin | 删除学院下的某个类别.executor": "Run",
-    "HTTP Request.collegeadmin | 后续可以改成从token里获取学院id  college_id.executor": "Run",
-    "HTTP Request.collegeadmin | 学院管理员登录.executor": "Run",
-    "HTTP Request.collegeadmin | 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token.executor": "Run",
-    "HTTP Request.collegeadmin | 所有用户都可以修改自己的密码.executor": "Run",
-    "HTTP Request.collegeadmin | 查询学院下的所有专业（学院管理员专用）.executor": "Run",
-    "HTTP Request.collegeadmin | 查询学院所有专业.executor": "Run",
-    "HTTP Request.collegeadmin | 查询学院辅导员列表.executor": "Run",
-    "HTTP Request.collegeadmin | 查询某类别下的专业.executor": "Run",
-    "HTTP Request.collegeadmin | 测试密码是否被成功修改.executor": "Run",
-    "HTTP Request.collegeadmin | 添加专业#1.executor": "Run",
-    "HTTP Request.collegeadmin | 添加专业#2.executor": "Run",
-    "HTTP Request.collegeadmin | 添加专业.executor": "Run",
-    "HTTP Request.counselor | 辅导员登录.executor": "Run",
-    "HTTP Request.indicatorpoints | #10.executor": "Run",
-    "HTTP Request.indicatorpoints | #15.executor": "Run",
-    "HTTP Request.indicatorpoints | 1. 学院管理员登录.executor": "Run",
-    "HTTP Request.indicatorpoints | 10. 尝试删除有子节点的指标点.executor": "Run",
-    "HTTP Request.indicatorpoints | 10. 验证删除结果.executor": "Run",
-    "HTTP Request.indicatorpoints | 11. 删除叶子节点指标点.executor": "Run",
-    "HTTP Request.indicatorpoints | 12. 测试同名指标点验证.executor": "Run",
-    "HTTP Request.indicatorpoints | 13. 测试在叶子节点下添加子节点.executor": "Run",
-    "HTTP Request.indicatorpoints | 14. 清理测试数据（删除所有测试创建的指标点）.executor": "Run",
-    "HTTP Request.indicatorpoints | 2. 添加一级指标点（无父节点）.executor": "Run",
-    "HTTP Request.indicatorpoints | 2. 获取专业类别列表.executor": "Run",
-    "HTTP Request.indicatorpoints | 3. 添加一级指标点.executor": "Run",
-    "HTTP Request.indicatorpoints | 3. 添加一级指标点（无父节点）.executor": "Run",
-    "HTTP Request.indicatorpoints | 3. 添加二级指标点（有父节点）.executor": "Run",
-    "HTTP Request.indicatorpoints | 4. 添加二级指标点.executor": "Run",
-    "HTTP Request.indicatorpoints | 4. 获取指标点树形结构.executor": "Run",
-    "HTTP Request.indicatorpoints | 5. 添加三级指标点（叶子节点）.executor": "Run",
-    "HTTP Request.indicatorpoints | 5. 获取指定节点的子节点.executor": "Run",
-    "HTTP Request.indicatorpoints | 6. 更新指标点信息.executor": "Run",
-    "HTTP Request.indicatorpoints | 6. 获取树形结构.executor": "Run",
-    "HTTP Request.indicatorpoints | 7. 尝试添加同名指标点（应失败）.executor": "Run",
-    "HTTP Request.indicatorpoints | 7. 根据类别获取指标点.executor": "Run",
-    "HTTP Request.indicatorpoints | 8. 删除指标点（有子节点时应失败）.executor": "Run",
-    "HTTP Request.indicatorpoints | 8. 获取子节点列表.executor": "Run",
-    "HTTP Request.indicatorpoints | 9. 先删除子节点再删除父节点.executor": "Run",
-    "HTTP Request.indicatorpoints | 9. 更新指标点信息.executor": "Run",
-    "HTTP Request.indicatorpoints | 链表式指标点测试.executor": "Run",
-    "HTTP Request.login | #1.executor": "Run",
-    "HTTP Request.login | failed.executor": "Run",
-    "HTTP Request.login | success.executor": "Run",
-    "HTTP Request.login | user.executor": "Run",
-    "HTTP Request.login | 学院管理员登录.executor": "Run",
-    "HTTP Request.login | 成功.executor": "Run",
-    "HTTP Request.login | 添加学院.executor": "Run",
-    "HTTP Request.login | 用户登录#1.executor": "Run",
-    "HTTP Request.login | 用户登录#2.executor": "Run",
-    "HTTP Request.login | 用户登录.executor": "Run",
-    "HTTP Request.login | 超级管理员登录.executor": "Run",
-    "HTTP Request.login | 错误.executor": "Run",
-    "HTTP Request.student | 学生登录.executor": "Run",
-    "HTTP Request.student | 注册页面.executor": "Run",
-    "HTTP Request.test | 测试Token解码.executor": "Run",
-    "HTTP Request.test | 添加学院.executor": "Run",
-    "HTTP Request.user | 用户可以修改自己的密码 (1).executor": "Run",
-    "HTTP Request.user | 用户可以修改自己的密码.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.BackendExamplesApplication.executor": "Run",
-    "Spring Boot.JdbcExamplesApplication.executor": "Run",
-    "Spring Boot.PgeeApplication.executor": "Run",
-    "Spring Boot.SpringmvcExamplesApplication.executor": "Run",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/code/springboot-course/springboot-course/PGEE/src/main/java/org/example/pgee",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "File.Encoding",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;HTTP Request.admin | #1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | #4.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | #5.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 9. 删除学院  最后面的一串数是学院id.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | user对象不存在，请求成功但返回为空.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 创建一个学院级管理员  101是学院id#1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 创建一个学院级管理员  101是学院id#2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 创建一个学院级管理员  101是学院id.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 创建一个学院级管理员.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 添加学院.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 管理员重置密码  重置账号为 2023221547.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 管理员重置密码  重置账号为 666.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.admin | 超级管理员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.college | 9. 删除学院  最后面的一串数是学院id.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.college | 9. 删除学院.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.college | 查询学院所有专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.college | 查询所有学院.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | #5.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | -----------------------------------------------.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 2. 统一接口测试 - 查询专业（根据角色返回不同数据）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 3. 统一接口测试 - 查询类别（根据角色返回不同数据）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 为学院添加类别  后续可以改成从token里获取学院id.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 为学院添加类别.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 修改专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 修改类别.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 删除专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 删除学院下的某个类别.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 后续可以改成从token里获取学院id  college_id.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 学院管理员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 所有用户都可以修改自己的密码  这个token用的是用户自己登录得到的token.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 所有用户都可以修改自己的密码.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 查询学院下的所有专业（学院管理员专用）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 查询学院所有专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 查询学院辅导员列表.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 查询某类别下的专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 测试密码是否被成功修改.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 添加专业#1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 添加专业#2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.collegeadmin | 添加专业.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.counselor | 辅导员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | #10.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | #15.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 1. 学院管理员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 10. 尝试删除有子节点的指标点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 10. 验证删除结果.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 11. 删除叶子节点指标点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 12. 测试同名指标点验证.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 13. 测试在叶子节点下添加子节点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 14. 清理测试数据（删除所有测试创建的指标点）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 2. 添加一级指标点（无父节点）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 2. 获取专业类别列表.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 3. 添加一级指标点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 3. 添加一级指标点（无父节点）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 3. 添加二级指标点（有父节点）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 4. 添加二级指标点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 4. 获取指标点树形结构.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 5. 添加三级指标点（叶子节点）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 5. 获取指定节点的子节点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 6. 更新指标点信息.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 6. 获取树形结构.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 7. 尝试添加同名指标点（应失败）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 7. 根据类别获取指标点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 8. 删除指标点（有子节点时应失败）.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 8. 获取子节点列表.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 9. 先删除子节点再删除父节点.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 9. 更新指标点信息.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.indicatorpoints | 链表式指标点测试.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | #1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | failed.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | success.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | user.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 学院管理员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 成功.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 添加学院.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 用户登录#1.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 用户登录#2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 用户登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 超级管理员登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.login | 错误.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.student | 学生登录.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.student | 注册页面.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.test | 测试Token解码.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.test | 添加学院.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.user | 用户可以修改自己的密码 (1).executor&quot;: &quot;Run&quot;,
+    &quot;HTTP Request.user | 用户可以修改自己的密码.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BackendExamplesApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.JdbcExamplesApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.PgeeApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.SpringmvcExamplesApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/code/springboot-course/springboot-course/PGEE/src/main/java/org/example/pgee&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\code\springboot-course\springboot-course\PGEE\src\main\java\org\example\pgee" />
@@ -202,12 +193,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.PgeeApplication">
-    <configuration name="collegeadmin | 查询某类别下的专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询某类别下的专业" index="9" runType="Run single request">
-      <method v="2" />
-    </configuration>
-    <configuration name="collegeadmin | 查询学院辅导员列表" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询学院辅导员列表" index="18" runType="Run single request">
-      <method v="2" />
-    </configuration>
     <configuration name="collegeadmin | 学院管理员登录" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="学院管理员登录" runType="Run single request">
       <method v="2" />
     </configuration>
@@ -224,6 +209,12 @@
       <method v="2" />
     </configuration>
     <configuration name="collegeadmin | 查询学院所有专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询学院所有专业" index="10" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="collegeadmin | 查询某类别下的专业" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询某类别下的专业" index="9" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="collegeadmin | 查询学院辅导员列表" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/collegeadmin.http" executionIdentifier="查询学院辅导员列表" index="18" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="indicatorpoints | 11. 删除叶子节点指标点" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/PGEE/src/test/http/indicatorpoints.http" executionIdentifier="11. 删除叶子节点指标点" index="11" runType="Run single request">
@@ -337,7 +328,9 @@
       <workItem from="1760058638036" duration="483000" />
       <workItem from="1760076531324" duration="2387000" />
       <workItem from="1760092362918" duration="13545000" />
-      <workItem from="1760144370452" duration="4507000" />
+      <workItem from="1760144370452" duration="8973000" />
+      <workItem from="1760230829075" duration="677000" />
+      <workItem from="1760345805587" duration="598000" />
     </task>
     <servers />
   </component>
