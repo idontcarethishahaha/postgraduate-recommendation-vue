@@ -582,7 +582,6 @@
                 <td>${formatDate(admin.createTime)}</td>
                 <td>
                     <div class="action-buttons">
-                        <!-- 关键：传递账号参数 -->
                         <button class="action-btn reset-btn" onclick="window.resetPassword('${adminId}', '${escapeHtml(admin.name)}', '${escapeHtml(admin.account)}')">重置密码</button>
                         <button class="action-btn remove-btn" onclick="window.removeAdmin('${adminId}', '${escapeHtml(admin.name)}')">移除</button>
                     </div>

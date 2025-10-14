@@ -16,7 +16,7 @@ public interface MajorCategoryRepository extends CrudRepository<MajorCategory, L
     //boolean existsByName(String name);
     boolean existsByCollegeIdAndName(Long collegeId, String name);
     Optional<MajorCategory> findById(Long id);
-    // 按学院ID查询所有类别
+    //按学院ID查询所有类别
     List<MajorCategory> findByCollegeId(Long collegeId);
 
 }

@@ -42,22 +42,22 @@ public class UserService {
         return userRepository.findByAccount(account);
     }
 
-    // 用户集合 - 返回包含String ID的用户列表
-    public List<User> listUsers(){
-        return userRepository.findAll();
-    }
+    //用户集合
+//    public List<User> listUsers(){
+//        return userRepository.findAll();
+//    }
 
-    // 根据用户ID查询辅导员信息
+    //根据用户ID查询辅导员信息
     public Optional<CounselorInfo> getCounselorInfo(Long userId) {
         return counselorInfoRepository.findByUserId(userId);
     }
 
-    // 根据用户ID查询学生信息
+    //根据用户ID查询学生信息
     public Optional<StudentInfo> getStudentInfo(Long userId) {
         return studentInfoRepository.findByUserId(userId);
     }
 
-    // 重置用户密码
+    //重置用户密码
     @Transactional
     public void updateUserPassword(String account) {
         User user = userRepository.findByAccount(account)
@@ -83,7 +83,7 @@ public class UserService {
     }
 
     //-----------------------------------------------------------------------------------
-    // 添加学院管理员
+    //添加学院管理员
     @Transactional
     public void addCollegeAdmin(Long collegeId, User user) {
         collegeRepository.findById(collegeId)
@@ -99,23 +99,23 @@ public class UserService {
                     .build();
         }
 
-        // 设置角色和学院
+        //设置角色和学院
         user.setRole(User.COLLEGE_ADMIN);
         user.setCollegeId(collegeId);
 
-        // 设置默认密码
+        //设置默认密码
         String password = user.getPassword() != null ? user.getPassword() : user.getAccount();
         user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
     }
 
-    // 获取学院管理员列表
+    //获取学院管理员列表
     public List<User> getCollegeAdmins(Long collegeId) {
         return userRepository.findByCollegeIdAndRole(collegeId, User.COLLEGE_ADMIN);
     }
 
-    // 移除学院管理员
+    //移除学院管理员
     @Transactional
     public void removeCollegeAdmin(Long collegeId, Long userId) {
         User user = userRepository.findById(userId)
@@ -134,7 +134,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    // 验证用户是否为指定学院的学院管理员
+    //验证用户是否为指定学院的学院管理员
     public void validateCollegeAdmin(Long collegeId, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> XException.builder()
@@ -151,28 +151,26 @@ public class UserService {
         }
     }
 
-    // 根据ID获取用户
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> XException.builder()
-                        .number(Code.ERROR)
-                        .message("用户不存在")
-                        .build());
-    }
+//    // 根据ID获取用户
+//    public User getUserById(Long userId) {
+//        return userRepository.findById(userId)
+//                .orElseThrow(() -> XException.builder()
+//                        .number(Code.ERROR)
+//                        .message("用户不存在")
+//                        .build());
+//    }
 
     //-----------------------------------------------------------------------------------
 
-    // 添加辅导员
+    //添加辅导员
     @Transactional
     public CounselorVO addCounselor(Long collegeId, CounselorAddDTO counselorAddDTO) {
-
-        // 使用String类型直接处理，避免Long精度问题
         String majorCategoryIdStr = counselorAddDTO.getMajorCategoryId();
 
         System.out.println("接收到的类别ID字符串: " + majorCategoryIdStr);
         System.out.println("学院ID: " + collegeId);
 
-        // 检查账号是否已存在
+        //检查账号是否已存在
         if(userRepository.existsByAccount(counselorAddDTO.getAccount())){
             throw XException.builder()
                     .number(Code.ERROR)
@@ -180,11 +178,9 @@ public class UserService {
                     .build();
         }
 
-        // 直接使用String类型的ID查询，避免精度转换问题
         List<MajorCategory> categories = majorCategoryRepository.findByCollegeId(collegeId);
         System.out.println("学院下的所有类别: " + categories.stream().map(c -> c.getId() + ":" + c.getName()).collect(Collectors.toList()));
 
-        // 查找匹配的类别
         MajorCategory category = null;
         for (MajorCategory cat : categories) {
             String categoryIdStr = cat.getId().toString();
@@ -205,7 +201,6 @@ public class UserService {
 
         System.out.println("找到匹配的类别: " + category.getName() + ", ID: " + category.getId());
 
-        // 创建用户
         User user = User.builder()
                 .name(counselorAddDTO.getName())
                 .account(counselorAddDTO.getAccount())
@@ -214,38 +209,35 @@ public class UserService {
                 .collegeId(collegeId)
                 .build();
 
-        //设置默认密码
+        //默认密码
         String password = counselorAddDTO.getPassword() != null ? counselorAddDTO.getPassword() : counselorAddDTO.getAccount();
         user.setPassword(passwordEncoder.encode(password));
 
         User savedUser = userRepository.save(user);
 
-        // 创建辅导员信息关联
+        //创建辅导员信息关联
         CounselorInfo counselorInfo = CounselorInfo.builder()
                 .userId(savedUser.getId())
-                .majorCategoryId(category.getId())  // 使用数据库中的Long类型ID
+                .majorCategoryId(category.getId())
                 .build();
 
         counselorInfoRepository.save(counselorInfo);
 
-        // 构建并返回CounselorVO
         return CounselorVO.builder()
                 .id(savedUser.getId().toString())
                 .name(savedUser.getName())
                 .account(savedUser.getAccount())
                 .tel(savedUser.getTel())
                 .majorCategoryName(category.getName())
-                .majorCategoryId(category.getId().toString())  // 转换为String
+                .majorCategoryId(category.getId().toString())
                 .createTime(savedUser.getCreateTime())
                 .build();
     }
 
-    // 删除辅导员
-    // 删除辅导员
+    //删除辅导员
     @Transactional
     public void removeCounselor(String counselorIdStr, Long collegeId) {
         try {
-            // 将String类型的ID转换为Long
             Long counselorId = Long.parseLong(counselorIdStr);
 
             User user = userRepository.findById(counselorId)
@@ -254,16 +246,13 @@ public class UserService {
                             .message("辅导员不存在")
                             .build());
 
-            // 验证辅导员属于当前学院
+            //验证辅导员属于当前学院
             if (!user.getCollegeId().equals(collegeId) || !User.COUNSELOR.equals(user.getRole())) {
                 throw XException.builder()
                         .code(Code.FORBIDDEN)
                         .build();
             }
-
-            // 删除辅导员信息记录
             counselorInfoRepository.deleteByUserId(counselorId);
-            // 删除用户记录
             userRepository.delete(user);
 
         } catch (NumberFormatException e) {
@@ -280,7 +269,7 @@ public class UserService {
     }
 
 
-    // 辅导员查询方法，返回完整信息
+    // 辅导员查询
     @Transactional(readOnly = true)
     public List<CounselorVO> getCounselorsWithCategory(Long collegeId) {
         try {
@@ -294,18 +283,18 @@ public class UserService {
             List<CounselorVO> result = new ArrayList<>();
 
             for (User user : counselorUsers) {
-                // 查询辅导员信息
+                //查询辅导员信息
                 CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(user.getId())
                         .orElse(CounselorInfo.builder().majorCategoryId(null).build());
 
-                // 查询专业类别信息
+                //查询专业类别信息
                 String categoryName = "未分配";
                 String majorCategoryIdStr = null;
                 if (counselorInfo.getMajorCategoryId() != null) {
                     Optional<MajorCategory> category = majorCategoryRepository.findById(counselorInfo.getMajorCategoryId());
                     if (category.isPresent()) {
                         categoryName = category.get().getName();
-                        majorCategoryIdStr = category.get().getId().toString(); // 转换为String
+                        majorCategoryIdStr = category.get().getId().toString();
                     }
                 }
 
@@ -329,24 +318,24 @@ public class UserService {
     //注册学生用的
     @Transactional
     public void registerStudent(StudentRegisterDTO registerDTO) {
-        // 检查账号（学号）是否已存在
+        //检查账号是否已存在
         if (userRepository.findByAccount(registerDTO.getAccount()).isPresent()) {
             throw XException.builder().number(Code.ERROR).message("账号已存在").build();
         }
 
-        // 创建用户
+        //创建用户
         User user = User.builder()
                 .name(registerDTO.getName())
-                .account(registerDTO.getAccount()) // 学号作为账号
+                .account(registerDTO.getAccount()) //学号作为账号
                 .tel(registerDTO.getTel())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
-                .role(User.STUDENT) // 使用常量
+                .role(User.STUDENT)
                 .collegeId(registerDTO.getCollegeId())
                 .build();
 
         User savedUser = userRepository.save(user);
 
-        // 创建学生信息关联
+        //创建学生信息关联
         StudentInfo studentInfo = StudentInfo.builder()
                 .userId(savedUser.getId())
                 .majorId(registerDTO.getMajorId())

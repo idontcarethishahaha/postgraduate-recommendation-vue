@@ -179,7 +179,7 @@ public class IndicatorPointService {
                 .updateTime(point.getUpdateTime())
                 .build();
 
-        // 递归构建子节点
+        //递归构建子节点
         List<IndicatorPoint> children = childrenMap.get(point.getId());
         if (children != null && !children.isEmpty()) {
             dto.setChildren(children.stream()

@@ -23,10 +23,10 @@ public class StudentService {
     private final UserRepository userRepository;
 
     //提交成绩
-    //只提交一次成绩，不可重复提交,可以修改
+    //只提交一次成绩，不重复提交,可以修改
     @Transactional
     public StuScoreVO submitScore(StuScoreDTO dto, Long userId) {
-        // 1. 校验学生是否存在
+        //学生是否存在
         validateStudentExists(userId);
 
         // 是否已有成绩记录（待审核/已认定都不允许重复提交）

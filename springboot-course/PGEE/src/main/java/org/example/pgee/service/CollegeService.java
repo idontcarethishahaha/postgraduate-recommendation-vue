@@ -262,10 +262,10 @@ public class CollegeService {
         majorRepository.save(major);
     }
 
-    // 删除专业
+    //删除专业
     @Transactional
     public void removeMajor(Long majorId, Long collegeId) {
-        // 查询专业是否存在且属于当前学院
+        //专业是否存在且属于当前学院
         Major major = majorRepository.findByIdAndCollegeId(majorId, collegeId)
                 .orElseThrow(() -> XException.builder()
                         .number(Code.ERROR)
@@ -277,9 +277,6 @@ public class CollegeService {
 
 
 
-    /**
-     * 根据角色查询专业列表
-     */
     public List<Major> listMajorsByRole(Long collegeId, Long majorCategoryId,
                                         Long userId, String role, Long collegeIdFromToken) {
         switch (role) {
@@ -298,14 +295,14 @@ public class CollegeService {
 
 
 
-    // 学生：查看所有专业（用于注册和浏览）
+    //学生，查看所有专业
     private List<Major> listAllMajorsForStudent() {
         List<Major> majors = new ArrayList<>();
         majorRepository.findAll().forEach(majors::add);
         return majors;
     }
 
-    // 辅导员：查看自己管理的类别下的专业
+    //辅导员，查看自己管理的类别下的专业
     private List<Major> listMajorsForCounselor(Long counselorId) {
         // 获取辅导员管理的类别ID
         CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
@@ -317,9 +314,9 @@ public class CollegeService {
         return majorRepository.findByMajorCategoryId(counselorInfo.getMajorCategoryId());
     }
 
-    // 学院管理员：查看自己学院的专业
+    //学院管理员，查看自己学院的专业
     private List<Major> listMajorsForCollegeAdmin(Long collegeId, Long majorCategoryId, Long userCollegeId) {
-        // 确保只能查看自己学院的数据
+        //只能查看自己学院的数据
         if (collegeId != null && !collegeId.equals(userCollegeId)) {
             throw XException.builder()
                     .number(Code.ERROR)
@@ -328,7 +325,6 @@ public class CollegeService {
         }
 
         if (majorCategoryId != null) {
-            // 验证类别属于当前学院
             MajorCategory category = majorCategoryRepository.findById(majorCategoryId)
                     .orElseThrow(() -> XException.builder()
                             .number(Code.ERROR)
@@ -341,16 +337,13 @@ public class CollegeService {
                         .message("无权限")
                         .build();
             }
-
-            // 按类别过滤
             return majorRepository.findByMajorCategoryId(majorCategoryId);
         } else {
-            // 查看整个学院
             return majorRepository.findByCollegeId(userCollegeId);
         }
     }
 
-    // 超级管理员：查看所有专业
+    //超级管理员，查看所有专业
     private List<Major> listMajorsForAdmin(Long collegeId, Long majorCategoryId) {
         if (collegeId != null && majorCategoryId != null) {
             // 按学院和类别过滤
@@ -362,36 +355,12 @@ public class CollegeService {
             // 按类别过滤
             return majorRepository.findByMajorCategoryId(majorCategoryId);
         } else {
-            // 查看所有
             List<Major> majors = new ArrayList<>();
             majorRepository.findAll().forEach(majors::add);
             return majors;
         }
     }
 
-//    // 辅导员：查看自己管理的类别
-//    private List<MajorCategory> listCategoriesForCounselor(Long counselorId) {
-//        CounselorInfo counselorInfo = counselorInfoRepository.findByUserId(counselorId)
-//                .orElseThrow(() -> XException.builder()
-//                        .number(Code.ERROR)
-//                        .message("该类别下已存在同名专业")
-//                        .build());
-//
-//        return majorCategoryRepository.findById(counselorInfo.getMajorCategoryId())
-//                .map(Collections::singletonList)
-//                .orElse(Collections.emptyList());
-//    }
-//
-//    // 超级管理员：查看所有类别
-//    private List<MajorCategory> listCategoriesForAdmin(Long collegeId) {
-//        if (collegeId != null) {
-//            return majorCategoryRepository.findByCollegeId(collegeId);
-//        } else {
-//            List<MajorCategory> categories = new ArrayList<>();
-//            majorCategoryRepository.findAll().forEach(categories::add);
-//            return categories;
-//        }
-//    }
     //--------------------------------------------------------------------------------------------------------
 //注册学生
 // 获取所有学院

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MajorCategoryAddDTO {
-    // 可以移除前端传递的学院id，完全由后端从token中获取
+    //移除前端传递的学院id，完全由后端从token中获取
     //private Long collegeId;
     private String name;
     private String calculationRule;

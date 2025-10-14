@@ -12,8 +12,6 @@ import java.util.Optional;
  */
 @Repository
 public interface StuScoreRepository extends CrudRepository<StuScore, Long> {
-     //根据ID查询成绩
     Optional<StuScore> findByUserId(@Param("userId") Long userId);
-
     boolean existsByUserId(Long userId);
 }

@@ -15,8 +15,8 @@ import org.example.pgee.exception.Code;
 @AllArgsConstructor
 public class ResultVO {
     private int code;
-    private String message;// 异常信息
-    private Object data;// 成功则返回200的业务码及数据
+    private String message;//异常信息
+    private Object data;//成功则返回200的业务码及数据
 
     public static final ResultVO EMPTY = ResultVO.builder()
             .code(200)
@@ -40,7 +40,7 @@ public class ResultVO {
                 .build();
     }
 
-    // 通用的不够了就显式声明
+    //通用的不够了就显式声明
     public static ResultVO error(int code, String message) {
         return ResultVO.builder()
                 .code(code)
