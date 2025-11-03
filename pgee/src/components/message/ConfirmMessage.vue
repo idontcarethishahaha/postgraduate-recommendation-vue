@@ -6,17 +6,13 @@ const props = defineProps<{
   close: () => void
 }>()
 
-//通过当前组件的根元素查找并卸载
 const handleClose = () => {
-  // 1. 先执行外部传入的 close 回调
   props.close()
 
-  // 2. 查找当前弹窗的根元素（.message-overlay）
   const overlayEl = document.querySelector('.message-overlay')
   if (overlayEl) {
-    // 3. 卸载组件并移除 DOM 元素
     render(null, overlayEl.parentElement!) //卸载父容器
-    overlayEl.remove() //删除遮罩层
+    overlayEl.remove()
   }
 }
 </script>

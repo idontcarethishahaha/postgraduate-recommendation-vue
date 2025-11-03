@@ -5,12 +5,12 @@ import { useUserStore } from '@/stores/UserStore'
 import { defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 
-// 获取当前用户角色和信息
+//获取当前用户角色和信息
 const role = CommonService.getRole()
 const userS = useUserStore().userS
 const router = useRouter()
 
-// 动态加载角色对应的导航组件
+//动态加载角色对应的导航组件
 const RoleNavComponent =
   role === ADMIN
     ? defineAsyncComponent(() => import('@/views/main/header/admin/IndexView.vue'))
@@ -22,7 +22,6 @@ const RoleNavComponent =
           ? defineAsyncComponent(() => import('@/views/main/header/student/IndexView.vue'))
           : null
 
-// 退出登录
 const handleLogout = () => {
   if (confirm('确定退出登录吗？')) {
     sessionStorage.clear()
@@ -33,15 +32,13 @@ const handleLogout = () => {
 
 <template>
   <div class="header">
-    <!-- 系统标题 -->
     <div class="logo">推免管理系统</div>
 
-    <!-- 角色专属导航（动态加载） -->
+    <!--动态加载角色对应导航-->
     <div class="role-nav">
       <component :is="RoleNavComponent" v-if="RoleNavComponent" />
     </div>
 
-    <!-- 用户信息和操作 -->
     <div class="user-ops">
       <span class="username">{{ userS?.name || '未登录' }}</span>
       <button class="setting-btn" @click="$router.push('/settings')">设置</button>

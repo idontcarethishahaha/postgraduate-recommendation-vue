@@ -1,64 +1,41 @@
-import axios from '@/axios'
-import type { ResultVO, User } from '@/types'
+import { baseUrl } from '@/config'
+import type { College, CollegeForm } from '@/types'
+import axios from 'axios'
 
-export class CollegeAdminService {
-  //获取学院管理员列表
-  static async getCollegeAdmins(collegeId: string): Promise<User[]> {
-    const response = await axios.get<ResultVO<User[]>>(`/admin/colleges/${collegeId}/collegeadmins`)
-    if (response.data.code === 200) {
-      return response.data.data || []
-    }
-    throw new Error(response.data.message || '加载管理员列表失败')
-  }
+export const CollegeService = {
+  // 删除：原 validateCollegeForm 方法（已移到 CollegesView.vue 组件内）
+  // 删除：原 initCollegeManagement 方法（已被 TanStack Query 替代）
 
-  //添加学院管理员
-  static async addCollegeAdmin(
-    collegeId: string,
-    adminData: {
-      name: string
-      account: string
-      tel?: string
-      password: string
-    }
-  ): Promise<void> {
-    const response = await axios.post<ResultVO<User>>(
-      `/admin/colleges/${collegeId}/collegeadmins`,
-      adminData
-    )
+  // 获取所有学院列表
+  async getColleges(): Promise<College[]> {
+    const response = await axios.get(`${baseUrl}/colleges`)
     if (response.data.code !== 200) {
-      throw new Error(response.data.message || '添加管理员失败')
+      throw new Error(response.data.message || '加载学院列表失败')
     }
-  }
+    return response.data.data
+  },
 
-  //重置用户密码
-  static async resetPassword(userAccount: string): Promise<void> {
-    const response = await axios.put<ResultVO<void>>(`/admin/users/${userAccount}/password`)
+  // 添加学院
+  async addCollege(form: CollegeForm): Promise<void> {
+    const response = await axios.post(`${baseUrl}/colleges`, form)
     if (response.data.code !== 200) {
-      throw new Error(response.data.message || '重置密码失败')
+      throw new Error(response.data.message || '添加学院失败')
     }
-  }
+  },
 
-  //移除学院管理员
-  static async removeCollegeAdmin(collegeId: string, userId: string): Promise<void> {
-    const response = await axios.delete<ResultVO<void>>(
-      `/admin/colleges/${collegeId}/collegeadmins/${userId}`
-    )
+  // 更新学院
+  async updateCollege(form: CollegeForm): Promise<void> {
+    const response = await axios.put(`${baseUrl}/colleges/${form.id}`, form)
     if (response.data.code !== 200) {
-      throw new Error(response.data.message || '移除管理员失败')
+      throw new Error(response.data.message || '更新学院失败')
     }
-  }
+  },
 
-  //验证管理员表单
-  static validateAdminForm(form: { name: string; account: string }): {
-    isValid: boolean
-    message: string
-  } {
-    if (!form.name?.trim()) {
-      return { isValid: false, message: '请输入姓名' }
+  // 删除学院
+  async deleteCollege(id: string): Promise<void> {
+    const response = await axios.delete(`${baseUrl}/colleges/${id}`)
+    if (response.data.code !== 200) {
+      throw new Error(response.data.message || '删除学院失败')
     }
-    if (!form.account?.trim()) {
-      return { isValid: false, message: '请输入账号' }
-    }
-    return { isValid: true, message: '' }
   }
 }

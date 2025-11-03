@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { CollegeService } from '@/services'
-import { onMounted } from 'vue'
 
-onMounted(() => {
-  CollegeService.initCollegeManagement()
-})
+// 直接调用异步方法，让组件成为异步组件，配合 Suspense
+await CollegeService.initCollegeManagement() // 确保该方法返回 Promise
 </script>
 
 <template>

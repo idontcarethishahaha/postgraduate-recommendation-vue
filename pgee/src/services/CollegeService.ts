@@ -8,8 +8,6 @@ import { CommonService } from './index'
 const collegeStore = useCollegeStore()
 
 export class CollegeService {
-  //初始化学院管理
-
   static async initCollegeManagement(): Promise<boolean> {
     console.log('组件挂载，开始检查登录状态...')
     if (!CommonService.checkAdminLogin()) {
@@ -23,20 +21,11 @@ export class CollegeService {
 
   //加载学院列表
   static async loadColleges(): Promise<void> {
-    try {
-      console.log('开始加载学院列表...')
-      const response = await axios.get<ResultVO<College[]>>('/admin/colleges')
-
-      if (response.data.code === 200) {
-        collegeStore.setColleges(response.data.data || [])
-        console.log('成功加载学院数量:', collegeStore.collegesS.value.length)
-      } else {
-        throw new Error(response.data.message || '加载学院列表失败')
-      }
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : '加载学院列表失败'
-      createMessageDialog(message)
-    }
+    console.log('开始加载学院列表...')
+    const response = await axios.get<ResultVO<College[]>>('/admin/colleges')
+    //Axios拦截器已确保code<300，无需额外判断
+    collegeStore.setColleges(response.data.data || [])
+    console.log('成功加载学院数量:', collegeStore.collegesS.value.length)
   }
 
   //添加学院
@@ -66,20 +55,11 @@ export class CollegeService {
     )
     if (!confirmed) return
 
-    try {
-      const response = await axios.delete<ResultVO<void>>(`/admin/colleges/${college.id}`)
-      if (response.data.code !== 200) {
-        throw new Error(response.data.message || '删除学院失败')
-      }
-      collegeStore.removeCollege(college.id)
-      createMessageDialog('删除成功')
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : '删除学院失败'
-      createMessageDialog(message)
-    }
+    await axios.delete<ResultVO<void>>(`/admin/colleges/${college.id}`)
+    collegeStore.removeCollege(college.id)
+    createMessageDialog('删除成功')
   }
 
-  //验证学院表单
   static validateCollegeForm(form: { name: string }): { isValid: boolean; message: string } {
     if (!form.name?.trim()) {
       return { isValid: false, message: '请输入学院名称' }

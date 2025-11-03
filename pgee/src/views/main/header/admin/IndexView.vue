@@ -18,7 +18,6 @@ const route = useRoute()
       @click="$router.push('/admin/college-admins')">
       管理员管理
     </button>
-    <!-- 可添加更多管理员专属菜单 -->
   </div>
 </template>
 

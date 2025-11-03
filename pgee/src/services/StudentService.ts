@@ -1,13 +1,13 @@
 import axios from '@/axios'
 import type { College, Major, RegisterRequest } from '@/types'
 
-// 定义表单验证结果的类型
+// 表单验证结果
 interface ValidationResult {
   isValid: boolean
   message: string
 }
 
-// 定义用于验证的表单数据类型
+// 用于验证的表单
 interface RegisterFormData {
   account?: string
   name?: string

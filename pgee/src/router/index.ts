@@ -1,7 +1,7 @@
 import * as consty from '@/services/Const'
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
-// 扩展路由元信息（角色权限）
+//角色权限
 declare module 'vue-router' {
   interface RouteMeta {
     roles?: string[]
@@ -9,7 +9,7 @@ declare module 'vue-router' {
 }
 
 const routes: RouteRecordRaw[] = [
-  // 公开路由
+  //公开路由
   {
     path: '/login',
     component: () => import('@/views/login/IndexView.vue')
@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/login/RegisterView.vue')
   },
 
-  // 系统主入口（所有角色的父路由）
+  //系统主入口（所有角色的父路由）
   {
     path: '/',
     component: () => import('@/views/main/IndexView.vue'),
@@ -35,8 +35,9 @@ const routes: RouteRecordRaw[] = [
             path: 'colleges',
             component: () => import('@/views/main/admin/CollegesView.vue')
           },
+          // 关键修改：添加动态路径参数 :collegeId 和 :collegeName
           {
-            path: 'college-admins',
+            path: 'college-admins/:collegeId/:collegeName',
             component: () => import('@/views/main/admin/CollegeAdminsView.vue')
           }
         ]
@@ -83,9 +84,9 @@ const router = createRouter({
   routes
 })
 
-// 路由守卫（权限校验）
+//权限校验
 router.beforeEach(to => {
-  // 无需权限的路由（登录/注册）
+  //无需权限的路由（登录/注册）
   console.log(to.fullPath)
 
   if (!to.meta.roles) {

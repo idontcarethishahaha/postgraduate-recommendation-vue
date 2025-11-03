@@ -1,87 +1,37 @@
-import axios from '@/axios'
-import router from '@/router'
-import { useUserStore } from '@/stores/UserStore'
-import type { LoginRequest, ResultVO, User } from '@/types'
-import { ADMIN, COLLEGE_ADMIN, COUNSELOR, ROUTE_PATHS, STUDENT } from './Const'
+import { useUserStore } from '@/stores/user'
+import type { LoginRequest, UserInfo } from '@/types'
+import axios from 'axios'
 
 export class UserService {
-  static async loginService(loginData: LoginRequest): Promise<void> {
-    const resp = await axios.post<ResultVO<User>>('/open/login', loginData)
-    const user = resp.data.data
-    const token = resp.headers.token
-    const role = resp.headers.role
+  // 登录请求：直接用 axios，不包 try/catch（异常由拦截器处理）
+  static async login(form: LoginRequest): Promise<UserInfo> {
+    const response = await axios.post('/user/login', form)
+    const { code, data, message } = response.data
 
-    if (!user || !token || !role) {
-      throw new Error('登录错误：缺少必要信息')
+    if (code !== 200) {
+      throw new Error(message || '登录失败') // 抛错让拦截器处理
     }
 
+    // Service 内部操作 Store，组件不直接碰 Store
     const userStore = useUserStore()
-    userStore.setUserSessionStorage(user, role)
+    userStore.setUser(data)
+    localStorage.setItem('token', data.token)
+    return data
+  }
 
-    // 存储 token 到 localStorage
-    localStorage.setItem('token', token)
-    sessionStorage.setItem('token', token)
-    sessionStorage.setItem('role', role)
-
-    console.log('登录成功:', { user, token, role })
-
-    // 根据角色跳转不同页面
-    let path = ''
-    switch (role) {
-      case ADMIN:
-        path = ROUTE_PATHS.ADMIN
-        break
-      case COLLEGE_ADMIN:
-        path = ROUTE_PATHS.COLLEGE_ADMIN
-        break
-      case COUNSELOR:
-        path = ROUTE_PATHS.COUNSELOR
-        break
-      case STUDENT:
-        path = ROUTE_PATHS.STUDENT
-        break
-      default:
-        throw new Error('未知用户角色: ' + role)
+  // 获取用户信息：直接用 axios，不包 try/catch
+  static async getUserInfo(): Promise<UserInfo> {
+    const response = await axios.get('/user/info')
+    if (response.data.code !== 200) {
+      throw new Error(response.data.message || '获取用户信息失败')
     }
-    console.log(path)
-
-    router.push(path)
+    return response.data.data
   }
 
-  //获取当前用户信息
-  static getCurrentUser(): User | null {
-    const userStore = useUserStore()
-    return userStore.getCurrentUser()
-  }
-
-  //获取当前用户角色
-  static getRole(): string | null {
-    const userStore = useUserStore()
-    return userStore.getCurrentRole()
-  }
-
-  //获取 token
-  static getToken(): string | null {
-    return localStorage.getItem('token')
-  }
-
-  //检查是否已登录
-  static isLoggedIn(): boolean {
-    const userStore = useUserStore()
-    return userStore.isLoggedIn()
-  }
-
-  static logout(): void {
+  // 登出：清理状态
+  static logout() {
     const userStore = useUserStore()
     userStore.clearUser()
-    router.push('/login')
-  }
-
-  //验证登录表单
-  static validateLoginForm(form: LoginRequest): { isValid: boolean; message: string } {
-    if (!form.account?.trim() || !form.password?.trim()) {
-      return { isValid: false, message: '请输入账号和密码' }
-    }
-    return { isValid: true, message: '' }
+    localStorage.removeItem('token')
   }
 }

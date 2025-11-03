@@ -2,7 +2,7 @@
 import { createMessageDialog } from '@/components/message'
 import { StudentService } from '@/services'
 import type { College, Major, RegisterRequest } from '@/types'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -38,30 +38,22 @@ watch(selectedMajorId, newMajorId => {
   form.majorId = newMajorId || ''
 })
 
+// 加载学院列表
 const loadColleges = async () => {
-  try {
-    colleges.value = await StudentService.getColleges()
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : '加载学院列表失败'
-    createMessageDialog(message)
-  }
+  colleges.value = await StudentService.getColleges()
 }
 
+// 加载专业列表
 const loadMajors = async (collegeId: string) => {
-  try {
-    majors.value = await StudentService.getMajorsByCollege(collegeId)
-    selectedMajorId.value = ''
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : '加载专业列表失败'
-    createMessageDialog(message)
-    majors.value = []
-  }
+  majors.value = await StudentService.getMajorsByCollege(collegeId)
+  selectedMajorId.value = ''
 }
 
 const handleRegister = async () => {
   const validation = StudentService.validateRegisterForm(form)
   if (!validation.isValid) {
     createMessageDialog(validation.message)
+    loading.value = false
     return
   }
 
@@ -69,30 +61,26 @@ const handleRegister = async () => {
   successMessage.value = ''
   loading.value = true
 
-  try {
-    await StudentService.register({
-      name: form.name.trim(),
-      account: form.account.trim(),
-      tel: form.tel.trim(),
-      password: form.password,
-      collegeId: form.collegeId,
-      majorId: form.majorId
+  await StudentService.register({
+    name: form.name.trim(),
+    account: form.account.trim(),
+    tel: form.tel.trim(),
+    password: form.password,
+    collegeId: form.collegeId,
+    majorId: form.majorId
+  })
+    .then(() => {
+      successMessage.value = '注册成功!进入登录页面...'
+      setTimeout(() => {
+        router.push('/login')
+      }, 2000)
     })
-
-    successMessage.value = '注册成功!进入登录页面...'
-    setTimeout(() => {
-      router.push('/login')
-    }, 2000)
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : '注册失败'
-    createMessageDialog(message)
-  } finally {
-    loading.value = false
-  }
+    .finally(() => {
+      loading.value = false
+    })
 }
-
-onMounted(() => {
-  loadColleges()
+loadColleges().then(() => {
+  console.log('学院数据加载完成')
 })
 </script>
 

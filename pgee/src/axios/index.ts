@@ -5,10 +5,8 @@ axios.defaults.baseURL = '/api/'
 
 //axios请求拦截器
 axios.interceptors.request.use(req => {
-  //将token保存到localStorage的操作写在LoginView.vue里
-  //从localStorage读取token
-  //localStorage持久化，页面关闭后token仍然存在
-  const auth = localStorage.getItem('token')
+  //从sessionStorage读取token
+  const auth = sessionStorage.getItem('token')
   if (auth && req.headers) {
     req.headers.token = auth //添加到请求头
     //通过拦截器自动添加到每个请求
