@@ -1,13 +1,19 @@
 import { createMessageDialog } from '@/components/message'
-import 'element-plus/dist/index.css'
+import queryClient from '@/views/vuequery/index.ts'
+import { VueQueryPlugin } from '@tanstack/vue-query'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+
 const app = createApp(App)
 
+app.use(ElementPlus, { locale: zhCn })
+app.use(VueQueryPlugin, { queryClient })
 app.use(router)
-
 app.mount('#app')
 
 app.config.errorHandler = err => {

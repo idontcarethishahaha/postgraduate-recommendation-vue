@@ -1,3 +1,65 @@
+<template>
+  <div class="college-page">
+    <div class="toolbar">
+      <el-button type="primary" @click="showAddCollegeModal" class="add-btn">添加学院</el-button>
+    </div>
+
+    <div class="college-list">
+      <el-table
+        :data="colleges"
+        border
+        stripe
+        style="width: 100%"
+        :header-cell-style="{ background: '#f5f7fa' }">
+        <el-table-column label="学院名称" prop="name" />
+        <el-table-column label="创建时间" prop="createTime">
+          <template #default="scope">
+            {{ formatDate(scope.row.createTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="更新时间" prop="updateTime">
+          <template #default="scope">
+            {{ formatDate(scope.row.updateTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="280">
+          <template #default="scope">
+            <el-button type="warning" text @click="editCollege(scope.row)" class="edit-btn">
+              编辑
+            </el-button>
+            <el-button type="success" text @click="manageAdmins(scope.row)" class="manage-btn">
+              管理管理员
+            </el-button>
+            <el-button type="danger" text @click="removeCollege(scope.row)" class="delete-btn">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <el-dialog
+      v-model="showModal"
+      :title="isEditing ? '编辑学院' : '添加学院'"
+      width="400px"
+      destroy-on-close>
+      <el-form :model="collegeForm" label-width="0px" class="modal-form">
+        <el-form-item>
+          <el-input
+            v-model="collegeForm.name"
+            type="text"
+            placeholder="请输入学院名称"
+            class="form-input" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="closeModal" class="cancel-btn">取消</el-button>
+        <el-button type="primary" @click="saveCollege" class="save-btn">保存</el-button>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { createMessageDialog } from '@/components/message'
 import { CollegeService } from '@/services'
@@ -6,6 +68,16 @@ import { useCollegeStore } from '@/stores/CollegeStore'
 import type { College } from '@/types'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+// 导入Element Plus组件
+import {
+  ElButton,
+  ElDialog,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElTable,
+  ElTableColumn
+} from 'element-plus'
 
 const router = useRouter()
 const collegeStore = useCollegeStore()
@@ -68,59 +140,6 @@ const manageAdmins = (college: College) => {
 CollegeService.initCollegeManagement()
 </script>
 
-<template>
-  <div class="college-page">
-    <div class="toolbar">
-      <button @click="showAddCollegeModal" class="add-btn">添加学院</button>
-    </div>
-
-    <div class="college-list">
-      <table class="college-table">
-        <thead>
-          <tr>
-            <th>学院名称</th>
-            <th>创建时间</th>
-            <th>更新时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="college of colleges" :key="college.id">
-            <td>{{ college.name }}</td>
-            <td>{{ formatDate(college.createTime) }}</td>
-            <td>{{ formatDate(college.updateTime) }}</td>
-            <td class="actions">
-              <button @click="editCollege(college)" class="edit-btn">编辑</button>
-              <button @click="manageAdmins(college)" class="manage-btn">管理管理员</button>
-              <button @click="removeCollege(college)" class="delete-btn">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div v-if="showModal" class="modal-overlay">
-      <div class="modal">
-        <div class="modal-header">
-          <h3>{{ isEditing ? '编辑学院' : '添加学院' }}</h3>
-          <button @click="closeModal" class="close-btn">×</button>
-        </div>
-        <div class="modal-body">
-          <input
-            v-model="collegeForm.name"
-            type="text"
-            placeholder="请输入学院名称"
-            class="form-input" />
-        </div>
-        <div class="modal-footer">
-          <button @click="closeModal" class="cancel-btn">取消</button>
-          <button @click="saveCollege" class="save-btn">保存</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style scoped>
 .toolbar {
   margin-bottom: 1rem;
@@ -133,16 +152,7 @@ CollegeService.initCollegeManagement()
   border-radius: 4px;
   cursor: pointer;
 }
-.college-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.college-table th,
-.college-table td {
-  padding: 0.8rem;
-  border: 1px solid #e8e8e8;
-  text-align: left;
-}
+
 .actions button {
   margin-right: 0.5rem;
   padding: 0.3rem 0.6rem;
@@ -151,45 +161,16 @@ CollegeService.initCollegeManagement()
   cursor: pointer;
 }
 .edit-btn {
-  background: #faad14;
-  color: white;
+  color: #faad14;
 }
 .manage-btn {
-  background: #52c41a;
-  color: white;
+  color: #52c41a;
 }
 .delete-btn {
-  background: #ff4d4f;
-  color: white;
+  color: #ff4d4f;
 }
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  width: 400px;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.close-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
+.modal-form {
+  width: 100%;
 }
 .form-input {
   width: 100%;
@@ -197,12 +178,6 @@ CollegeService.initCollegeManagement()
   margin-bottom: 1rem;
   border: 1px solid #e8e8e8;
   border-radius: 4px;
-}
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
 }
 .cancel-btn {
   padding: 0.5rem 1rem;

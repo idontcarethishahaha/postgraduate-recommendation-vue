@@ -1,9 +1,89 @@
+<template>
+  <div class="register-page">
+    <div class="register-header">
+      <h1>学生注册</h1>
+    </div>
+
+    <el-alert v-if="errorMessage" :message="errorMessage" type="error" closable class="alert-box" />
+    <el-alert
+      v-if="successMessage"
+      :message="successMessage"
+      type="success"
+      closable
+      class="alert-box" />
+
+    <el-form
+      @submit.prevent="handleRegister"
+      :model="form"
+      label-width="80px"
+      class="register-form">
+      <el-form-item label="学号:" prop="account" required>
+        <el-input v-model="form.account" type="text" placeholder="请输入学号" clearable />
+      </el-form-item>
+
+      <el-form-item label="姓名:" prop="name" required>
+        <el-input v-model="form.name" type="text" placeholder="请输入姓名" clearable />
+      </el-form-item>
+
+      <el-form-item label="电话:" prop="tel" required>
+        <el-input v-model="form.tel" type="tel" placeholder="请输入电话" clearable />
+      </el-form-item>
+
+      <el-form-item label="学院:" prop="collegeId" required>
+        <el-select v-model="selectedCollegeId" placeholder="请选择学院" clearable>
+          <el-option
+            v-for="college of colleges"
+            :key="college.id"
+            :label="college.name"
+            :value="college.id" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="专业:" prop="majorId" required>
+        <el-select
+          v-model="selectedMajorId"
+          :placeholder="
+            !selectedCollegeId
+              ? '请先选择学院'
+              : majors.length === 0
+                ? '该学院暂无专业'
+                : '请选择专业'
+          "
+          :disabled="!selectedCollegeId || majors.length === 0"
+          clearable>
+          <el-option
+            v-for="major of majors"
+            :key="major.id"
+            :label="major.name"
+            :value="major.id" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="密码:" prop="password" required>
+        <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password />
+      </el-form-item>
+
+      <el-form-item class="register-btn-group">
+        <el-button type="primary" native-type="submit" :loading="loading" class="register-btn">
+          {{ loading ? '注册中...' : '注册' }}
+        </el-button>
+      </el-form-item>
+    </el-form>
+
+    <div class="login-link">
+      <el-button type="text" @click="$router.push('/login')">已有账号？立即登录</el-button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { createMessageDialog } from '@/components/message'
 import { StudentService } from '@/services'
 import type { College, Major, RegisterRequest } from '@/types'
 import { reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+// 导入Element Plus组件
+import { ElAlert, ElButton, ElForm, ElFormItem, ElInput, ElOption, ElSelect } from 'element-plus'
 
 const router = useRouter()
 const loading = ref(false)
@@ -84,87 +164,45 @@ loadColleges().then(() => {
 })
 </script>
 
-<template>
-  <div>
-    <div>
-      <h1>学生注册</h1>
-    </div>
+<style scoped>
+.register-page {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
 
-    <div v-if="errorMessage">
-      {{ errorMessage }}
-    </div>
+.register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
 
-    <div v-if="successMessage">
-      {{ successMessage }}
-    </div>
+.register-header h1 {
+  color: #1890ff;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
 
-    <form @submit.prevent="handleRegister">
-      <div>
-        <label for="account">学号:</label>
-        <input v-model="form.account" type="text" id="account" placeholder="请输入学号" required />
-      </div>
+.alert-box {
+  margin-bottom: 20px;
+}
 
-      <div>
-        <label for="name">姓名:</label>
-        <input v-model="form.name" type="text" id="name" placeholder="请输入姓名" required />
-      </div>
+.register-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
 
-      <div>
-        <label for="tel">电话:</label>
-        <input v-model="form.tel" type="tel" id="tel" placeholder="请输入电话" required />
-      </div>
+.register-btn-group {
+  margin-top: 10px;
+}
 
-      <div>
-        <label for="collegeSelect">学院:</label>
-        <select v-model="selectedCollegeId" id="collegeSelect" required>
-          <option value="">请选择学院</option>
-          <option v-for="college of colleges" :key="college.id" :value="college.id">
-            {{ college.name }}
-          </option>
-        </select>
-      </div>
+.register-btn {
+  width: 100%;
+}
 
-      <div>
-        <label for="majorSelect">专业:</label>
-        <select
-          v-model="selectedMajorId"
-          id="majorSelect"
-          required
-          :disabled="!selectedCollegeId || majors.length === 0">
-          <option value="">
-            {{
-              !selectedCollegeId
-                ? '请先选择学院'
-                : majors.length === 0
-                  ? '该学院暂无专业'
-                  : '请选择专业'
-            }}
-          </option>
-          <option v-for="major of majors" :key="major.id" :value="major.id">
-            {{ major.name }}
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label for="password">密码:</label>
-        <input
-          v-model="form.password"
-          type="password"
-          id="password"
-          placeholder="请输入密码"
-          required />
-      </div>
-
-      <button type="submit" :disabled="loading">
-        {{ loading ? '注册中...' : '注册' }}
-      </button>
-    </form>
-
-    <div>
-      <router-link to="/login">已有账号？立即登录</router-link>
-    </div>
-  </div>
-</template>
-
-<style scoped></style>
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+}
+</style>

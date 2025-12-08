@@ -41,7 +41,7 @@ const handleLogout = () => {
 
     <div class="user-ops">
       <span class="username">{{ userS?.name || '未登录' }}</span>
-      <button class="setting-btn" @click="$router.push('/settings')">设置</button>
+      <!--<button class="setting-btn" @click="$router.push('/settings')">设置</button>-->
       <button class="logout-btn" @click="handleLogout">退出</button>
     </div>
   </div>
