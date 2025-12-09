@@ -41,9 +41,8 @@
 import { createMessageDialog } from '@/components/message'
 import { UserService } from '@/services'
 import type { LoginRequest } from '@/types'
-import { ref } from 'vue'
-// 导入Element Plus组件
 import { ElButton, ElForm, ElFormItem, ElInput } from 'element-plus'
+import { ref } from 'vue'
 
 const loading = ref(false)
 const accountInput = ref<HTMLInputElement>()

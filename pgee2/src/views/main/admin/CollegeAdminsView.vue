@@ -114,9 +114,6 @@ import { createMessageDialog } from '@/components/message'
 import { CollegeAdminService } from '@/services'
 import { formatDate } from '@/services/FormatUtils'
 import type { User } from '@/types'
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-// 导入Element Plus组件
 import {
   ElBreadcrumb,
   ElBreadcrumbItem,
@@ -126,13 +123,13 @@ import {
   ElForm,
   ElFormItem,
   ElInput,
+  ElMessageBox,
   ElTable,
   ElTableColumn
 } from 'element-plus'
-// 导入ElMessageBox替换原生confirm
-import { ElMessageBox } from 'element-plus'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
-// 保留你所有原始逻辑，一行不改
 const router = useRouter()
 const route = useRoute()
 
@@ -164,13 +161,12 @@ const filteredAdmins = computed(() => {
 
 const adminCount = computed(() => admins.value.length)
 
-// 添加管理员弹窗
+// 添加管理员
 const showAddAdminModal = () => {
   adminForm.value = { name: '', account: '', tel: '', password: '' }
   showModal.value = true
 }
 
-// 关闭弹窗
 const closeModal = () => {
   showModal.value = false
 }
@@ -202,8 +198,6 @@ const addAdmin = async () => {
 
 // 重置密码
 const resetPassword = async (admin: User) => {
-  // 保留原生confirm，也可替换为下面的ElMessageBox（二选一）
-  // if (!confirm(`确定要重置管理员 "${admin.name}" 的密码吗？密码将重置为默认值。`)) {
   if (
     !(await ElMessageBox.confirm(
       `确定要重置管理员 "${admin.name}" 的密码吗？密码将重置为默认值。`,
@@ -224,8 +218,6 @@ const resetPassword = async (admin: User) => {
 
 // 移除管理员
 const removeAdmin = async (admin: User) => {
-  // 保留原生confirm，也可替换为下面的ElMessageBox（二选一）
-  // if (!confirm(`确定要移除管理员 "${admin.name}" 吗？此操作不可恢复！`)) {
   if (
     !(await ElMessageBox.confirm(
       `确定要移除管理员 "${admin.name}" 吗？此操作不可恢复！`,

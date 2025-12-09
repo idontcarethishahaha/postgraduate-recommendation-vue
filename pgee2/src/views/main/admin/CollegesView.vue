@@ -66,9 +66,6 @@ import { CollegeService } from '@/services'
 import { formatDate } from '@/services/FormatUtils'
 import { useCollegeStore } from '@/stores/CollegeStore'
 import type { College } from '@/types'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-// 导入Element Plus组件
 import {
   ElButton,
   ElDialog,
@@ -78,6 +75,8 @@ import {
   ElTable,
   ElTableColumn
 } from 'element-plus'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const collegeStore = useCollegeStore()
@@ -101,7 +100,6 @@ const editCollege = (college: College) => {
   showModal.value = true
 }
 
-// 关闭弹窗
 const closeModal = () => {
   showModal.value = false
 }

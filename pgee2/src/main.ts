@@ -1,5 +1,5 @@
 import { createMessageDialog } from '@/components/message'
-import queryClient from '@/views/vuequery/index.ts'
+import queryClient from '@/vuequery/index.ts'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { createApp } from 'vue'
 import App from './App.vue'
