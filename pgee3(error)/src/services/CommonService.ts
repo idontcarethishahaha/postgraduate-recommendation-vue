@@ -2,6 +2,8 @@ import axios from '@/axios'
 import router from '@/router'
 import { useUserStore } from '@/stores/UserStore'
 import { ADMIN } from './Const'
+//import { querycachename } from '@/vuequery/Const'
+//import { useQuery } from '@tanstack/vue-query'
 
 const userStore = useUserStore()
 

@@ -66,29 +66,37 @@ axios.interceptors.response.use(async resp => {
   return resp
 })
 
-export const useGet = async <T>(url: string): Promise<T> => {
+// 1. 修改请求工具的返回值，返回完整的 ResultVO<T>
+export const useGet = async <T>(url: string): Promise<ResultVO<T>> => {
   const resp = await axios.get<ResultVO<T>>(url)
-  return resp.data.data
+  return resp.data // 返回完整的 { code, message, data }
 }
 
-export const usePost = async <T>(url: string, data: unknown): Promise<T> => {
+export const usePost = async <T>(url: string, data: unknown): Promise<ResultVO<T>> => {
   const resp = await axios.post<ResultVO<T>>(url, data)
-  return resp.data.data
+  return resp.data // 返回完整的 ResultVO
 }
-
-export const usePut = async <T>(url: string): Promise<T> => {
+/*
+export const usePut = async <T>(url: string): Promise<ResultVO<T>> => {
   const resp = await axios.put<ResultVO<T>>(url)
-  return resp.data.data
+  return resp.data
+}
+*/
+
+//添加 data 参数
+export const usePut = async <T>(url: string, data?: unknown): Promise<ResultVO<T>> => {
+  const resp = await axios.put<ResultVO<T>>(url, data) // 传递 data 给 axios.put
+  return resp.data
 }
 
-export const usePatch = async <T>(url: string, data: unknown): Promise<T> => {
+export const usePatch = async <T>(url: string, data: unknown): Promise<ResultVO<T>> => {
   const resp = await axios.patch<ResultVO<T>>(url, data)
-  return resp.data.data
+  return resp.data
 }
 
-export const useDelete = async <T>(url: string): Promise<T> => {
+export const useDelete = async <T>(url: string): Promise<ResultVO<T>> => {
   const resp = await axios.delete<ResultVO<T>>(url)
-  return resp.data.data
+  return resp.data
 }
 
 export default axios

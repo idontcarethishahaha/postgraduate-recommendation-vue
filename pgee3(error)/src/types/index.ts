@@ -14,7 +14,7 @@ export interface UserInfo {
 export const login = (data: LoginRequest) => {
   return usePost<UserInfo>('/open/login', data)
 }
-
+/*
 // 后端返回的统一响应格式
 export interface ResultVO<T = unknown> {
   code: number
@@ -22,7 +22,7 @@ export interface ResultVO<T = unknown> {
   message: string
   data: T
 }
-
+*/
 //通用响应
 export interface ApiResponse<T = unknown> {
   success: boolean
@@ -135,4 +135,10 @@ export interface AddCollegeAdminRequest {
   account: string
   tel?: string
   password?: string
+}
+
+export interface ResultVO<T> {
+  code: number // 确保 code 是 number 类型（与后端一致，如 200/400）
+  message: string // 错误信息字段
+  data: T // 业务数据（泛型参数）
 }

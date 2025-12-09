@@ -1,5 +1,7 @@
 import axios from '@/axios'
 import type { College, Major, RegisterRequest } from '@/types'
+//import { querycachename } from '@/vuequery/Const'
+//import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
 // 表单验证结果
 interface ValidationResult {

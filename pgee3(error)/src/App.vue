@@ -2,6 +2,7 @@
   <suspense>
     <template #default>
       <router-view />
+      <!--<RouterView />-->
     </template>
   </suspense>
 </template>
