@@ -61,7 +61,6 @@ export class CommonService {
   }
 
   //退出登录
-
   static logout(): void {
     localStorage.removeItem('token')
     localStorage.removeItem('role')

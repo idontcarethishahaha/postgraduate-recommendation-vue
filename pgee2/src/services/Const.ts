@@ -7,6 +7,5 @@ export const ROUTE_PATHS = {
   ADMIN: '/admin',
   COLLEGE_ADMIN: '/collegeadmin',
   COUNSELOR: '/counselor',
-  STUDENT: '/student',
-  SETTINGS: '/settings'
+  STUDENT: '/student'
 }

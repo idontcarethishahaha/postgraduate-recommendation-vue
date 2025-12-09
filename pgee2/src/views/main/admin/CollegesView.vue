@@ -100,6 +100,7 @@ const editCollege = (college: College) => {
   showModal.value = true
 }
 
+// 关闭弹窗
 const closeModal = () => {
   showModal.value = false
 }

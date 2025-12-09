@@ -80,10 +80,9 @@
 import { createMessageDialog } from '@/components/message'
 import { StudentService } from '@/services'
 import type { College, Major, RegisterRequest } from '@/types'
+import { ElAlert, ElButton, ElForm, ElFormItem, ElInput, ElOption, ElSelect } from 'element-plus'
 import { reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-// 导入Element Plus组件
-import { ElAlert, ElButton, ElForm, ElFormItem, ElInput, ElOption, ElSelect } from 'element-plus'
 
 const router = useRouter()
 const loading = ref(false)

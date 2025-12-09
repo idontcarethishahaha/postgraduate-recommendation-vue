@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/login/RegisterView.vue')
   },
 
-  //系统主入口（所有角色的父路由）
+  //系统主入口
   {
     path: '/',
     component: () => import('@/views/main/IndexView.vue'),
@@ -35,7 +35,6 @@ const routes: RouteRecordRaw[] = [
             path: 'colleges',
             component: () => import('@/views/main/admin/CollegesView.vue')
           },
-          // 关键修改：添加动态路径参数 :collegeId 和 :collegeName
           {
             path: 'college-admins/:collegeId/:collegeName',
             component: () => import('@/views/main/admin/CollegeAdminsView.vue')
@@ -63,20 +62,8 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/main/student/IndexView.vue'),
         meta: { roles: [consty.STUDENT] }
       }
-
-      // 公共设置页
-      /* {
-        path: 'settings',
-        component: () => import('@/views/main/UserSettingView.vue')
-      }*/
     ]
   }
-
-  // 404路由
-  // {
-  //   path: '/:pathMatch(.*)*',
-  //   redirect: '/login'
-  // }
 ]
 
 const router = createRouter({
