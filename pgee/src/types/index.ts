@@ -146,3 +146,36 @@ export interface Major {
   createTime?: string
   updateTime?: string
 }
+
+// 计算规则
+export interface CalculationRule {
+  id: string
+  ruleName: string //规则
+  weight: number //权重
+}
+
+//数据库存储用：规则名-权重键值对（最终存库是json格式）
+export interface CalculationRuleStorage {
+  [ruleName: string]: number //{"规则1":80, "规则2":20}
+}
+
+// 专业类别
+export interface MajorCategory {
+  id: string
+  name: string
+  collegeId: string
+  calculationRule: CalculationRuleStorage //存库格式：{规则名:权重}
+  createTime?: string
+  updateTime?: string
+}
+
+// 添加/更新请求参数
+export interface AddMajorCategoryRequest {
+  name: string
+  calculationRule: CalculationRuleStorage
+}
+
+export interface UpdateMajorCategoryRequest {
+  name: string
+  calculationRule: CalculationRuleStorage
+}
