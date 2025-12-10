@@ -64,7 +64,6 @@
       <p>点击"添加专业类别"按钮来添加</p>
     </div>
 
-    <!-- 添加/修改类别模态框 -->
     <el-dialog
       v-model="modalVisible"
       :title="isEdit ? '修改专业类别' : '添加专业类别'"
@@ -72,7 +71,6 @@
       destroy-on-close
       :close-on-click-modal="false">
       <el-form :model="categoryForm" label-width="80px" class="modal-form" ref="categoryFormRef">
-        <!-- 类别名称 -->
         <el-form-item label="类别名称 *" prop="name">
           <el-input
             v-model="categoryForm.name"
@@ -80,30 +78,25 @@
             class="form-control" />
         </el-form-item>
 
-        <!-- 计算规则区域 -->
         <el-form-item label="计算规则 *" prop="calculationRule">
           <div class="rule-container">
-            <!-- 规则表头 -->
             <div class="rule-header">
               <div class="col-name">规则名称</div>
               <div class="col-weight">权重（%）</div>
               <div class="col-op">操作</div>
             </div>
 
-            <!-- 动态规则行 -->
             <div
               class="rule-row"
               v-for="(item, index) in categoryForm.ruleItems"
               :key="item.id"
               :class="{ 'confirmed-row': item.isConfirmed }">
-              <!-- 规则名称输入框 -->
               <el-input
                 v-model="item.ruleName"
                 placeholder="如：学业绩点、竞赛加分"
                 class="form-control rule-input"
                 :disabled="item.isConfirmed" />
 
-              <!-- 权重输入框（限制0-100整数） -->
               <el-input
                 v-model.number="item.weight"
                 type="number"
@@ -115,7 +108,6 @@
                 @input="handleWeightInput(item)"
                 @blur="validateWeight(item)" />
 
-              <!-- 操作列 -->
               <div class="rule-op">
                 <el-button
                   type="text"
@@ -136,12 +128,10 @@
               </div>
             </div>
 
-            <!-- 新增规则行按钮 -->
             <el-button type="text" icon="el-icon-plus" class="btn-add-row" @click="addRuleRow">
               添加规则行
             </el-button>
 
-            <!-- 权重总和提示 -->
             <div class="weight-summary">
               已确定行权重总和：
               <span :class="{ 'text-error': totalConfirmedWeight !== 100 }">
@@ -155,7 +145,6 @@
         </el-form-item>
       </el-form>
 
-      <!-- 弹窗底部按钮 -->
       <template #footer>
         <el-button @click="closeModal">取消</el-button>
         <el-button
@@ -170,22 +159,17 @@
 </template>
 
 <script setup lang="ts">
-// 服务导入（适配修改后的接口）
 import { CollegeService, MajorCategoryService } from '@/services'
-import { useMajorCategoryStore } from '@/stores/MajorCategoryStore'
-// 类型导入（适配新的DTO）
 import type { MajorCategoryAddDTO, MajorCategoryUpdateDTO } from '@/services/MajorCategoryService'
+import { useMajorCategoryStore } from '@/stores/MajorCategoryStore'
 import type { CalculationRuleStorage, College, MajorCategory } from '@/types'
+import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-// Token工具函数
-import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
 
-// ========== 精确类型定义（移除any） ==========
-// 自定义错误类型
 class RequestError extends Error {
   constructor(message: string) {
     super(message)
@@ -193,7 +177,6 @@ class RequestError extends Error {
   }
 }
 
-// 规则行类型
 interface RuleItem {
   id: string
   ruleName: string
@@ -201,22 +184,18 @@ interface RuleItem {
   isConfirmed: boolean
 }
 
-// 表单类型
 interface CategoryForm {
   id: string
   name: string
   ruleItems: RuleItem[]
 }
 
-// ========== 路由与响应式数据 ==========
 const router = useRouter()
 const route = useRoute()
 
-// 移除collegeId依赖（后端从Token解析）
 const modalVisible = ref(false)
 const isEdit = ref(false)
 const categoryFormRef = ref<FormInstance>()
-// 学院信息（强化初始化）
 const college = ref<College>({
   id: '',
   name: '所属学院',
@@ -226,11 +205,9 @@ const college = ref<College>({
 const categories = ref<MajorCategory[]>([])
 const isInitialized = ref(false)
 
-// Store实例
 const { setMajorCategories, addMajorCategory, updateMajorCategory, removeMajorCategory } =
   useMajorCategoryStore()
 
-// ========== 表单初始化 ==========
 const initCategoryForm = (): CategoryForm => ({
   id: '',
   name: '',
@@ -245,8 +222,6 @@ const initCategoryForm = (): CategoryForm => ({
 })
 const categoryForm = ref<CategoryForm>(initCategoryForm())
 
-// ========== 计算属性 ==========
-// 已确定权重总和（类型安全）
 const totalConfirmedWeight = computed(() => {
   return categoryForm.value.ruleItems
     .filter(item => item.isConfirmed)
@@ -256,11 +231,10 @@ const totalConfirmedWeight = computed(() => {
     }, 0)
 })
 
-// ========== 初始化逻辑（适配后端Token解析） ==========
 const initPage = async () => {
   if (isInitialized.value) return
 
-  // 1. 权限校验
+  // 权限校验
   if (!isCollegeAdmin()) {
     ElMessage.error('无学院管理员权限，请重新登录')
     sessionStorage.clear()
@@ -268,17 +242,11 @@ const initPage = async () => {
     return
   }
 
-  // 2. 加载数据（无需传collegeId）
-  try {
-    await Promise.all([loadCollegeInfo(), loadCategories()])
-    isInitialized.value = true
-  } catch (error) {
-    const errMsg = error instanceof RequestError ? error.message : '页面初始化失败，请重试'
-    ElMessage.error(errMsg)
-  }
+  // 加载数据
+  await Promise.all([loadCollegeInfo(), loadCategories()])
+  isInitialized.value = true
 }
 
-// 监听路由变化初始化
 watch(
   () => route.fullPath,
   async () => {
@@ -289,24 +257,15 @@ watch(
   { immediate: true }
 )
 
-// ========== 数据加载方法（适配新接口） ==========
-// 加载学院信息
 const loadCollegeInfo = async () => {
-  try {
-    const collegeId = getCollegeIdStrFromToken()
-    if (!collegeId) throw new RequestError('未从Token解析到学院ID')
+  const collegeId = getCollegeIdStrFromToken()
+  if (!collegeId) throw new RequestError('未从Token解析到学院ID')
 
-    const collegeInfo = await CollegeService.getCollegeById(collegeId)
-    college.value = collegeInfo
-  } catch (error) {
-    const errMsg = error instanceof RequestError ? error.message : '加载学院信息失败'
-    ElMessage.error(errMsg)
-    // 兜底显示
-    college.value.name = '所属学院'
-  }
+  const collegeInfo = await CollegeService.getCollegeById(collegeId)
+  college.value = collegeInfo
 }
 
-// 加载专业类别（无需传collegeId）
+// 加载专业类别
 const loadCategories = async () => {
   try {
     const res = await MajorCategoryService.getCategoriesByCollegeId()
@@ -319,8 +278,6 @@ const loadCategories = async () => {
   }
 }
 
-// ========== 工具方法 ==========
-// 日期格式化（类型安全）
 const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
   try {
@@ -336,7 +293,6 @@ const formatDate = (dateStr?: string): string => {
   }
 }
 
-// ========== 规则行交互（类型安全） ==========
 const addRuleRow = (): void => {
   categoryForm.value.ruleItems.push({
     id: uuidv4(),
@@ -358,7 +314,6 @@ const toggleRuleConfirm = (index: number): void => {
   const item = categoryForm.value.ruleItems[index]
 
   if (!item.isConfirmed) {
-    // 前置校验
     if (!item.ruleName.trim()) {
       ElMessage.warning('请先填写规则名称')
       return
@@ -386,7 +341,6 @@ const validateWeight = (item: RuleItem): void => {
   }
 }
 
-// ========== 模态框操作 ==========
 const openAddModal = (): void => {
   isEdit.value = false
   categoryForm.value = initCategoryForm()
@@ -395,7 +349,7 @@ const openAddModal = (): void => {
 
 const openEditModal = (category: MajorCategory): void => {
   isEdit.value = true
-  // 转换数据库格式到前端规则行
+
   const ruleItems = Object.entries(category.calculationRule).map(([ruleName, weight]) => ({
     id: uuidv4(),
     ruleName,
@@ -416,7 +370,6 @@ const closeModal = (): void => {
   categoryFormRef.value?.resetFields()
 }
 
-// 转换规则行到后端DTO格式
 const convertToStorageFormat = (): CalculationRuleStorage => {
   const storageObj: CalculationRuleStorage = {}
   categoryForm.value.ruleItems
@@ -427,7 +380,6 @@ const convertToStorageFormat = (): CalculationRuleStorage => {
   return storageObj
 }
 
-// ========== 表单提交（适配新接口） ==========
 const submitForm = async (): Promise<void> => {
   const confirmedItems = categoryForm.value.ruleItems.filter(item => item.isConfirmed)
   if (confirmedItems.length === 0) {
@@ -435,63 +387,45 @@ const submitForm = async (): Promise<void> => {
     return
   }
 
-  // 构建请求数据（适配后端DTO）
   const requestData: MajorCategoryAddDTO | MajorCategoryUpdateDTO = {
     name: categoryForm.value.name.trim(),
     calculationRule: convertToStorageFormat()
   }
 
-  try {
-    if (isEdit.value) {
-      // 编辑操作（无需collegeId）
-      const updatedCategory = await MajorCategoryService.updateCategory(
-        categoryForm.value.id,
-        requestData as MajorCategoryUpdateDTO
-      )
-      updateMajorCategory(categoryForm.value.id, requestData)
-      // 更新本地列表
-      const idx = categories.value.findIndex(item => item.id === categoryForm.value.id)
-      if (idx > -1) {
-        categories.value[idx] = updatedCategory
-      }
-      ElMessage.success('专业类别修改成功')
-    } else {
-      // 添加操作（无需collegeId）
-      const newCategory = await MajorCategoryService.addCategory(requestData as MajorCategoryAddDTO)
-      addMajorCategory(newCategory)
-      categories.value.push(newCategory)
-      ElMessage.success('专业类别添加成功')
+  if (isEdit.value) {
+    const updatedCategory = await MajorCategoryService.updateCategory(
+      categoryForm.value.id,
+      requestData as MajorCategoryUpdateDTO
+    )
+    updateMajorCategory(categoryForm.value.id, requestData)
+    const idx = categories.value.findIndex(item => item.id === categoryForm.value.id)
+    if (idx > -1) {
+      categories.value[idx] = updatedCategory
     }
-    closeModal()
-  } catch (error) {
-    const errMsg = error instanceof RequestError ? error.message : '操作失败，请重试'
-    ElMessage.error(errMsg)
+    ElMessage.success('专业类别修改成功')
+  } else {
+    const newCategory = await MajorCategoryService.addCategory(requestData as MajorCategoryAddDTO)
+    addMajorCategory(newCategory)
+    categories.value.push(newCategory)
+    ElMessage.success('专业类别添加成功')
   }
+  closeModal()
 }
 
-// ========== 删除与导航 ==========
 const removeCategory = async (category: MajorCategory): Promise<void> => {
-  try {
-    await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
-      type: 'warning'
-    })
-    await MajorCategoryService.deleteCategory(category.id)
-    removeMajorCategory(category.id)
-    categories.value = categories.value.filter(item => item.id !== category.id)
-    ElMessage.success('删除成功')
-  } catch (error) {
-    if (error !== 'cancel' && error instanceof RequestError) {
-      ElMessage.error(error.message || '删除失败，请重试')
-    }
-  }
+  await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
+    type: 'warning'
+  })
+  await MajorCategoryService.deleteCategory(category.id)
+  removeMajorCategory(category.id)
+  categories.value = categories.value.filter(item => item.id !== category.id)
+  ElMessage.success('删除成功')
 }
 
-// 管理专业（路由跳转无需传collegeId）
 const manageMajors = (category: MajorCategory): void => {
   router.push(`/collegeadmin/categories/${category.id}/majors`)
 }
 
-// 导航回首页（使用Token中的学院ID）
 const navigateToIndex = (): void => {
   const cid = getCollegeIdStrFromToken()
   router.push(`/collegeadmin/${cid}`)

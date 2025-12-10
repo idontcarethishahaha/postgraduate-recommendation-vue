@@ -40,7 +40,7 @@ export class UserService {
         break
       case COLLEGE_ADMIN:
         //path = ROUTE_PATHS.COLLEGE_ADMIN
-        // 学院管理员跳转到专业类别管理页（自动带学院ID）
+        // 学院管理员跳转到专业类别管理页（token里带学院ID）
         const collegeId = getCollegeIdFromToken()
         path = `/collegeadmin/major-categories/${collegeId}`
         break
