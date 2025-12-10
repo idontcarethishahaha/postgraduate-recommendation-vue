@@ -99,11 +99,9 @@ const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
   return typeof error === 'object' && error !== null && 'message' in error
 }
 
-// 路由实例
 const router = useRouter()
 const route = useRoute()
 
-// 优先从Token获取学院ID
 const collegeId = ref(getCollegeIdStrFromToken() || (route.params.collegeId as string))
 const categoryId = ref(route.params.categoryId as string)
 
@@ -123,7 +121,6 @@ const category = ref<MajorCategory>({
 
 const { majors, setMajors, addMajor, updateMajor, removeMajor } = useMajorStore()
 
-// 表单验证规则
 const formRules = ref<FormRules>({
   name: [
     { required: true, message: '请输入专业名称', trigger: 'blur' },
@@ -131,13 +128,11 @@ const formRules = ref<FormRules>({
   ]
 })
 
-// 表单数据（匹配Major接口的string类型ID）
 const majorForm = ref({
   id: '',
   name: ''
 })
 
-// ========== 初始化逻辑（替代 onMounted） ==========
 const initPage = async () => {
   // 验证是否为学院管理员
   if (!isCollegeAdmin()) {
@@ -154,33 +149,23 @@ const initPage = async () => {
     router.push('/login')
     return
   }
-
-  // 加载数据
-  try {
-    await loadCollegeInfo()
-    await loadCategoryInfo()
-    await loadMajors()
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '页面初始化失败，请重试'
-    ElMessage.error(msg)
-  }
+  await loadCollegeInfo()
+  await loadCategoryInfo()
+  await loadMajors()
 }
 
-// 监听路由参数变化，实现初始化（替代onMounted）
 watch(
   () => route.params,
   async () => {
-    // 更新学院ID和类别ID（路由参数兜底）
     collegeId.value = getCollegeIdStrFromToken() || (route.params.collegeId as string)
     categoryId.value = route.params.categoryId as string
-    // 等待DOM更新后执行初始化
     await nextTick()
     await initPage()
   },
   { immediate: true, deep: true }
 )
 
-// 加载学院信息（增加空值校验）
+// 加载学院信息
 const loadCollegeInfo = async () => {
   try {
     if (!collegeId.value) throw new Error('学院ID为空')
@@ -188,11 +173,11 @@ const loadCollegeInfo = async () => {
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
     ElMessage.error(msg)
-    college.value.name = '所属学院' // 兜底显示
+    college.value.name = '所属学院'
   }
 }
 
-// 加载专业类别信息（空值校验 + 错误处理）
+// 加载专业类别信息
 const loadCategoryInfo = async () => {
   try {
     if (!categoryId.value) throw new Error('专业类别ID为空')
@@ -201,11 +186,11 @@ const loadCategoryInfo = async () => {
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载专业类别信息失败'
     ElMessage.error(msg)
-    category.value.name = '未知类别' // 兜底显示
+    category.value.name = '未知类别'
   }
 }
 
-// 加载专业列表（空值校验 + 错误处理）
+// 加载专业列表
 const loadMajors = async () => {
   try {
     if (!categoryId.value) throw new Error('专业类别ID为空')
@@ -251,34 +236,27 @@ const closeModal = () => {
 
 // 提交表单（添加/编辑 + 错误处理）
 const submitForm = async () => {
-  try {
-    await majorFormRef.value?.validate()
-    submitLoading.value = true
+  await majorFormRef.value?.validate()
+  submitLoading.value = true
 
-    if (isEditing.value) {
-      // 编辑专业
-      const updateData = { name: majorForm.value.name.trim() }
-      await MajorService.updateMajor(majorForm.value.id, updateData)
-      updateMajor(majorForm.value.id, updateData)
-      ElMessage.success('专业编辑成功')
-    } else {
-      // 添加专业
-      const addData = {
-        name: majorForm.value.name.trim(),
-        majorCategoryId: categoryId.value
-      }
-      const newMajor = await MajorService.addMajor(addData)
-      addMajor(newMajor)
-      ElMessage.success('专业添加成功')
+  if (isEditing.value) {
+    // 编辑专业
+    const updateData = { name: majorForm.value.name.trim() }
+    await MajorService.updateMajor(majorForm.value.id, updateData)
+    updateMajor(majorForm.value.id, updateData)
+    ElMessage.success('专业编辑成功')
+  } else {
+    // 添加专业
+    const addData = {
+      name: majorForm.value.name.trim(),
+      majorCategoryId: categoryId.value
     }
-
-    closeModal()
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '操作失败，请重试'
-    ElMessage.error(msg)
-  } finally {
-    submitLoading.value = false
+    const newMajor = await MajorService.addMajor(addData)
+    addMajor(newMajor)
+    ElMessage.success('专业添加成功')
   }
+
+  closeModal()
 }
 
 // 删除专业

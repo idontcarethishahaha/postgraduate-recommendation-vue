@@ -127,7 +127,7 @@ import {
   ElTable,
   ElTableColumn
 } from 'element-plus'
-import { computed, ref } from 'vue' // 移除 onMounted 导入
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -143,11 +143,8 @@ const adminForm = ref({
   password: ''
 })
 
-// 从路由路径参数获取学院ID
 const currentCollegeId = ref('')
-// 存储学院名称（通过接口查询）
 const currentCollegeName = ref('加载中...')
-
 const filteredAdmins = computed(() => {
   if (!searchKeyword.value) return admins.value
 
@@ -174,25 +171,16 @@ const closeModal = () => {
 
 // 加载管理员列表
 const loadAdmins = async () => {
-  try {
-    const adminsData = await CollegeAdminService.getCollegeAdmins(currentCollegeId.value)
-    admins.value = adminsData
-  } catch (error) {
-    createMessageDialog('加载管理员列表失败：' + (error as Error).message)
-  }
+  const adminsData = await CollegeAdminService.getCollegeAdmins(currentCollegeId.value)
+  admins.value = adminsData
 }
 
 // 加载学院名称（通过collegeId查询）
 const loadCollegeName = async () => {
-  try {
-    if (!currentCollegeId.value) return
-    // 调用后端 /open/colleges/{collegeId} 接口
-    const college: College = await CollegeService.getCollegeById(currentCollegeId.value)
-    currentCollegeName.value = college.name || '未知学院'
-  } catch (error) {
-    currentCollegeName.value = '未知学院'
-    createMessageDialog('加载学院名称失败：' + (error as Error).message)
-  }
+  if (!currentCollegeId.value) return
+  // 调用后端 /open/colleges/{collegeId} 接口
+  const college: College = await CollegeService.getCollegeById(currentCollegeId.value)
+  currentCollegeName.value = college.name || '未知学院'
 }
 
 // 添加管理员
@@ -203,68 +191,56 @@ const addAdmin = async () => {
     return
   }
 
-  try {
-    await CollegeAdminService.addCollegeAdmin(currentCollegeId.value, {
-      name: adminForm.value.name.trim(),
-      account: adminForm.value.account.trim(),
-      tel: adminForm.value.tel.trim(),
-      password: adminForm.value.password.trim() || adminForm.value.account.trim()
-    })
-    createMessageDialog('添加成功')
-    closeModal()
-    await loadAdmins()
-  } catch (error) {
-    createMessageDialog('添加管理员失败：' + (error as Error).message)
-  }
+  await CollegeAdminService.addCollegeAdmin(currentCollegeId.value, {
+    name: adminForm.value.name.trim(),
+    account: adminForm.value.account.trim(),
+    tel: adminForm.value.tel.trim(),
+    password: adminForm.value.password.trim() || adminForm.value.account.trim()
+  })
+  createMessageDialog('添加成功')
+  closeModal()
+  await loadAdmins()
 }
 
 // 重置密码
 const resetPassword = async (admin: User) => {
-  try {
-    if (
-      !(await ElMessageBox.confirm(
-        `确定要重置管理员 "${admin.name}" 的密码吗？密码将重置为默认值。`,
-        '确认重置',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ))
-    ) {
-      return
-    }
-
-    await CollegeAdminService.resetPassword(admin.account)
-    createMessageDialog('密码重置成功')
-  } catch (error) {
-    createMessageDialog('重置密码失败：' + (error as Error).message)
+  if (
+    !(await ElMessageBox.confirm(
+      `确定要重置管理员 "${admin.name}" 的密码吗？密码将重置为默认值。`,
+      '确认重置',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ))
+  ) {
+    return
   }
+
+  await CollegeAdminService.resetPassword(admin.account)
+  createMessageDialog('密码重置成功')
 }
 
 // 移除管理员
 const removeAdmin = async (admin: User) => {
-  try {
-    if (
-      !(await ElMessageBox.confirm(
-        `确定要移除管理员 "${admin.name}" 吗？此操作不可恢复！`,
-        '确认移除',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ))
-    ) {
-      return
-    }
-
-    await CollegeAdminService.removeCollegeAdmin(currentCollegeId.value, admin.id)
-    createMessageDialog('移除成功')
-    await loadAdmins()
-  } catch (error) {
-    createMessageDialog('移除管理员失败：' + (error as Error).message)
+  if (
+    !(await ElMessageBox.confirm(
+      `确定要移除管理员 "${admin.name}" 吗？此操作不可恢复！`,
+      '确认移除',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    ))
+  ) {
+    return
   }
+
+  await CollegeAdminService.removeCollegeAdmin(currentCollegeId.value, admin.id)
+  createMessageDialog('移除成功')
+  await loadAdmins()
 }
 
 // 跳转到学院管理页面
@@ -272,19 +248,17 @@ const navigateToColleges = () => {
   router.push('/admin/colleges')
 }
 
-// ========== 核心修改：移除 onMounted，改用立即执行的异步函数 ==========
 ;(async () => {
   // 获取路由中的collegeId
   currentCollegeId.value = route.params.collegeId as string
 
-  // 校验collegeId有效性
   if (!currentCollegeId.value) {
     createMessageDialog('无效的学院信息')
     router.push('/admin/colleges')
     return
   }
 
-  // 并行加载学院名称和管理员列表
+  // 加载学院名称和管理员列表
   await Promise.all([loadCollegeName(), loadAdmins()])
 })()
 </script>

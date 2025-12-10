@@ -2,7 +2,7 @@
   <div class="major-categories-page">
     <el-breadcrumb class="breadcrumb" separator=">">
       <el-breadcrumb-item @click="navigateToIndex" style="cursor: pointer; color: #1890ff">
-        {{ college.name || '所属学院' }}学院管理员中心
+        {{ college.name || '未知学院' }}学院管理员中心
       </el-breadcrumb-item>
       <el-breadcrumb-item>专业类别管理</el-breadcrumb-item>
     </el-breadcrumb>
@@ -383,7 +383,7 @@ const convertToStorageFormat = (): CalculationRuleStorage => {
 const submitForm = async (): Promise<void> => {
   const confirmedItems = categoryForm.value.ruleItems.filter(item => item.isConfirmed)
   if (confirmedItems.length === 0) {
-    ElMessage.error('请至少确定1条规则行')
+    ElMessage.error('请至少制定1条规则')
     return
   }
 
