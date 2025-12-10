@@ -70,4 +70,13 @@ export class CollegeService {
   private static confirmAction(message: string): Promise<boolean> {
     return Promise.resolve(window.confirm(message))
   }
+
+  // 根据学院ID获取单个学院详情
+  static async getCollegeById(collegeId: string): Promise<College> {
+    const response = await axios.get(`/colleges/${collegeId}`)
+    if (response.data.code === 200) {
+      return response.data.data || ({} as College)
+    }
+    throw new Error(response.data.message || '加载学院信息失败')
+  }
 }
