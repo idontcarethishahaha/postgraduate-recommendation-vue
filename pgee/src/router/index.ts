@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/main/admin/CollegesView.vue')
           },
           {
-            path: 'college-admins/:collegeId/:collegeName',
+            path: 'college-admins/:collegeId',
             component: () => import('@/views/main/admin/CollegeAdminsView.vue')
           }
         ]

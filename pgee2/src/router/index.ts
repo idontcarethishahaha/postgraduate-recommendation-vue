@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/login/RegisterView.vue')
   },
 
-  //系统主入口（所有角色的父路由）
+  //系统主入口
   {
     path: '/',
     component: () => import('@/views/main/IndexView.vue'),
@@ -35,7 +35,6 @@ const routes: RouteRecordRaw[] = [
             path: 'colleges',
             component: () => import('@/views/main/admin/CollegesView.vue')
           },
-          // 关键修改：添加动态路径参数 :collegeId 和 :collegeName
           {
             path: 'college-admins/:collegeId/:collegeName',
             component: () => import('@/views/main/admin/CollegeAdminsView.vue')
@@ -44,10 +43,31 @@ const routes: RouteRecordRaw[] = [
       },
 
       // 学院管理员模块
+      /*
       {
         path: 'collegeadmin',
         component: () => import('@/views/main/collegeadmin/IndexView.vue'),
         meta: { roles: [consty.COLLEGE_ADMIN] }
+      }*/
+      // 学院管理员模块（默认首页为IndexView.vue）
+      {
+        path: 'collegeadmin',
+        component: () => import('@/views/main/collegeadmin/IndexView.vue'), // 首页组件
+        meta: { roles: [consty.COLLEGE_ADMIN] },
+        children: [
+          // 专业类别管理（子路由）
+          {
+            path: 'major-categories/:collegeId',
+            component: () => import('@/views/main/collegeadmin/MajorCategoriesView.vue'),
+            meta: { roles: [consty.COLLEGE_ADMIN] }
+          },
+          // 专业管理（子路由）
+          {
+            path: 'major-categories/:collegeId/majors/:categoryId',
+            component: () => import('@/views/main/collegeadmin/MajorView.vue'),
+            meta: { roles: [consty.COLLEGE_ADMIN] }
+          }
+        ]
       },
 
       // 辅导员模块

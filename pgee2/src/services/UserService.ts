@@ -2,6 +2,7 @@ import axios from '@/axios'
 import router from '@/router'
 import { useUserStore } from '@/stores/UserStore'
 import type { LoginRequest, ResultVO, User } from '@/types'
+import { getCollegeIdFromToken } from '@/utils/token'
 import { ADMIN, COLLEGE_ADMIN, COUNSELOR, ROUTE_PATHS, STUDENT } from './Const'
 
 export class UserService {
@@ -21,6 +22,13 @@ export class UserService {
     //存储token到sessionStorage
     sessionStorage.setItem('token', token)
     sessionStorage.setItem('role', role)
+    //解析Token，存储学院ID（学院管理员）
+    if (role === COLLEGE_ADMIN) {
+      const cid = getCollegeIdFromToken()
+      if (cid) {
+        sessionStorage.setItem('collegeId', cid.toString())
+      }
+    }
 
     console.log('登录成功:', { user, token, role })
 
@@ -31,7 +39,10 @@ export class UserService {
         path = ROUTE_PATHS.ADMIN
         break
       case COLLEGE_ADMIN:
-        path = ROUTE_PATHS.COLLEGE_ADMIN
+        //path = ROUTE_PATHS.COLLEGE_ADMIN
+        // 学院管理员跳转到专业类别管理页（自动带学院ID）
+        const collegeId = getCollegeIdFromToken()
+        path = `/collegeadmin/major-categories/${collegeId}`
         break
       case COUNSELOR:
         path = ROUTE_PATHS.COUNSELOR
