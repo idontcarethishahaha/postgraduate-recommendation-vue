@@ -180,45 +180,36 @@ const saveMajor = async () => {
     return
   }
 
-  try {
-    if (isEditing.value) {
-      const updateData = {
-        name: majorForm.value.name.trim()
-      }
-      await MajorService.updateMajor(majorForm.value.id, updateData)
-      createMessageDialog('更新成功')
-    } else {
-      const addData: Omit<Major, 'id' | 'createTime' | 'updateTime'> = {
-        name: majorForm.value.name.trim(),
-        majorCategoryId: categoryId.value
-      }
-      await MajorService.addMajor(addData)
-      createMessageDialog('添加成功')
+  if (isEditing.value) {
+    const updateData = {
+      name: majorForm.value.name.trim()
     }
-
-    closeModal()
-    loadMajors()
-  } catch (error) {
-    createMessageDialog('操作失败')
-    console.error(error)
+    await MajorService.updateMajor(majorForm.value.id, updateData)
+    createMessageDialog('更新成功')
+  } else {
+    const addData: Omit<Major, 'id' | 'createTime' | 'updateTime'> = {
+      name: majorForm.value.name.trim(),
+      majorCategoryId: categoryId.value
+    }
+    await MajorService.addMajor(addData)
+    createMessageDialog('添加成功')
   }
+
+  closeModal()
+  loadMajors()
 }
 
 // 删除专业
 const removeMajor = async (major: Major) => {
-  try {
-    await ElMessageBox.confirm(`确定要删除专业"${major.name}"吗？此操作不可恢复！`, '确认删除', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
+  await ElMessageBox.confirm(`确定要删除专业"${major.name}"吗？此操作不可恢复！`, '确认删除', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
 
-    await MajorService.deleteMajor(major.id)
-    createMessageDialog('删除成功')
-    loadMajors()
-  } catch (error) {
-    console.error(error)
-  }
+  await MajorService.deleteMajor(major.id)
+  createMessageDialog('删除成功')
+  loadMajors()
 }
 
 // 导航回管理员首页
