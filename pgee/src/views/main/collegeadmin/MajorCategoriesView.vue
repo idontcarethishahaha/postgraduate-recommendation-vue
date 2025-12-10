@@ -182,8 +182,10 @@ import type { CalculationRuleStorage, College, MajorCategory } from '@/types'
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue' // 移除onMounted，改用watch
 import { useRoute, useRouter } from 'vue-router'
+// 导入Token工具函数（权限验证+学院ID获取）
+import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
 
 // 错误类型定义
 interface ErrorWithMessage {
@@ -212,29 +214,23 @@ interface CategoryForm {
 const router = useRouter()
 const route = useRoute()
 
-// 路由参数（仅取collegeId，categoryId是MajorView的参数）
-const collegeId = ref(route.params.collegeId as string)
+// 核心：优先从Token获取学院ID，路由参数仅兜底（解决参数依赖问题）
+const collegeId = ref(getCollegeIdStrFromToken() || (route.params.collegeId as string))
 
 // 响应式数据
 const modalVisible = ref(false)
 const isEdit = ref(false)
 const categoryFormRef = ref<FormInstance>()
-const college = ref<College>({} as College)
+// 初始化学院对象（避免空对象类型警告）
+const college = ref<College>({ id: '', name: '', createTime: '', updateTime: '' })
 const categories = ref<MajorCategory[]>([])
+
+// 新增：标记是否已初始化，避免重复加载
+const isInitialized = ref(false)
 
 // 获取专业类别Store
 const { setMajorCategories, addMajorCategory, updateMajorCategory, removeMajorCategory } =
   useMajorCategoryStore()
-
-// 表单验证规则
-/*
-const formRules = ref<FormRules>({
-  name: [
-    { required: true, message: '请输入专业类别名称', trigger: 'blur' },
-    { min: 2, max: 50, message: '类别名称长度需在2-50个字符之间', trigger: 'blur' }
-  ]
-})
-  */
 
 // 初始化表单
 const initCategoryForm = (): CategoryForm => ({
@@ -258,25 +254,71 @@ const totalConfirmedWeight = computed(() => {
     .reduce((sum, item) => sum + (Number.isInteger(item.weight) ? item.weight : 0), 0)
 })
 
-// 初始化加载
-onMounted(async () => {
-  await loadCollegeInfo()
-  await loadCategories()
-})
+// ========== 初始化逻辑（替代onMounted，增加权限验证） ==========
+const initPage = async () => {
+  // 避免重复初始化
+  if (isInitialized.value) return
 
-// 加载学院信息
-const loadCollegeInfo = async () => {
+  // 1. 权限验证：必须是学院管理员
+  if (!isCollegeAdmin()) {
+    ElMessage.error('无学院管理员权限，请重新登录')
+    sessionStorage.clear()
+    router.push('/login')
+    return
+  }
+
+  // 2. 学院ID有效性验证
+  if (!collegeId.value) {
+    ElMessage.error('未获取到学院ID，请重新登录')
+    sessionStorage.clear()
+    router.push('/login')
+    return
+  }
+
+  // 3. 加载页面数据
   try {
-    college.value = await CollegeService.getCollegeById(collegeId.value)
+    await Promise.all([loadCollegeInfo(), loadCategories()])
+    isInitialized.value = true // 标记初始化完成
   } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
+    const msg = isErrorWithMessage(error) ? error.message : '页面初始化失败，请重试'
     ElMessage.error(msg)
   }
 }
 
-// 加载专业类别列表
+// 监听路由参数变化，实现初始化（替代onMounted）
+watch(
+  () => route.params.collegeId,
+  async newCollegeId => {
+    // 仅在当前页面执行（需给路由配置name: 'MajorCategories'）
+    if (route.name !== 'MajorCategories') return
+
+    // 更新学院ID（优先Token，兜底路由参数）
+    collegeId.value = getCollegeIdStrFromToken() || (newCollegeId as string)
+
+    // 等待DOM更新后执行初始化
+    await nextTick()
+    await initPage()
+  },
+  { immediate: true } // 首次加载自动执行
+)
+
+// 加载学院信息（增加空值校验+兜底显示）
+const loadCollegeInfo = async () => {
+  try {
+    if (!collegeId.value) throw new Error('学院ID为空')
+    const collegeInfo = await CollegeService.getCollegeById(collegeId.value)
+    college.value = collegeInfo
+  } catch (error: unknown) {
+    const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
+    ElMessage.error(msg)
+    college.value.name = '所属学院' // 兜底显示
+  }
+}
+
+// 加载专业类别列表（增加空值校验）
 const loadCategories = async () => {
   try {
+    if (!collegeId.value) throw new Error('学院ID为空')
     const res = await MajorCategoryService.getCategoriesByCollegeId(collegeId.value)
     setMajorCategories(res)
     categories.value = res
@@ -414,7 +456,7 @@ const submitForm = async () => {
       }
       ElMessage.success('专业类别修改成功')
     } else {
-      // 添加专业类别
+      // 添加专业类别（使用Token中的学院ID，更安全）
       const newCategory = await MajorCategoryService.addCategory(collegeId.value, requestData)
       addMajorCategory(newCategory)
       categories.value.push(newCategory)
@@ -444,14 +486,16 @@ const removeCategory = async (category: MajorCategory) => {
   }
 }
 
-// 管理专业（跳转到专业管理页面）
+// 管理专业（跳转到专业管理页面，使用Token中的学院ID）
 const manageMajors = (category: MajorCategory) => {
-  router.push(`/collegeadmin/major-categories/${collegeId.value}/majors/${category.id}`)
+  const cid = getCollegeIdStrFromToken()
+  router.push(`/collegeadmin/major-categories/${cid}/majors/${category.id}`)
 }
 
-// 导航回学院管理员首页
+// 导航回学院管理员首页（使用Token中的学院ID）
 const navigateToIndex = () => {
-  router.push(`/collegeadmin/${collegeId.value}`)
+  const cid = getCollegeIdStrFromToken()
+  router.push(`/collegeadmin/${cid}`)
 }
 </script>
 

@@ -1,6 +1,5 @@
 <template>
   <div class="major-page">
-    <!-- 面包屑导航 -->
     <el-breadcrumb class="breadcrumb" separator=">">
       <el-breadcrumb-item @click="navigateToIndex" style="cursor: pointer; color: #1890ff">
         {{ college.name }}学院管理员中心
@@ -11,19 +10,16 @@
       <el-breadcrumb-item>{{ category.name }} - 专业管理</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <!-- 页面头部 -->
     <div class="page-header">
       <h2 class="page-title">{{ category.name }} 专业管理</h2>
       <el-button type="primary" class="add-btn" @click="openAddModal">添加专业</el-button>
     </div>
 
-    <!-- 统计卡片 -->
     <el-card class="stats-card" shadow="hover">
       该类别下专业总数：
       <strong>{{ majors.length }}</strong>
     </el-card>
 
-    <!-- 专业列表表格 -->
     <el-table
       v-if="majors.length > 0"
       :data="majors"
@@ -56,12 +52,10 @@
       </el-table-column>
     </el-table>
 
-    <!-- 空状态 -->
     <div v-else class="empty-state">
       <el-empty description="该类别下暂无专业，请点击添加按钮创建"></el-empty>
     </div>
 
-    <!-- 添加/编辑专业模态框 -->
     <el-dialog
       v-model="modalVisible"
       :title="isEditing ? '编辑专业' : '添加专业'"
@@ -91,12 +85,12 @@ import { CollegeService, MajorCategoryService, MajorService } from '@/services'
 import { useMajorStore } from '@/stores/MajorStore'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import type { College, Major, MajorCategory } from '@/types'
+import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
 
-// 错误类型定义（替代any）
 interface ErrorWithMessage {
   message: string
 }
@@ -109,19 +103,24 @@ const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
 const router = useRouter()
 const route = useRoute()
 
-// 路由参数
-const collegeId = ref(route.params.collegeId as string)
+// 优先从Token获取学院ID
+const collegeId = ref(getCollegeIdStrFromToken() || (route.params.collegeId as string))
 const categoryId = ref(route.params.categoryId as string)
 
-// 响应式数据
 const modalVisible = ref(false)
 const isEditing = ref(false)
 const submitLoading = ref(false)
 const majorFormRef = ref<FormInstance>()
-const college = ref<College>({} as College)
-const category = ref<MajorCategory>({} as MajorCategory)
+const college = ref<College>({ id: '', name: '', createTime: '', updateTime: '' })
+const category = ref<MajorCategory>({
+  id: '',
+  name: '',
+  collegeId: '',
+  calculationRule: {},
+  createTime: '',
+  updateTime: ''
+})
 
-// 获取store（只保留用到的方法/变量）
 const { majors, setMajors, addMajor, updateMajor, removeMajor } = useMajorStore()
 
 // 表单验证规则
@@ -132,43 +131,84 @@ const formRules = ref<FormRules>({
   ]
 })
 
-// 表单数据
+// 表单数据（匹配Major接口的string类型ID）
 const majorForm = ref({
   id: '',
   name: ''
 })
 
-// 初始化加载
-onMounted(async () => {
-  await loadCollegeInfo()
-  await loadCategoryInfo()
-  await loadMajors()
-})
+// ========== 初始化逻辑（替代 onMounted） ==========
+const initPage = async () => {
+  // 验证是否为学院管理员
+  if (!isCollegeAdmin()) {
+    ElMessage.error('无学院管理员权限，请重新登录')
+    sessionStorage.clear()
+    router.push('/login')
+    return
+  }
 
-// 加载学院信息
-const loadCollegeInfo = async () => {
+  // 验证学院ID有效性
+  if (!collegeId.value) {
+    ElMessage.error('未获取到学院ID，请重新登录')
+    sessionStorage.clear()
+    router.push('/login')
+    return
+  }
+
+  // 加载数据
   try {
-    college.value = await CollegeService.getCollegeById(collegeId.value)
+    await loadCollegeInfo()
+    await loadCategoryInfo()
+    await loadMajors()
   } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
+    const msg = isErrorWithMessage(error) ? error.message : '页面初始化失败，请重试'
     ElMessage.error(msg)
   }
 }
 
-// 加载专业类别信息
+// 监听路由参数变化，实现初始化（替代onMounted）
+watch(
+  () => route.params,
+  async () => {
+    // 更新学院ID和类别ID（路由参数兜底）
+    collegeId.value = getCollegeIdStrFromToken() || (route.params.collegeId as string)
+    categoryId.value = route.params.categoryId as string
+    // 等待DOM更新后执行初始化
+    await nextTick()
+    await initPage()
+  },
+  { immediate: true, deep: true }
+)
+
+// 加载学院信息（增加空值校验）
+const loadCollegeInfo = async () => {
+  try {
+    if (!collegeId.value) throw new Error('学院ID为空')
+    college.value = await CollegeService.getCollegeById(collegeId.value)
+  } catch (error: unknown) {
+    const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
+    ElMessage.error(msg)
+    college.value.name = '所属学院' // 兜底显示
+  }
+}
+
+// 加载专业类别信息（空值校验 + 错误处理）
 const loadCategoryInfo = async () => {
   try {
+    if (!categoryId.value) throw new Error('专业类别ID为空')
     const categoryData = await MajorCategoryService.getCategoryById(categoryId.value)
     category.value = categoryData
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载专业类别信息失败'
     ElMessage.error(msg)
+    category.value.name = '未知类别' // 兜底显示
   }
 }
 
-// 加载专业列表
+// 加载专业列表（空值校验 + 错误处理）
 const loadMajors = async () => {
   try {
+    if (!categoryId.value) throw new Error('专业类别ID为空')
     const majorsData = await MajorService.getMajorsByCategoryId(categoryId.value)
     setMajors(majorsData)
   } catch (error: unknown) {
@@ -209,7 +249,7 @@ const closeModal = () => {
   majorFormRef.value?.resetFields()
 }
 
-// 提交表单（添加/编辑）
+// 提交表单（添加/编辑 + 错误处理）
 const submitForm = async () => {
   try {
     await majorFormRef.value?.validate()
@@ -260,19 +300,20 @@ const handleDelete = async (major: Major) => {
   }
 }
 
-// 导航回学院管理员首页
+// 导航回学院管理员首页（从Token获取学院ID）
 const navigateToIndex = () => {
-  router.push(`/collegeadmin/${collegeId.value}`)
+  const cid = getCollegeIdStrFromToken()
+  router.push(`/collegeadmin/${cid}`)
 }
 
-// 导航回专业类别列表
+// 导航回专业类别列表（从Token获取学院ID）
 const navigateToCategories = () => {
-  router.push(`/collegeadmin/major-categories/${collegeId.value}`)
+  const cid = getCollegeIdStrFromToken()
+  router.push(`/collegeadmin/major-categories/${cid}`)
 }
 </script>
 
 <style scoped>
-/* 基础样式 */
 .major-page {
   padding: 16px;
 }
@@ -305,7 +346,6 @@ const navigateToCategories = () => {
   background: #f8f9fa;
 }
 
-/* 表格操作按钮 */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -319,13 +359,11 @@ const navigateToCategories = () => {
   color: #f56c6c;
 }
 
-/* 空状态 */
 .empty-state {
   padding: 48px 0;
   text-align: center;
 }
 
-/* 模态框样式 */
 .modal-form {
   padding: 8px 0;
 }
