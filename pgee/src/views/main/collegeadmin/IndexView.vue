@@ -51,7 +51,7 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <!--
     <div v-else class="empty-state">
       <h3>该类别下暂无专业</h3>
       <p>点击"添加专业"按钮来添加</p>
@@ -72,6 +72,7 @@
         <el-button type="primary" @click="saveMajor">确定</el-button>
       </template>
     </el-dialog>
+  -->
 
     <router-view></router-view>
   </div>
@@ -89,10 +90,10 @@ import {
   ElBreadcrumbItem,
   ElButton,
   ElCard,
-  ElDialog,
-  ElForm,
-  ElFormItem,
-  ElInput,
+  //ElDialog,
+  //ElForm,
+  //ElFormItem,
+  //ElInput,
   ElMessage,
   ElMessageBox,
   ElTable,
@@ -207,11 +208,12 @@ const editMajor = (major: Major) => {
   majorForm.value = { id: major.id, name: major.name }
   showModal.value = true
 }
-
+/*
 const closeModal = () => {
   showModal.value = false
 }
-
+*/
+/*
 const saveMajor = async () => {
   if (!majorForm.value.name.trim()) {
     createMessageDialog('请输入专业名称')
@@ -232,7 +234,7 @@ const saveMajor = async () => {
   }
   closeModal()
   await loadMajors()
-}
+}*/
 
 const removeMajor = async (major: Major) => {
   await ElMessageBox.confirm(`确定要删除专业"${major.name}"吗？此操作不可恢复！`, '确认删除', {

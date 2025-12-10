@@ -412,6 +412,7 @@ const removeCategory = async (category: MajorCategory): Promise<void> => {
   ElMessage.success('删除成功')
 }
 
+// 某类别下所有专业
 const manageMajors = (category: MajorCategory): void => {
   router.push(`/collegeadmin/categories/${category.id}/majors`)
 }

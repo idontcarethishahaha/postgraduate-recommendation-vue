@@ -81,12 +81,6 @@ export interface RegisterRequest {
   majorId: string
 }
 
-//登录请求参数
-export interface LoginRequest {
-  account: string
-  password: string
-}
-
 //登录响应（包含token）
 export interface LoginResponse {
   user: User
@@ -127,15 +121,6 @@ export interface AddCollegeAdminRequest {
   account: string
   tel?: string
   password?: string
-}
-
-//专业类别
-export interface MajorCategory {
-  id: string
-  name: string
-  collegeId: string
-  createTime?: string
-  updateTime?: string
 }
 
 //专业类型
