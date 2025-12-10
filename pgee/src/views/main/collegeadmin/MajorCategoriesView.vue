@@ -267,30 +267,20 @@ const loadCollegeInfo = async () => {
 
 // 加载专业类别
 const loadCategories = async () => {
-  try {
-    const res = await MajorCategoryService.getCategoriesByCollegeId()
-    setMajorCategories(res)
-    categories.value = res
-  } catch (error) {
-    const errMsg = error instanceof RequestError ? error.message : '加载专业类别列表失败'
-    ElMessage.error(errMsg)
-    categories.value = []
-  }
+  const res = await MajorCategoryService.getCategoriesByCollegeId()
+  setMajorCategories(res)
+  categories.value = res
 }
 
 const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
-  try {
-    return new Date(dateStr).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  } catch {
-    return '-'
-  }
+  return new Date(dateStr).toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 const addRuleRow = (): void => {
