@@ -1,7 +1,7 @@
 import axios from '@/axios'
 import type { Major } from '@/types'
 
-// 表单验证结果（复用你定义的 ValidationResult）
+// 表单验证结果
 interface ValidationResult {
   isValid: boolean
   message: string
