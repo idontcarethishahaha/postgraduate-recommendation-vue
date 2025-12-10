@@ -35,17 +35,9 @@ export interface ApiResponse<T = unknown> {
 export interface College {
   id: string
   name: string
-  code?: string
+  //code?: string
   createTime?: string
   updateTime?: string
-}
-
-//专业类型
-export interface Major {
-  id: string
-  name: string
-  collegeId?: string
-  code?: string
 }
 
 //用户信息
@@ -135,4 +127,22 @@ export interface AddCollegeAdminRequest {
   account: string
   tel?: string
   password?: string
+}
+
+//专业类别
+export interface MajorCategory {
+  id: string
+  name: string
+  collegeId: string
+  createTime?: string
+  updateTime?: string
+}
+
+//专业类型
+export interface Major {
+  id: string
+  name: string
+  majorCategoryId: string
+  createTime?: string
+  updateTime?: string
 }
