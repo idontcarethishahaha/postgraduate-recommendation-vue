@@ -1,25 +1,29 @@
 <template>
   <div class="category-majors-page">
+    <!-- 面包屑导航（增加双重兜底） -->
     <el-breadcrumb class="breadcrumb" separator=">">
       <el-breadcrumb-item @click="navigateToIndex" style="cursor: pointer; color: #1890ff">
-        {{ college.name }}学院管理员中心
+        {{ college.name || '所属学院' }}学院管理员中心
       </el-breadcrumb-item>
       <el-breadcrumb-item @click="navigateToCategories" style="cursor: pointer; color: #1890ff">
         专业类别管理
       </el-breadcrumb-item>
-      <el-breadcrumb-item>{{ category.name }} - 专业管理</el-breadcrumb-item>
+      <el-breadcrumb-item>{{ category.name || '未知类别' }} - 专业管理</el-breadcrumb-item>
     </el-breadcrumb>
 
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h2 class="page-title">{{ category.name }} 专业管理</h2>
+      <h2 class="page-title">{{ category.name || '未知类别' }} 专业管理</h2>
       <el-button type="primary" class="add-btn" @click="showAddMajorModal">添加专业</el-button>
     </div>
 
+    <!-- 统计卡片 -->
     <el-card class="stats" shadow="hover">
       该类别下专业总数：
       <strong>{{ majors.length }}</strong>
     </el-card>
 
+    <!-- 专业列表表格 -->
     <el-table
       v-if="majors.length > 0"
       :data="majors"
@@ -52,11 +56,13 @@
       </el-table-column>
     </el-table>
 
+    <!-- 空状态 -->
     <div v-else class="empty-state">
       <h3>该类别下暂无专业</h3>
       <p>点击"添加专业"按钮来添加</p>
     </div>
 
+    <!-- 添加/编辑专业弹窗 -->
     <el-dialog
       v-model="showModal"
       :title="isEditing ? '编辑专业' : '添加专业'"
@@ -78,11 +84,14 @@
 </template>
 
 <script setup lang="ts">
+// 组件/工具导入
 import { createMessageDialog } from '@/components/message'
 import { CollegeService, MajorCategoryService, MajorService } from '@/services'
 import { formatDate } from '@/services/FormatUtils'
 import type { College, Major, MajorCategory } from '@/types'
 import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
+
+// Element Plus 组件导入
 import {
   ElBreadcrumb,
   ElBreadcrumbItem,
@@ -97,10 +106,12 @@ import {
   ElTable,
   ElTableColumn
 } from 'element-plus'
-import { nextTick, ref, watch } from 'vue' // 移除onMounted，改用watch
+
+// Vue 核心API
+import { nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-// 错误类型定义（统一错误处理）
+// 统一错误类型定义
 interface ErrorWithMessage {
   message: string
 }
@@ -108,96 +119,156 @@ const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
   return typeof error === 'object' && error !== null && 'message' in error
 }
 
+// 路由实例
 const router = useRouter()
 const route = useRoute()
 
-// 核心：优先从Token获取学院ID，路由参数仅兜底
-const collegeId = ref(getCollegeIdStrFromToken() || (route.params.collegeId as string))
+// ========== 核心参数初始化（优先Token，兜底路由参数） ==========
+// 提前解析Token中的学院ID，优先使用
+const tokenCollegeId = getCollegeIdStrFromToken()
+const collegeId = ref(tokenCollegeId || (route.params.collegeId as string))
 const categoryId = ref(route.params.categoryId as string)
 
-// 响应式数据
+// ========== 响应式数据（初始化即兜底，避免空值） ==========
 const showModal = ref(false)
 const isEditing = ref(false)
-const college = ref<College>({ id: '', name: '', createTime: '', updateTime: '' })
+const isInitialized = ref(false)
+
+// 学院信息（初始就给兜底值）
+const college = ref<College>({
+  id: tokenCollegeId || '',
+  name: '所属学院',
+  createTime: '',
+  updateTime: ''
+})
+
+// 专业类别信息（初始就给兜底值）
 const category = ref<MajorCategory>({
   id: '',
-  name: '',
-  collegeId: '',
+  name: '未知类别',
+  collegeId: tokenCollegeId || '',
   calculationRule: {},
   createTime: '',
   updateTime: ''
 })
+
+// 专业列表/表单
 const majors = ref<Major[]>([])
 const majorForm = ref({
   id: '',
   name: ''
 })
 
-// 新增：标记是否已初始化，避免重复加载
-const isInitialized = ref(false)
-
-// 加载学院信息（完善错误处理 + 兜底显示）
+// ========== 数据加载方法（完善错误处理+兜底） ==========
+/**
+ * 加载学院信息（确保始终有兜底值）
+ */
 const loadCollegeInfo = async () => {
+  // 重置为兜底值（防止接口报错导致空值）
+  college.value = {
+    id: collegeId.value || '',
+    name: '所属学院',
+    createTime: '',
+    updateTime: ''
+  }
+
+  // 学院ID为空，直接返回
+  if (!collegeId.value) {
+    ElMessage.warning('未获取到有效学院ID，使用默认名称')
+    return
+  }
+
   try {
-    if (!collegeId.value) throw new Error('学院ID为空')
     const collegeInfo = await CollegeService.getCollegeById(collegeId.value)
-    college.value = collegeInfo
+    // 接口返回有效数据才更新
+    if (collegeInfo && collegeInfo.name) {
+      college.value = collegeInfo
+      console.log('学院信息加载成功：', collegeInfo)
+    } else {
+      ElMessage.warning('学院信息为空，使用默认名称')
+    }
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
     console.error('加载学院信息失败：', error)
     ElMessage.error(msg)
-    college.value.name = '所属学院' // 兜底显示
+    // 强制保留兜底值
+    college.value.name = '所属学院'
   }
 }
 
-// 加载类别信息（完善错误处理 + 兜底显示）
+/**
+ * 加载专业类别信息（确保始终有兜底值）
+ */
 const loadCategoryInfo = async () => {
+  // 重置为兜底值
+  category.value = {
+    id: '',
+    name: '未知类别',
+    collegeId: collegeId.value || '',
+    calculationRule: {},
+    createTime: '',
+    updateTime: ''
+  }
+
+  // 类别ID为空，直接返回
+  if (!categoryId.value) {
+    ElMessage.warning('未获取到有效专业类别ID，使用默认名称')
+    return
+  }
+
   try {
-    if (!categoryId.value) throw new Error('专业类别ID为空')
     const categoryInfo = await MajorCategoryService.getCategoryById(categoryId.value)
-    category.value = categoryInfo
+    // 接口返回有效数据才更新
+    if (categoryInfo && categoryInfo.name) {
+      category.value = categoryInfo
+      console.log('专业类别信息加载成功：', categoryInfo)
+    } else {
+      ElMessage.warning('专业类别信息为空，使用默认名称')
+    }
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载专业类别信息失败'
     console.error('加载类别信息失败：', error)
     ElMessage.error(msg)
-    category.value.name = '未知类别' // 兜底显示
+    // 强制保留兜底值
+    category.value.name = '未知类别'
   }
 }
 
-// 加载该类别下的专业列表（完善错误处理）
+//加载专业列表
 const loadMajors = async () => {
-  try {
-    if (!categoryId.value) throw new Error('专业类别ID为空')
-    const data = await MajorService.getMajorsByCategoryId(categoryId.value)
-    majors.value = data
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '加载专业列表失败'
-    console.error('加载专业列表失败：', error)
-    ElMessage.error(msg)
-    majors.value = []
+  majors.value = []
+
+  if (!categoryId.value) {
+    ElMessage.warning('未获取到有效专业类别ID，无法加载专业列表')
+    return
   }
+
+  const data = await MajorService.getMajorsByCategoryId(categoryId.value)
+  majors.value = data || []
+  console.log('专业列表加载成功：', data)
 }
 
-// 显示添加专业弹窗
+//显示添加专业弹窗
+
 const showAddMajorModal = () => {
   isEditing.value = false
   majorForm.value = { id: '', name: '' }
   showModal.value = true
 }
 
-// 显示编辑专业弹窗
+//显示编辑专业弹窗
 const editMajor = (major: Major) => {
   isEditing.value = true
   majorForm.value = { id: major.id, name: major.name }
   showModal.value = true
 }
 
-// 关闭弹窗
+//关闭弹窗
 const closeModal = () => {
   showModal.value = false
 }
 
-// 保存专业（完善错误处理 + 匹配接口类型）
+//保存专业（添加/编辑）
 const saveMajor = async () => {
   // 基础校验
   if (!majorForm.value.name.trim()) {
@@ -205,67 +276,52 @@ const saveMajor = async () => {
     return
   }
 
-  try {
-    if (isEditing.value) {
-      // 编辑专业
-      const updateData = { name: majorForm.value.name.trim() }
-      await MajorService.updateMajor(majorForm.value.id, updateData)
-      createMessageDialog('更新成功')
-    } else {
-      // 添加专业（严格匹配接口类型）
-      const addData: Omit<Major, 'id' | 'createTime' | 'updateTime'> = {
-        name: majorForm.value.name.trim(),
-        majorCategoryId: categoryId.value // 确保是string类型
-      }
-      await MajorService.addMajor(addData)
-      createMessageDialog('添加成功')
+  if (isEditing.value) {
+    // 编辑专业
+    const updateData = { name: majorForm.value.name.trim() }
+    await MajorService.updateMajor(majorForm.value.id, updateData)
+    createMessageDialog('更新成功')
+  } else {
+    // 添加专业
+    const addData: Omit<Major, 'id' | 'createTime' | 'updateTime'> = {
+      name: majorForm.value.name.trim(),
+      majorCategoryId: categoryId.value
     }
-    closeModal()
-    await loadMajors() // 重新加载列表
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '操作失败，请重试'
-    ElMessage.error(msg)
+    await MajorService.addMajor(addData)
+    createMessageDialog('添加成功')
   }
+
+  // 关闭弹窗并重新加载列表
+  closeModal()
+  await loadMajors()
 }
 
-// 删除专业（完善错误处理 + 取消操作不报错）
+//删除专业
 const removeMajor = async (major: Major) => {
-  try {
-    await ElMessageBox.confirm(`确定要删除专业"${major.name}"吗？此操作不可恢复！`, '确认删除', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    })
+  await ElMessageBox.confirm(`确定要删除专业"${major.name}"吗？此操作不可恢复！`, '确认删除', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
 
-    await MajorService.deleteMajor(major.id)
-    createMessageDialog('删除成功')
-    await loadMajors() // 重新加载列表
-  } catch (error: unknown) {
-    // 取消操作不报错
-    if (error !== 'cancel' && isErrorWithMessage(error)) {
-      ElMessage.error(error.message || '删除失败，请重试')
-    }
-  }
+  await MajorService.deleteMajor(major.id)
+  createMessageDialog('删除成功')
+  await loadMajors()
 }
 
-// 导航回管理员首页（使用Token中的学院ID，避免路由参数依赖）
 const navigateToIndex = () => {
   const cid = getCollegeIdStrFromToken()
-  router.push(`/collegeadmin/${cid}`) // 修正：原代码缺少学院ID参数
+  router.push(`/collegeadmin/${cid}`)
 }
 
-// 导航回类别管理页（使用Token中的学院ID）
 const navigateToCategories = () => {
   const cid = getCollegeIdStrFromToken()
   router.push(`/collegeadmin/major-categories/${cid}`)
 }
 
-// ========== 初始化逻辑（替代onMounted，避免重复触发） ==========
 const initPage = async () => {
-  // 避免重复初始化
   if (isInitialized.value) return
 
-  // 1. 权限验证
   if (!isCollegeAdmin()) {
     ElMessage.error('无学院管理员权限，请重新登录')
     sessionStorage.clear()
@@ -273,7 +329,6 @@ const initPage = async () => {
     return
   }
 
-  // 2. 学院ID验证
   if (!collegeId.value) {
     ElMessage.error('未获取到学院ID，请重新登录')
     sessionStorage.clear()
@@ -281,67 +336,73 @@ const initPage = async () => {
     return
   }
 
-  // 3. 加载数据（异步执行，避免阻塞）
   await Promise.all([loadCollegeInfo(), loadCategoryInfo(), loadMajors()])
 
-  // 标记初始化完成
   isInitialized.value = true
 }
 
-// 监听路由参数变化，实现初始化（替代onMounted）
 watch(
   () => [route.params.collegeId, route.params.categoryId],
   async newParams => {
-    // 仅在当前页面执行（需给路由配置name，比如name: 'CategoryMajors'）
     if (route.name !== 'CategoryMajors') return
 
-    // 更新参数（优先Token，兜底路由参数）
     collegeId.value = getCollegeIdStrFromToken() || (newParams[0] as string)
     categoryId.value = newParams[1] as string
 
-    // 等待DOM更新后初始化
     await nextTick()
     await initPage()
   },
-  { immediate: true } // 首次加载执行
+  { immediate: true }
 )
 </script>
 
 <style scoped>
+.category-majors-page {
+  padding: 20px;
+}
+
 .breadcrumb {
   margin: 0 0 1rem 0;
   color: #666;
 }
+
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
+
 .add-btn {
   padding: 0.5rem 1rem;
 }
+
 .stats {
   margin: 1rem 0;
   padding: 1rem;
   background: #f5f5f5;
   border-radius: 4px;
 }
+
 .action-buttons {
   display: flex;
   gap: 0.5rem;
 }
+
 .action-btn {
   padding: 0.3rem 0.6rem;
 }
+
 .empty-state {
   text-align: center;
   padding: 1rem;
   color: #666;
 }
+
 .modal-form {
   width: 100%;
 }
+
 .form-control {
   width: 100%;
   padding: 0.5rem;
@@ -350,7 +411,6 @@ watch(
   margin-top: 0.3rem;
 }
 
-/* 子路由出口样式优化 */
 :deep(.router-view) {
   margin-top: 20px;
   padding-top: 20px;

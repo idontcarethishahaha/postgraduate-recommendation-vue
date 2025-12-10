@@ -1,27 +1,22 @@
-<!-- src/views/main/collegeadmin/MajorCategoriesView.vue -->
 <template>
   <div class="major-categories-page">
-    <!-- 面包屑导航 -->
     <el-breadcrumb class="breadcrumb" separator=">">
       <el-breadcrumb-item @click="navigateToIndex" style="cursor: pointer; color: #1890ff">
-        {{ college.name }}学院管理员中心
+        {{ college.name || '所属学院' }}学院管理员中心
       </el-breadcrumb-item>
       <el-breadcrumb-item>专业类别管理</el-breadcrumb-item>
     </el-breadcrumb>
 
-    <!-- 页面头部 -->
     <div class="page-header">
       <h2 class="page-title">专业类别管理</h2>
       <el-button type="primary" class="add-btn" @click="openAddModal">添加专业类别</el-button>
     </div>
 
-    <!-- 统计卡片 -->
     <el-card class="stats" shadow="hover">
       专业类别总数：
       <strong>{{ categories.length }}</strong>
     </el-card>
 
-    <!-- 类别列表表格 -->
     <el-table
       v-if="categories.length > 0"
       :data="categories"
@@ -64,7 +59,6 @@
       </el-table-column>
     </el-table>
 
-    <!-- 空状态 -->
     <div v-else class="empty-state">
       <h3>暂无专业类别</h3>
       <p>点击"添加专业类别"按钮来添加</p>
@@ -176,26 +170,30 @@
 </template>
 
 <script setup lang="ts">
+// 服务导入（适配修改后的接口）
 import { CollegeService, MajorCategoryService } from '@/services'
 import { useMajorCategoryStore } from '@/stores/MajorCategoryStore'
+// 类型导入（适配新的DTO）
+import type { MajorCategoryAddDTO, MajorCategoryUpdateDTO } from '@/services/MajorCategoryService'
 import type { CalculationRuleStorage, College, MajorCategory } from '@/types'
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, nextTick, ref, watch } from 'vue' // 移除onMounted，改用watch
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-// 导入Token工具函数（权限验证+学院ID获取）
+// Token工具函数
 import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
 
-// 错误类型定义
-interface ErrorWithMessage {
-  message: string
-}
-const isErrorWithMessage = (error: unknown): error is ErrorWithMessage => {
-  return typeof error === 'object' && error !== null && 'message' in error
+// ========== 精确类型定义（移除any） ==========
+// 自定义错误类型
+class RequestError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'RequestError'
+  }
 }
 
-// 规则行类型定义
+// 规则行类型
 interface RuleItem {
   id: string
   ruleName: string
@@ -203,36 +201,36 @@ interface RuleItem {
   isConfirmed: boolean
 }
 
-// 表单类型定义
+// 表单类型
 interface CategoryForm {
   id: string
   name: string
   ruleItems: RuleItem[]
 }
 
-// 路由实例
+// ========== 路由与响应式数据 ==========
 const router = useRouter()
 const route = useRoute()
 
-// 核心：优先从Token获取学院ID，路由参数仅兜底（解决参数依赖问题）
-const collegeId = ref(getCollegeIdStrFromToken() || (route.params.collegeId as string))
-
-// 响应式数据
+// 移除collegeId依赖（后端从Token解析）
 const modalVisible = ref(false)
 const isEdit = ref(false)
 const categoryFormRef = ref<FormInstance>()
-// 初始化学院对象（避免空对象类型警告）
-const college = ref<College>({ id: '', name: '', createTime: '', updateTime: '' })
+// 学院信息（强化初始化）
+const college = ref<College>({
+  id: '',
+  name: '所属学院',
+  createTime: '',
+  updateTime: ''
+})
 const categories = ref<MajorCategory[]>([])
-
-// 新增：标记是否已初始化，避免重复加载
 const isInitialized = ref(false)
 
-// 获取专业类别Store
+// Store实例
 const { setMajorCategories, addMajorCategory, updateMajorCategory, removeMajorCategory } =
   useMajorCategoryStore()
 
-// 初始化表单
+// ========== 表单初始化 ==========
 const initCategoryForm = (): CategoryForm => ({
   id: '',
   name: '',
@@ -247,19 +245,22 @@ const initCategoryForm = (): CategoryForm => ({
 })
 const categoryForm = ref<CategoryForm>(initCategoryForm())
 
-// 计算已确定行的权重总和
+// ========== 计算属性 ==========
+// 已确定权重总和（类型安全）
 const totalConfirmedWeight = computed(() => {
   return categoryForm.value.ruleItems
     .filter(item => item.isConfirmed)
-    .reduce((sum, item) => sum + (Number.isInteger(item.weight) ? item.weight : 0), 0)
+    .reduce((sum, item) => {
+      const validWeight = Number.isInteger(item.weight) ? item.weight : 0
+      return sum + (validWeight < 0 || validWeight > 100 ? 0 : validWeight)
+    }, 0)
 })
 
-// ========== 初始化逻辑（替代onMounted，增加权限验证） ==========
+// ========== 初始化逻辑（适配后端Token解析） ==========
 const initPage = async () => {
-  // 避免重复初始化
   if (isInitialized.value) return
 
-  // 1. 权限验证：必须是学院管理员
+  // 1. 权限校验
   if (!isCollegeAdmin()) {
     ElMessage.error('无学院管理员权限，请重新登录')
     sessionStorage.clear()
@@ -267,81 +268,76 @@ const initPage = async () => {
     return
   }
 
-  // 2. 学院ID有效性验证
-  if (!collegeId.value) {
-    ElMessage.error('未获取到学院ID，请重新登录')
-    sessionStorage.clear()
-    router.push('/login')
-    return
-  }
-
-  // 3. 加载页面数据
+  // 2. 加载数据（无需传collegeId）
   try {
     await Promise.all([loadCollegeInfo(), loadCategories()])
-    isInitialized.value = true // 标记初始化完成
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '页面初始化失败，请重试'
-    ElMessage.error(msg)
+    isInitialized.value = true
+  } catch (error) {
+    const errMsg = error instanceof RequestError ? error.message : '页面初始化失败，请重试'
+    ElMessage.error(errMsg)
   }
 }
 
-// 监听路由参数变化，实现初始化（替代onMounted）
+// 监听路由变化初始化
 watch(
-  () => route.params.collegeId,
-  async newCollegeId => {
-    // 仅在当前页面执行（需给路由配置name: 'MajorCategories'）
+  () => route.fullPath,
+  async () => {
     if (route.name !== 'MajorCategories') return
-
-    // 更新学院ID（优先Token，兜底路由参数）
-    collegeId.value = getCollegeIdStrFromToken() || (newCollegeId as string)
-
-    // 等待DOM更新后执行初始化
     await nextTick()
     await initPage()
   },
-  { immediate: true } // 首次加载自动执行
+  { immediate: true }
 )
 
-// 加载学院信息（增加空值校验+兜底显示）
+// ========== 数据加载方法（适配新接口） ==========
+// 加载学院信息
 const loadCollegeInfo = async () => {
   try {
-    if (!collegeId.value) throw new Error('学院ID为空')
-    const collegeInfo = await CollegeService.getCollegeById(collegeId.value)
+    const collegeId = getCollegeIdStrFromToken()
+    if (!collegeId) throw new RequestError('未从Token解析到学院ID')
+
+    const collegeInfo = await CollegeService.getCollegeById(collegeId)
     college.value = collegeInfo
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
-    ElMessage.error(msg)
-    college.value.name = '所属学院' // 兜底显示
+  } catch (error) {
+    const errMsg = error instanceof RequestError ? error.message : '加载学院信息失败'
+    ElMessage.error(errMsg)
+    // 兜底显示
+    college.value.name = '所属学院'
   }
 }
 
-// 加载专业类别列表（增加空值校验）
+// 加载专业类别（无需传collegeId）
 const loadCategories = async () => {
   try {
-    if (!collegeId.value) throw new Error('学院ID为空')
-    const res = await MajorCategoryService.getCategoriesByCollegeId(collegeId.value)
+    const res = await MajorCategoryService.getCategoriesByCollegeId()
     setMajorCategories(res)
     categories.value = res
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '加载专业类别列表失败'
-    ElMessage.error(msg)
+  } catch (error) {
+    const errMsg = error instanceof RequestError ? error.message : '加载专业类别列表失败'
+    ElMessage.error(errMsg)
+    categories.value = []
   }
 }
 
-// 格式化日期
-const formatDate = (dateStr?: string) => {
+// ========== 工具方法 ==========
+// 日期格式化（类型安全）
+const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
-  return new Date(dateStr).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  try {
+    return new Date(dateStr).toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return '-'
+  }
 }
 
-// ========== 规则行交互 ==========
-const addRuleRow = () => {
+// ========== 规则行交互（类型安全） ==========
+const addRuleRow = (): void => {
   categoryForm.value.ruleItems.push({
     id: uuidv4(),
     ruleName: '',
@@ -350,7 +346,7 @@ const addRuleRow = () => {
   })
 }
 
-const deleteRuleRow = (index: number) => {
+const deleteRuleRow = (index: number): void => {
   if (categoryForm.value.ruleItems.length <= 1) {
     ElMessage.warning('至少保留1条规则行')
     return
@@ -358,9 +354,11 @@ const deleteRuleRow = (index: number) => {
   categoryForm.value.ruleItems.splice(index, 1)
 }
 
-const toggleRuleConfirm = (index: number) => {
+const toggleRuleConfirm = (index: number): void => {
   const item = categoryForm.value.ruleItems[index]
+
   if (!item.isConfirmed) {
+    // 前置校验
     if (!item.ruleName.trim()) {
       ElMessage.warning('请先填写规则名称')
       return
@@ -370,18 +368,18 @@ const toggleRuleConfirm = (index: number) => {
       return
     }
   }
+
   item.isConfirmed = !item.isConfirmed
 }
 
-const handleWeightInput = (item: RuleItem) => {
+const handleWeightInput = (item: RuleItem): void => {
   if (!Number.isInteger(item.weight)) {
     item.weight = Math.floor(item.weight) || 0
   }
-  if (item.weight < 0) item.weight = 0
-  if (item.weight > 100) item.weight = 100
+  item.weight = Math.max(0, Math.min(100, item.weight))
 }
 
-const validateWeight = (item: RuleItem) => {
+const validateWeight = (item: RuleItem): void => {
   if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
     ElMessage.warning('权重需为0-100的整数')
     item.weight = 0
@@ -389,21 +387,22 @@ const validateWeight = (item: RuleItem) => {
 }
 
 // ========== 模态框操作 ==========
-const openAddModal = () => {
+const openAddModal = (): void => {
   isEdit.value = false
   categoryForm.value = initCategoryForm()
   modalVisible.value = true
 }
 
-const openEditModal = (category: MajorCategory) => {
+const openEditModal = (category: MajorCategory): void => {
   isEdit.value = true
   // 转换数据库格式到前端规则行
   const ruleItems = Object.entries(category.calculationRule).map(([ruleName, weight]) => ({
     id: uuidv4(),
     ruleName,
-    weight,
+    weight: Number(weight),
     isConfirmed: true
   }))
+
   categoryForm.value = {
     id: category.id,
     name: category.name,
@@ -412,12 +411,12 @@ const openEditModal = (category: MajorCategory) => {
   modalVisible.value = true
 }
 
-const closeModal = () => {
+const closeModal = (): void => {
   modalVisible.value = false
   categoryFormRef.value?.resetFields()
 }
 
-// 转换前端规则行到数据库格式
+// 转换规则行到后端DTO格式
 const convertToStorageFormat = (): CalculationRuleStorage => {
   const storageObj: CalculationRuleStorage = {}
   categoryForm.value.ruleItems
@@ -428,25 +427,26 @@ const convertToStorageFormat = (): CalculationRuleStorage => {
   return storageObj
 }
 
-// 提交表单（添加/修改）
-const submitForm = async () => {
+// ========== 表单提交（适配新接口） ==========
+const submitForm = async (): Promise<void> => {
   const confirmedItems = categoryForm.value.ruleItems.filter(item => item.isConfirmed)
   if (confirmedItems.length === 0) {
     ElMessage.error('请至少确定1条规则行')
     return
   }
 
-  const requestData = {
+  // 构建请求数据（适配后端DTO）
+  const requestData: MajorCategoryAddDTO | MajorCategoryUpdateDTO = {
     name: categoryForm.value.name.trim(),
     calculationRule: convertToStorageFormat()
   }
 
   try {
     if (isEdit.value) {
-      // 编辑专业类别
+      // 编辑操作（无需collegeId）
       const updatedCategory = await MajorCategoryService.updateCategory(
         categoryForm.value.id,
-        requestData
+        requestData as MajorCategoryUpdateDTO
       )
       updateMajorCategory(categoryForm.value.id, requestData)
       // 更新本地列表
@@ -456,21 +456,21 @@ const submitForm = async () => {
       }
       ElMessage.success('专业类别修改成功')
     } else {
-      // 添加专业类别（使用Token中的学院ID，更安全）
-      const newCategory = await MajorCategoryService.addCategory(collegeId.value, requestData)
+      // 添加操作（无需collegeId）
+      const newCategory = await MajorCategoryService.addCategory(requestData as MajorCategoryAddDTO)
       addMajorCategory(newCategory)
       categories.value.push(newCategory)
       ElMessage.success('专业类别添加成功')
     }
     closeModal()
-  } catch (error: unknown) {
-    const msg = isErrorWithMessage(error) ? error.message : '操作失败，请重试'
-    ElMessage.error(msg)
+  } catch (error) {
+    const errMsg = error instanceof RequestError ? error.message : '操作失败，请重试'
+    ElMessage.error(errMsg)
   }
 }
 
-// 删除专业类别
-const removeCategory = async (category: MajorCategory) => {
+// ========== 删除与导航 ==========
+const removeCategory = async (category: MajorCategory): Promise<void> => {
   try {
     await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
       type: 'warning'
@@ -479,21 +479,20 @@ const removeCategory = async (category: MajorCategory) => {
     removeMajorCategory(category.id)
     categories.value = categories.value.filter(item => item.id !== category.id)
     ElMessage.success('删除成功')
-  } catch (error: unknown) {
-    if (error !== 'cancel' && isErrorWithMessage(error)) {
+  } catch (error) {
+    if (error !== 'cancel' && error instanceof RequestError) {
       ElMessage.error(error.message || '删除失败，请重试')
     }
   }
 }
 
-// 管理专业（跳转到专业管理页面，使用Token中的学院ID）
-const manageMajors = (category: MajorCategory) => {
-  const cid = getCollegeIdStrFromToken()
-  router.push(`/collegeadmin/major-categories/${cid}/majors/${category.id}`)
+// 管理专业（路由跳转无需传collegeId）
+const manageMajors = (category: MajorCategory): void => {
+  router.push(`/collegeadmin/categories/${category.id}/majors`)
 }
 
-// 导航回学院管理员首页（使用Token中的学院ID）
-const navigateToIndex = () => {
+// 导航回首页（使用Token中的学院ID）
+const navigateToIndex = (): void => {
   const cid = getCollegeIdStrFromToken()
   router.push(`/collegeadmin/${cid}`)
 }
