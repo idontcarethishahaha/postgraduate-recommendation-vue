@@ -173,7 +173,7 @@ const loadCollegeInfo = async () => {
   } catch (error: unknown) {
     const msg = isErrorWithMessage(error) ? error.message : '加载学院信息失败'
     ElMessage.error(msg)
-    college.value.name = '所属学院'
+    college.value.name = '未知学院'
   }
 }
 
