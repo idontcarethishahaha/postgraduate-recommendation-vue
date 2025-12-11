@@ -1,7 +1,7 @@
-import axios from '@/axios'
+import { useDelete, useGet, usePost, usePut } from '@/axios'
 import type { CalculationRuleStorage, MajorCategory } from '@/types'
 
-// MajorCategoryAddDTO/UpdateDTO
+// 与后端交互的 DTO 类型（添加/更新专业类别）
 export interface MajorCategoryAddDTO {
   name: string
   calculationRule: CalculationRuleStorage
@@ -12,90 +12,120 @@ export interface MajorCategoryUpdateDTO {
   calculationRule: CalculationRuleStorage
 }
 
-// 后端返回的 ResultVO 类型
-interface ResultVO<T = unknown> {
-  code: number
-  message?: string
-  data: T
-}
-
-// 表单验证结果
-interface ValidationResult {
-  isValid: boolean
-  message: string
-}
-
-// 错误
-class RequestError extends Error {
+// 错误处理类
+export class RequestError extends Error {
   constructor(message: string) {
     super(message)
     this.name = 'RequestError'
   }
 }
 
+// 表单验证结果类型
+interface ValidationResult {
+  isValid: boolean
+  message: string
+}
+
+/**
+ * 专业类别服务（封装与后端的交互逻辑）
+ */
 export class MajorCategoryService {
+  /**
+   * 获取当前学院的所有专业类别（从学院管理员 token 中解析学院 ID）
+   */
   static async getCategoriesByCollegeId(): Promise<MajorCategory[]> {
-    const response = await axios.get<ResultVO<MajorCategory[]>>('/collegeadmin/categories')
-    if (response.data.code === 200) {
-      return response.data.data || []
+    try {
+      // 调用后端接口：/api/collegeadmin/categories（无需传参，后端从 token 获取 cid）
+      return await useGet<MajorCategory[]>('/collegeadmin/categories')
+    } catch (error) {
+      throw new RequestError(`获取专业类别失败：${(error as Error).message}`)
     }
-    throw new RequestError(response.data.message || '加载专业类别列表失败')
   }
 
+  /**
+   * 添加新的专业类别
+   * @param data 专业类别信息（名称 + 计算规则）
+   */
   static async addCategory(data: MajorCategoryAddDTO): Promise<MajorCategory> {
-    const response = await axios.post<ResultVO<MajorCategory>>('/collegeadmin/categories', data)
-    if (response.data.code === 200) {
-      return response.data.data as MajorCategory
+    try {
+      return await usePost<MajorCategory>('/collegeadmin/categories', data)
+    } catch (error) {
+      throw new RequestError(`添加专业类别失败：${(error as Error).message}`)
     }
-    throw new RequestError(response.data.message || '添加专业类别失败')
   }
 
+  /**
+   * 更新专业类别
+   * @param categoryId 要更新的类别 ID
+   * @param data 更新后的信息
+   */
   static async updateCategory(
     categoryId: string,
     data: MajorCategoryUpdateDTO
   ): Promise<MajorCategory> {
-    const response = await axios.put<ResultVO<MajorCategory>>(
-      `/collegeadmin/categories/${categoryId}`,
-      data
-    )
-    if (response.data.code === 200) {
-      return response.data.data as MajorCategory
+    try {
+      return await usePut<MajorCategory>(`/collegeadmin/categories/${categoryId}`, data)
+    } catch (error) {
+      throw new RequestError(`更新专业类别失败：${(error as Error).message}`)
     }
-    throw new RequestError(response.data.message || '更新专业类别失败')
   }
 
+  /**
+   * 删除专业类别
+   * @param categoryId 要删除的类别 ID
+   */
   static async deleteCategory(categoryId: string): Promise<void> {
-    const response = await axios.delete<ResultVO<null>>(`/collegeadmin/categories/${categoryId}`)
-    if (response.data.code !== 200) {
-      throw new RequestError(response.data.message || '删除专业类别失败')
+    try {
+      await useDelete<void>(`/collegeadmin/categories/${categoryId}`)
+    } catch (error) {
+      throw new RequestError(`删除专业类别失败：${(error as Error).message}`)
     }
   }
 
-  static validateCalculationRule(rule: CalculationRuleStorage): ValidationResult {
-    const total = Object.values(rule).reduce((sum, weight) => {
-      const numWeight = Number(weight)
-      return sum + (isNaN(numWeight) ? 0 : numWeight)
-    }, 0)
-
-    if (total !== 100) {
-      return { isValid: false, message: `权重总和需为100（当前：${total}）` }
-    }
-
-    const emptyKey = Object.keys(rule).find(key => key.trim() === '')
-    if (emptyKey) {
-      return { isValid: false, message: '规则名称不能为空' }
-    }
-
-    return { isValid: true, message: '' }
-  }
-
+  /**
+   * 根据 ID 获取单个专业类别
+   * @param categoryId 类别 ID
+   */
   static async getCategoryById(categoryId: string): Promise<MajorCategory> {
     const categories = await this.getCategoriesByCollegeId()
     const category = categories.find(item => item.id === categoryId)
 
     if (!category) {
-      throw new RequestError('专业类别不存在')
+      throw new RequestError('未找到该专业类别')
     }
     return category
+  }
+
+  /**
+   * 验证计算规则的合法性（权重总和是否为 100，规则名称是否为空）
+   * @param rule 计算规则对象（{ 规则名: 权重 }）
+   */
+  static validateCalculationRule(rule: CalculationRuleStorage): ValidationResult {
+    // 计算权重总和
+    const totalWeight = Object.values(rule).reduce((sum, weight) => {
+      const num = Number(weight)
+      return sum + (isNaN(num) ? 0 : num)
+    }, 0)
+
+    if (totalWeight !== 100) {
+      return {
+        isValid: false,
+        message: `权重总和必须为 100（当前：${totalWeight}）`
+      }
+    }
+
+    // 检查是否有空白的规则名称
+    const hasEmptyRuleName = Object.keys(rule).some(key => key.trim() === '')
+    if (hasEmptyRuleName) {
+      return {
+        isValid: false,
+        message: '规则名称不能为空'
+      }
+    }
+
+    return {
+      isValid: true,
+      message: '验证通过'
+    }
   }
 }

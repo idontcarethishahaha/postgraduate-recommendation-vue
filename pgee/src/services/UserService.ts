@@ -16,6 +16,11 @@ export class UserService {
       throw new Error('登录错误：缺少必要信息')
     }
 
+    if (user.collegeId) {
+      sessionStorage.setItem('collegeId', user.collegeId)
+      console.log('从 user 中获取的学院ID:', user.collegeId)
+    }
+
     const userStore = useUserStore()
     userStore.setUserSessionStorage(user, role)
 

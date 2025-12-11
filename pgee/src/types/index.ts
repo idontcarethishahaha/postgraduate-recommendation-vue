@@ -148,7 +148,7 @@ export interface CalculationRuleStorage {
 export interface MajorCategory {
   id: string
   name: string
-  collegeId: string
+  collegeId?: string
   calculationRule: CalculationRuleStorage //存库格式：{规则名:权重}
   createTime?: string
   updateTime?: string
