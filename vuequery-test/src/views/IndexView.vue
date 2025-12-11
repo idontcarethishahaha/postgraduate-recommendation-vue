@@ -5,9 +5,7 @@
     <div v-else-if="isError">加载失败:{{ error }}</div>
     <div v-else-if="data?.length === 0">暂无数据</div>
     <div v-else>
-      <div v-for="college of data" :key="college.id">
-        {{ college.name }}
-      </div>
+      <div v-for="college of data" :key="college.id">{{ college.name }}--{{ college.id }}</div>
     </div>
   </div>
 </template>
