@@ -23,7 +23,7 @@ export const updateCollege = async (
   if (data.code !== 200) throw new Error(data.message || '更新失败')
 }
 
-export const deleteCollege = async (collegeId: string): Promise<void> => {
+export const removeCollege = async (collegeId: string): Promise<void> => {
   const { data } = await axios.delete<ResultVO>(`/admin/colleges/${collegeId}`)
   if (data.code !== 200) throw new Error(data.message || '删除失败')
 }

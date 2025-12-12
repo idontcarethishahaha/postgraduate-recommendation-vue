@@ -198,7 +198,7 @@ const isEdit = ref(false)
 const categoryFormRef = ref<FormInstance>()
 const college = ref<College>({
   id: '',
-  name: '所属学院',
+  name: '加载中...', // 初始显示加载中
   createTime: '',
   updateTime: ''
 })
@@ -242,9 +242,15 @@ const initPage = async () => {
     return
   }
 
-  // 加载数据
-  await Promise.all([loadCollegeInfo(), loadCategories()])
-  isInitialized.value = true
+  // 加载数据（优先确保学院信息加载成功）
+  try {
+    await loadCollegeInfo()
+    await loadCategories()
+    isInitialized.value = true
+  } catch (error) {
+    console.error('页面初始化失败:', error)
+    ElMessage.error('页面加载失败，请刷新重试')
+  }
 }
 
 watch(
@@ -257,19 +263,46 @@ watch(
   { immediate: true }
 )
 
+// 修复学院信息加载逻辑：优先从sessionStorage获取collegeId，再从token获取
 const loadCollegeInfo = async () => {
-  const collegeId = getCollegeIdStrFromToken()
-  if (!collegeId) throw new RequestError('未从Token解析到学院ID')
+  try {
+    // 1. 优先从sessionStorage获取学院ID（之前已存储）
+    let collegeId = sessionStorage.getItem('collegeId')
 
-  const collegeInfo = await CollegeService.getCollegeById(collegeId)
-  college.value = collegeInfo
+    // 2. 如果sessionStorage没有，再从token解析
+    if (!collegeId) {
+      collegeId = getCollegeIdStrFromToken()
+    }
+
+    if (!collegeId) {
+      throw new RequestError('未获取到学院ID')
+    }
+
+    // 3. 调用接口加载学院信息
+    const collegeInfo = await CollegeService.getCollegeById(collegeId)
+    if (collegeInfo && collegeInfo.name) {
+      college.value = collegeInfo
+    } else {
+      throw new RequestError('获取的学院信息不完整')
+    }
+  } catch (error) {
+    console.error('加载学院信息失败:', error)
+    // 显示友好提示，避免直接显示"未知学院"
+    college.value.name = '学院信息加载失败'
+    ElMessage.warning(`学院信息加载失败: ${(error as Error).message}`)
+  }
 }
 
 // 加载专业类别
 const loadCategories = async () => {
-  const res = await MajorCategoryService.getCategoriesByCollegeId()
-  setMajorCategories(res)
-  categories.value = res
+  try {
+    const res = await MajorCategoryService.getCategoriesByCollegeId()
+    setMajorCategories(res)
+    categories.value = res
+  } catch (error) {
+    console.error('加载专业类别失败:', error)
+    ElMessage.error('加载专业类别失败，请刷新重试')
+  }
 }
 
 const formatDate = (dateStr?: string): string => {
@@ -418,7 +451,7 @@ const manageMajors = (category: MajorCategory): void => {
 }
 
 const navigateToIndex = (): void => {
-  const cid = getCollegeIdStrFromToken()
+  const cid = sessionStorage.getItem('collegeId') || getCollegeIdStrFromToken()
   router.push(`/collegeadmin/${cid}`)
 }
 </script>

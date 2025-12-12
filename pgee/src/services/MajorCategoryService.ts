@@ -26,13 +26,7 @@ interface ValidationResult {
   message: string
 }
 
-/**
- * 专业类别服务（封装与后端的交互逻辑）
- */
 export class MajorCategoryService {
-  /**
-   * 获取当前学院的所有专业类别（从学院管理员 token 中解析学院 ID）
-   */
   static async getCategoriesByCollegeId(): Promise<MajorCategory[]> {
     try {
       // 调用后端接口：/api/collegeadmin/categories（无需传参，后端从 token 获取 cid）
@@ -42,10 +36,6 @@ export class MajorCategoryService {
     }
   }
 
-  /**
-   * 添加新的专业类别
-   * @param data 专业类别信息（名称 + 计算规则）
-   */
   static async addCategory(data: MajorCategoryAddDTO): Promise<MajorCategory> {
     try {
       return await usePost<MajorCategory>('/collegeadmin/categories', data)
@@ -54,11 +44,6 @@ export class MajorCategoryService {
     }
   }
 
-  /**
-   * 更新专业类别
-   * @param categoryId 要更新的类别 ID
-   * @param data 更新后的信息
-   */
   static async updateCategory(
     categoryId: string,
     data: MajorCategoryUpdateDTO
@@ -70,10 +55,6 @@ export class MajorCategoryService {
     }
   }
 
-  /**
-   * 删除专业类别
-   * @param categoryId 要删除的类别 ID
-   */
   static async deleteCategory(categoryId: string): Promise<void> {
     try {
       await useDelete<void>(`/collegeadmin/categories/${categoryId}`)
@@ -82,10 +63,6 @@ export class MajorCategoryService {
     }
   }
 
-  /**
-   * 根据 ID 获取单个专业类别
-   * @param categoryId 类别 ID
-   */
   static async getCategoryById(categoryId: string): Promise<MajorCategory> {
     const categories = await this.getCategoriesByCollegeId()
     const category = categories.find(item => item.id === categoryId)
@@ -96,10 +73,6 @@ export class MajorCategoryService {
     return category
   }
 
-  /**
-   * 验证计算规则的合法性（权重总和是否为 100，规则名称是否为空）
-   * @param rule 计算规则对象（{ 规则名: 权重 }）
-   */
   static validateCalculationRule(rule: CalculationRuleStorage): ValidationResult {
     // 计算权重总和
     const totalWeight = Object.values(rule).reduce((sum, weight) => {
@@ -114,7 +87,6 @@ export class MajorCategoryService {
       }
     }
 
-    // 检查是否有空白的规则名称
     const hasEmptyRuleName = Object.keys(rule).some(key => key.trim() === '')
     if (hasEmptyRuleName) {
       return {
