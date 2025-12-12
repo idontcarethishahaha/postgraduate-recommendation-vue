@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 
 //获取当前用户角色和信息
 const role = CommonService.getRole()
+console.log('当前角色：', role)
 const userS = useUserStore().userS
 const router = useRouter()
 
