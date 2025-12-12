@@ -249,19 +249,12 @@ import { CollegeService, MajorCategoryService } from '@/services'
 import type { MajorCategoryAddDTO, MajorCategoryUpdateDTO } from '@/services/MajorCategoryService'
 import { useMajorCategoryStore } from '@/stores/MajorCategoryStore'
 import type { CalculationRuleStorage, College, MajorCategory } from '@/types'
-import { getCollegeIdStrFromToken } from '@/utils/token' //, isCollegeAdmin
+import { getCollegeIdStrFromToken } from '@/utils/token'
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
-class RequestError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'RequestError'
-  }
-}
 
 // 规则行
 interface RuleItem {
@@ -280,7 +273,8 @@ interface CategoryForm {
 
 const router = useRouter()
 const route = useRoute()
-//----------------------------------------------
+
+// 学院信息和类别数据
 const college = ref<College>({
   id: '',
   name: '未知学院',
@@ -533,55 +527,52 @@ const submitEditForm = async (): Promise<void> => {
   ElMessage.success('专业类别修改成功')
   closeEditModal()
 }
-//----------------------------------------------------------------------------
-//初始化页面
+//========================================================
+// 初始化页面
 const initPage = async () => {
   if (isInitialized.value) return
-
-  /*
-  // 权限校验
-  if (!isCollegeAdmin()) {
-    ElMessage.error('无学院管理员权限，请重新登录')
-    sessionStorage.clear()
-    router.push('/login')
-    return
-  }
-  */
-  // 加载数据
-  await Promise.all([loadCollegeInfo(), loadCategories()])
+  await loadCollegeInfo()
+  await loadCategories() //加载类别
   isInitialized.value = true
 }
 
 watch(
   () => route.fullPath,
   async () => {
-    if (route.name !== 'MajorCategories') return //这行注释掉就“无权限”
+    if (route.name !== 'MajorCategories') return
     await nextTick()
     await initPage()
   },
   { immediate: true }
 )
-
-//学院信息
+//===========================================================
+// 加载学院信息
 const loadCollegeInfo = async () => {
   const collegeId = getCollegeIdStrFromToken()
-  if (!collegeId) throw new RequestError('未从Token解析到学院ID')
+  if (!collegeId) {
+    college.value.name = '默认学院'
+    return
+  }
 
   const collegeInfo = await CollegeService.getCollegeById(collegeId)
-  college.value = collegeInfo
+  if (collegeInfo && collegeInfo.name) {
+    college.value = collegeInfo
+  } else {
+    ElMessage.warning('学院信息为空，显示默认名称')
+    college.value.name = '默认学院'
+  }
 }
-
-//加载专业类别列表
+//===================================================================
+// 加载专业类别列表
 const loadCategories = async () => {
   console.log('开始请求学院下类别数据')
-  //调用后端接口从数据库查询当前学院的所有专业类别
   const res = await MajorCategoryService.getCategoriesByCollegeId()
   console.log('返回专业类别：', res)
   setMajorCategories(res)
   categories.value = res
 }
-//----------------------------------------------------------------------------
-//日期格式化
+//=====================================================================
+// 日期格式化
 const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
   return new Date(dateStr).toLocaleString('zh-CN', {
@@ -593,7 +584,7 @@ const formatDate = (dateStr?: string): string => {
   })
 }
 
-//删除专业类别
+// 删除类别
 const removeCategory = async (category: MajorCategory): Promise<void> => {
   await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
     type: 'warning'
@@ -604,7 +595,7 @@ const removeCategory = async (category: MajorCategory): Promise<void> => {
   ElMessage.success('删除成功')
 }
 
-//专业管理页面
+// 专业管理页面
 const manageMajors = (category: MajorCategory): void => {
   router.push(`/collegeadmin/categories/${category.id}/majors`)
 }
