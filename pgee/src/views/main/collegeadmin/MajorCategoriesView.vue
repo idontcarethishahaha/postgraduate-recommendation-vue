@@ -280,6 +280,7 @@ interface CategoryForm {
 
 const router = useRouter()
 const route = useRoute()
+//----------------------------------------------
 const college = ref<College>({
   id: '',
   name: '未知学院',
