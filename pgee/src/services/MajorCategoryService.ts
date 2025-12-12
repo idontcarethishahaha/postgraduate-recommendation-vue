@@ -1,7 +1,6 @@
 import { useDelete, useGet, usePost, usePut } from '@/axios'
 import type { CalculationRuleStorage, MajorCategory } from '@/types'
 
-// 与后端交互的 DTO 类型（添加/更新专业类别）
 export interface MajorCategoryAddDTO {
   name: string
   calculationRule: CalculationRuleStorage
@@ -12,7 +11,6 @@ export interface MajorCategoryUpdateDTO {
   calculationRule: CalculationRuleStorage
 }
 
-// 错误处理类
 export class RequestError extends Error {
   constructor(message: string) {
     super(message)
@@ -20,7 +18,7 @@ export class RequestError extends Error {
   }
 }
 
-// 表单验证结果类型
+// 表单验证
 interface ValidationResult {
   isValid: boolean
   message: string
