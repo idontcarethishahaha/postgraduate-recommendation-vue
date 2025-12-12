@@ -1,7 +1,7 @@
 import type { Major } from '@/types'
 import { shallowRef } from 'vue'
 
-// 专业列表（全局状态）
+// 专业列表
 const majors = shallowRef<Major[]>([])
 
 const setMajors = (newMajors: Major[]) => {
@@ -18,7 +18,7 @@ const updateMajor = (majorId: string, data: Partial<{ name: string }>) => {
     majors.value[index] = {
       ...majors.value[index],
       ...data,
-      updateTime: new Date().toISOString() // 前端临时更新时间
+      updateTime: new Date().toISOString()
     }
   }
 }
@@ -39,7 +39,6 @@ const clearMajors = () => {
   majors.value = []
 }
 
-// 暴露状态和方法
 export const useMajorStore = () => ({
   majors,
   setMajors,
