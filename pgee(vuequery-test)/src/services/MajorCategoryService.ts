@@ -28,23 +28,39 @@ interface ValidationResult {
 
 export class MajorCategoryService {
   static async getCategoriesByCollegeId(): Promise<MajorCategory[]> {
-    // 调用后端接口：/api/collegeadmin/categories（从 token 获取 cid）
-    return await useGet<MajorCategory[]>('/collegeadmin/categories')
+    try {
+      // 调用后端接口：/api/collegeadmin/categories（无需传参，后端从 token 获取 cid）
+      return await useGet<MajorCategory[]>('/collegeadmin/categories')
+    } catch (error) {
+      throw new RequestError(`获取专业类别失败：${(error as Error).message}`)
+    }
   }
 
   static async addCategory(data: MajorCategoryAddDTO): Promise<MajorCategory> {
-    return await usePost<MajorCategory>('/collegeadmin/categories', data)
+    try {
+      return await usePost<MajorCategory>('/collegeadmin/categories', data)
+    } catch (error) {
+      throw new RequestError(`添加专业类别失败：${(error as Error).message}`)
+    }
   }
 
   static async updateCategory(
     categoryId: string,
     data: MajorCategoryUpdateDTO
   ): Promise<MajorCategory> {
-    return await usePut<MajorCategory>(`/collegeadmin/categories/${categoryId}`, data)
+    try {
+      return await usePut<MajorCategory>(`/collegeadmin/categories/${categoryId}`, data)
+    } catch (error) {
+      throw new RequestError(`更新专业类别失败：${(error as Error).message}`)
+    }
   }
 
   static async deleteCategory(categoryId: string): Promise<void> {
-    await useDelete<void>(`/collegeadmin/categories/${categoryId}`)
+    try {
+      await useDelete<void>(`/collegeadmin/categories/${categoryId}`)
+    } catch (error) {
+      throw new RequestError(`删除专业类别失败：${(error as Error).message}`)
+    }
   }
 
   static async getCategoryById(categoryId: string): Promise<MajorCategory> {
