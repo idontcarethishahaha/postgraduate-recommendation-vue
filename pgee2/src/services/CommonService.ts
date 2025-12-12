@@ -8,8 +8,8 @@ const userStore = useUserStore()
 export class CommonService {
   //检查管理员登录状态
   static checkAdminLogin(): boolean {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = sessionStorage.getItem('token')
+    const role = sessionStorage.getItem('role')
 
     console.log('登录状态检查:', {
       token: token ? '存在' : '不存在',
@@ -34,8 +34,8 @@ export class CommonService {
 
   //检查登录状态
   static checkLogin(): boolean {
-    const token = localStorage.getItem('token')
-    const role = localStorage.getItem('role')
+    const token = sessionStorage.getItem('token')
+    const role = sessionStorage.getItem('role')
 
     if (!token || !role) {
       router.push('/login')
@@ -47,7 +47,7 @@ export class CommonService {
 
   //检查特定角色权限
   static checkRole(allowedRoles: string[]): boolean {
-    const role = localStorage.getItem('role')
+    const role = sessionStorage.getItem('role')
     if (!role || !allowedRoles.includes(role)) {
       router.push('/login')
       return false
@@ -57,14 +57,14 @@ export class CommonService {
 
   // 获取当前用户角色
   static getRole(): string | null {
-    return localStorage.getItem('role')
+    return sessionStorage.getItem('role')
   }
 
   //退出登录
   static logout(): void {
-    localStorage.removeItem('token')
-    localStorage.removeItem('role')
-    localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('role')
+    sessionStorage.removeItem('user')
     if (userStore) {
       userStore.clearUser()
     }
