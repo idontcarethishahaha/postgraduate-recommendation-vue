@@ -51,28 +51,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--
-    <div v-else class="empty-state">
-      <h3>该类别下暂无专业</h3>
-      <p>点击"添加专业"按钮来添加</p>
-    </div>
-
-    <el-dialog
-      v-model="showModal"
-      :title="isEditing ? '编辑专业' : '添加专业'"
-      width="400px"
-      destroy-on-close>
-      <el-form :model="majorForm" label-width="80px" class="modal-form">
-        <el-form-item label="专业名称 *" required>
-          <el-input v-model="majorForm.name" type="text" class="form-control" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="closeModal">取消</el-button>
-        <el-button type="primary" @click="saveMajor">确定</el-button>
-      </template>
-    </el-dialog>
-  -->
 
     <router-view></router-view>
   </div>
