@@ -532,7 +532,7 @@ const submitEditForm = async (): Promise<void> => {
   ElMessage.success('专业类别修改成功')
   closeEditModal()
 }
-
+//----------------------------------------------------------------------------
 //初始化页面
 const initPage = async () => {
   if (isInitialized.value) return
@@ -571,13 +571,15 @@ const loadCollegeInfo = async () => {
 
 //加载专业类别列表
 const loadCategories = async () => {
+  console.log('开始请求学院下类别数据')
+  //调用后端接口从数据库查询当前学院的所有专业类别
   const res = await MajorCategoryService.getCategoriesByCollegeId()
+  console.log('返回专业类别：', res)
   setMajorCategories(res)
   categories.value = res
 }
-
+//----------------------------------------------------------------------------
 //日期格式化
-
 const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
   return new Date(dateStr).toLocaleString('zh-CN', {
@@ -590,21 +592,14 @@ const formatDate = (dateStr?: string): string => {
 }
 
 //删除专业类别
-
 const removeCategory = async (category: MajorCategory): Promise<void> => {
-  try {
-    await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
-      type: 'warning'
-    })
-    await MajorCategoryService.deleteCategory(category.id)
-    removeMajorCategory(category.id)
-    categories.value = categories.value.filter(item => item.id !== category.id)
-    ElMessage.success('删除成功')
-  } catch (error) {
-    if ((error as Error).message !== 'cancel') {
-      ElMessage.error(`删除失败：${(error as Error).message}`)
-    }
-  }
+  await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
+    type: 'warning'
+  })
+  await MajorCategoryService.deleteCategory(category.id)
+  removeMajorCategory(category.id)
+  categories.value = categories.value.filter(item => item.id !== category.id)
+  ElMessage.success('删除成功')
 }
 
 //专业管理页面

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+//import { useRoute } from 'vue-router'
 
-const route = useRoute()
+//const route = useRoute()
 </script>
-
+<!--
 <template>
+
   <div class="collegeadmin-nav">
     <button
       class="nav-item"
@@ -14,6 +15,7 @@ const route = useRoute()
     </button>
   </div>
 </template>
+-->
 
 <style scoped>
 .collegeadmin-nav {
