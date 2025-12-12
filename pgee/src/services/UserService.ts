@@ -18,7 +18,7 @@ export class UserService {
 
     if (user.collegeId) {
       sessionStorage.setItem('collegeId', user.collegeId)
-      console.log('从 user 中获取的学院ID:', user.collegeId)
+      console.log('该用户的学院ID:', user.collegeId)
     }
 
     const userStore = useUserStore()
