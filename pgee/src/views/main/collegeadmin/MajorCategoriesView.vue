@@ -539,8 +539,11 @@ const initPage = async () => {
 watch(
   () => route.fullPath,
   async () => {
+    console.log(route.name)
+    //  这个有问题
     if (route.name !== 'MajorCategories') return
     await nextTick()
+    console.log('路由变化，重新加载页面')
     await initPage()
   },
   { immediate: true }
