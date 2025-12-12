@@ -49,7 +49,7 @@ export const getUserRole = (): string | null => {
 
 export const getCollegeIdFromToken = (): number | null => {
   const payload = parseToken()
-  if (getUserRole() === 'ADMIN') return null
+  if (getUserRole() === 'Fr5g') return null
   return payload?.cid || null
 }
 
@@ -59,5 +59,5 @@ export const getCollegeIdStrFromToken = (): string => {
 }
 
 export const isCollegeAdmin = (): boolean => {
-  return getUserRole() === 'COLLEGE_ADMIN'
+  return getUserRole() === 'yHJ7'
 }

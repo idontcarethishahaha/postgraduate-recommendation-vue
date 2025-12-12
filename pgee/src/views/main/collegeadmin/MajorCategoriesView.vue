@@ -249,7 +249,7 @@ import { CollegeService, MajorCategoryService } from '@/services'
 import type { MajorCategoryAddDTO, MajorCategoryUpdateDTO } from '@/services/MajorCategoryService'
 import { useMajorCategoryStore } from '@/stores/MajorCategoryStore'
 import type { CalculationRuleStorage, College, MajorCategory } from '@/types'
-import { getCollegeIdStrFromToken, isCollegeAdmin } from '@/utils/token'
+import { getCollegeIdStrFromToken } from '@/utils/token' //, isCollegeAdmin
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
@@ -538,6 +538,7 @@ const submitEditForm = async (): Promise<void> => {
 const initPage = async () => {
   if (isInitialized.value) return
 
+  /*
   // 权限校验
   if (!isCollegeAdmin()) {
     ElMessage.error('无学院管理员权限，请重新登录')
@@ -545,7 +546,7 @@ const initPage = async () => {
     router.push('/login')
     return
   }
-
+  */
   // 加载数据
   await Promise.all([loadCollegeInfo(), loadCategories()])
   isInitialized.value = true
@@ -554,7 +555,7 @@ const initPage = async () => {
 watch(
   () => route.fullPath,
   async () => {
-    if (route.name !== 'MajorCategories') return
+    if (route.name !== 'MajorCategories') return //这行注释掉就“无权限”
     await nextTick()
     await initPage()
   },
