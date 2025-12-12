@@ -48,11 +48,6 @@
             <el-button type="primary" text class="action-btn" @click="manageMajors(scope.row)">
               管理专业
             </el-button>
-            <!--  预留
-            <el-button type="primary" text class="action-btn" @click="manageMajors(scope.row)">
-              管理辅导员
-            </el-button>
-            -->
             <el-button type="warning" text class="action-btn" @click="openEditModal(scope.row)">
               编辑
             </el-button>
@@ -70,17 +65,14 @@
     </div>
 
     <el-dialog
-      v-model="modalVisible"
-      :title="isEdit ? '修改专业类别' : '添加专业类别'"
+      v-model="addModalVisible"
+      title="添加专业类别"
       width="600px"
       destroy-on-close
       :close-on-click-modal="false">
-      <el-form :model="categoryForm" label-width="80px" class="modal-form" ref="categoryFormRef">
+      <el-form :model="addForm" label-width="80px" class="modal-form" ref="addFormRef">
         <el-form-item label="类别名称 *" prop="name">
-          <el-input
-            v-model="categoryForm.name"
-            placeholder="请输入专业类别名称"
-            class="form-control" />
+          <el-input v-model="addForm.name" placeholder="请输入专业类别名称" class="form-control" />
         </el-form-item>
 
         <el-form-item label="计算规则 *" prop="calculationRule">
@@ -93,7 +85,7 @@
 
             <div
               class="rule-row"
-              v-for="(item, index) in categoryForm.ruleItems"
+              v-for="(item, index) in addForm.ruleItems"
               :key="item.id"
               :class="{ 'confirmed-row': item.isConfirmed }">
               <el-input
@@ -110,39 +102,39 @@
                 placeholder="0-100整数"
                 class="form-control rule-input weight-input"
                 :disabled="item.isConfirmed"
-                @input="handleWeightInput(item)"
-                @blur="validateWeight(item)" />
+                @input="handleAddWeightInput(item)"
+                @blur="validateAddWeight(item)" />
 
               <div class="rule-op">
                 <el-button
                   type="text"
                   icon="el-icon-delete"
                   class="btn-delete"
-                  @click="deleteRuleRow(index)"
-                  :disabled="categoryForm.ruleItems.length === 1">
+                  @click="deleteAddRuleRow(index)"
+                  :disabled="addForm.ruleItems.length === 1">
                   删除
                 </el-button>
                 <el-button
                   type="primary"
                   text
                   class="btn-confirm"
-                  @click="toggleRuleConfirm(index)"
+                  @click="toggleAddRuleConfirm(index)"
                   :class="{ 'btn-cancel': item.isConfirmed }">
                   {{ item.isConfirmed ? '取消' : '确定' }}
                 </el-button>
               </div>
             </div>
 
-            <el-button type="text" icon="el-icon-plus" class="btn-add-row" @click="addRuleRow">
+            <el-button type="text" icon="el-icon-plus" class="btn-add-row" @click="addAddRuleRow">
               添加规则行
             </el-button>
 
             <div class="weight-summary">
               已确定行权重总和：
-              <span :class="{ 'text-error': totalConfirmedWeight !== 100 }">
-                {{ totalConfirmedWeight }}
+              <span :class="{ 'text-error': addTotalConfirmedWeight !== 100 }">
+                {{ addTotalConfirmedWeight }}
               </span>
-              <span v-if="totalConfirmedWeight !== 100" class="tip-text">
+              <span v-if="addTotalConfirmedWeight !== 100" class="tip-text">
                 （需等于100才能提交）
               </span>
             </div>
@@ -151,11 +143,100 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="closeModal">取消</el-button>
+        <el-button @click="closeAddModal">取消</el-button>
         <el-button
           type="primary"
-          @click="submitForm"
-          :disabled="totalConfirmedWeight !== 100 || !categoryForm.name.trim()">
+          @click="submitAddForm"
+          :disabled="addTotalConfirmedWeight !== 100 || !addForm.name.trim()">
+          提交
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="editModalVisible"
+      title="修改专业类别"
+      width="600px"
+      destroy-on-close
+      :close-on-click-modal="false">
+      <el-form :model="editForm" label-width="80px" class="modal-form" ref="editFormRef">
+        <el-form-item label="类别名称 *" prop="name">
+          <el-input v-model="editForm.name" placeholder="请输入专业类别名称" class="form-control" />
+        </el-form-item>
+
+        <el-form-item label="计算规则 *" prop="calculationRule">
+          <div class="rule-container">
+            <div class="rule-header">
+              <div class="col-name">规则名称</div>
+              <div class="col-weight">权重（%）</div>
+              <div class="col-op">操作</div>
+            </div>
+
+            <div
+              class="rule-row"
+              v-for="(item, index) in editForm.ruleItems"
+              :key="item.id"
+              :class="{ 'confirmed-row': item.isConfirmed }">
+              <el-input
+                v-model="item.ruleName"
+                placeholder="如：学业绩点、竞赛加分"
+                class="form-control rule-input"
+                :disabled="item.isConfirmed" />
+
+              <el-input
+                v-model.number="item.weight"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="0-100整数"
+                class="form-control rule-input weight-input"
+                :disabled="item.isConfirmed"
+                @input="handleEditWeightInput(item)"
+                @blur="validateEditWeight(item)" />
+
+              <div class="rule-op">
+                <el-button
+                  type="text"
+                  icon="el-icon-delete"
+                  class="btn-delete"
+                  @click="deleteEditRuleRow(index)"
+                  :disabled="editForm.ruleItems.length === 1">
+                  删除
+                </el-button>
+                <el-button
+                  type="primary"
+                  text
+                  class="btn-confirm"
+                  @click="toggleEditRuleConfirm(index)"
+                  :class="{ 'btn-cancel': item.isConfirmed }">
+                  {{ item.isConfirmed ? '取消' : '确定' }}
+                </el-button>
+              </div>
+            </div>
+
+            <el-button type="text" icon="el-icon-plus" class="btn-add-row" @click="addEditRuleRow">
+              添加规则行
+            </el-button>
+
+            <div class="weight-summary">
+              已确定行权重总和：
+              <span :class="{ 'text-error': editTotalConfirmedWeight !== 100 }">
+                {{ editTotalConfirmedWeight }}
+              </span>
+              <span v-if="editTotalConfirmedWeight !== 100" class="tip-text">
+                （需等于100才能提交）
+              </span>
+            </div>
+          </div>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button @click="closeEditModal">取消</el-button>
+        <el-button
+          type="primary"
+          @click="submitEditForm"
+          :disabled="editTotalConfirmedWeight !== 100 || !editForm.name.trim()">
           提交
         </el-button>
       </template>
@@ -182,6 +263,7 @@ class RequestError extends Error {
   }
 }
 
+// 规则行
 interface RuleItem {
   id: string
   ruleName: string
@@ -189,6 +271,7 @@ interface RuleItem {
   isConfirmed: boolean
 }
 
+// 表单
 interface CategoryForm {
   id: string
   name: string
@@ -197,10 +280,6 @@ interface CategoryForm {
 
 const router = useRouter()
 const route = useRoute()
-
-const modalVisible = ref(false)
-const isEdit = ref(false)
-const categoryFormRef = ref<FormInstance>()
 const college = ref<College>({
   id: '',
   name: '未知学院',
@@ -213,7 +292,12 @@ const isInitialized = ref(false)
 const { setMajorCategories, addMajorCategory, updateMajorCategory, removeMajorCategory } =
   useMajorCategoryStore()
 
-const initCategoryForm = (): CategoryForm => ({
+// 添加弹窗状态
+const addModalVisible = ref(false)
+const addFormRef = ref<FormInstance>()
+
+// 添加表单数据
+const initAddForm = (): CategoryForm => ({
   id: '',
   name: '',
   ruleItems: [
@@ -225,10 +309,11 @@ const initCategoryForm = (): CategoryForm => ({
     }
   ]
 })
-const categoryForm = ref<CategoryForm>(initCategoryForm())
+const addForm = ref<CategoryForm>(initAddForm())
 
-const totalConfirmedWeight = computed(() => {
-  return categoryForm.value.ruleItems
+// 添加表单权重总和
+const addTotalConfirmedWeight = computed(() => {
+  return addForm.value.ruleItems
     .filter(item => item.isConfirmed)
     .reduce((sum, item) => {
       const validWeight = Number.isInteger(item.weight) ? item.weight : 0
@@ -236,6 +321,219 @@ const totalConfirmedWeight = computed(() => {
     }, 0)
 })
 
+// 添加表单规则行
+const addAddRuleRow = (): void => {
+  addForm.value.ruleItems.push({
+    id: uuidv4(),
+    ruleName: '',
+    weight: 0,
+    isConfirmed: false
+  })
+}
+const deleteAddRuleRow = (index: number): void => {
+  if (addForm.value.ruleItems.length <= 1) {
+    ElMessage.warning('至少保留1条规则行')
+    return
+  }
+  addForm.value.ruleItems.splice(index, 1)
+}
+const toggleAddRuleConfirm = (index: number): void => {
+  const item = addForm.value.ruleItems[index]
+  if (!item.isConfirmed) {
+    if (!item.ruleName.trim()) {
+      ElMessage.warning('请先填写规则名称')
+      return
+    }
+    if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
+      ElMessage.warning('权重需为0-100的整数')
+      return
+    }
+  }
+  item.isConfirmed = !item.isConfirmed
+}
+const handleAddWeightInput = (item: RuleItem): void => {
+  if (!Number.isInteger(item.weight)) {
+    item.weight = Math.floor(item.weight) || 0
+  }
+  item.weight = Math.max(0, Math.min(100, item.weight))
+}
+const validateAddWeight = (item: RuleItem): void => {
+  if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
+    ElMessage.warning('权重需为0-100的整数')
+    item.weight = 0
+  }
+}
+
+// 添加弹窗控制
+const openAddModal = (): void => {
+  addForm.value = initAddForm()
+  addModalVisible.value = true
+}
+const closeAddModal = (): void => {
+  addModalVisible.value = false
+  addFormRef.value?.resetFields()
+}
+
+// 添加表单提交
+const convertAddToStorageFormat = (): CalculationRuleStorage => {
+  const storageObj: CalculationRuleStorage = {}
+  addForm.value.ruleItems
+    .filter(item => item.isConfirmed && item.ruleName.trim())
+    .forEach(item => {
+      storageObj[item.ruleName.trim()] = item.weight
+    })
+  return storageObj
+}
+const submitAddForm = async (): Promise<void> => {
+  const confirmedItems = addForm.value.ruleItems.filter(item => item.isConfirmed)
+  if (confirmedItems.length === 0) {
+    ElMessage.error('请至少确定1条规则行')
+    return
+  }
+
+  const requestData: MajorCategoryAddDTO = {
+    name: addForm.value.name.trim(),
+    calculationRule: convertAddToStorageFormat()
+  }
+  const newCategory = await MajorCategoryService.addCategory(requestData)
+  addMajorCategory(newCategory)
+  categories.value.push(newCategory)
+  ElMessage.success('专业类别添加成功')
+  closeAddModal()
+}
+
+// 编辑弹窗状态
+const editModalVisible = ref(false)
+const editFormRef = ref<FormInstance>()
+const currentEditCategoryId = ref('') //记录当前编辑的类别ID
+
+// 编辑表单数据
+const initEditForm = (category: MajorCategory): CategoryForm => {
+  const ruleItems = Object.entries(category.calculationRule).map(([ruleName, weight]) => ({
+    id: uuidv4(),
+    ruleName,
+    weight: Number(weight),
+    isConfirmed: true
+  }))
+  return {
+    id: category.id,
+    name: category.name,
+    ruleItems:
+      ruleItems.length > 0
+        ? ruleItems
+        : [{ id: uuidv4(), ruleName: '', weight: 0, isConfirmed: false }]
+  }
+}
+const editForm = ref<CategoryForm>(
+  initEditForm({
+    id: '',
+    name: '',
+    calculationRule: {},
+    createTime: '',
+    updateTime: ''
+  })
+)
+
+// 编辑表单权重总和
+const editTotalConfirmedWeight = computed(() => {
+  return editForm.value.ruleItems
+    .filter(item => item.isConfirmed)
+    .reduce((sum, item) => {
+      const validWeight = Number.isInteger(item.weight) ? item.weight : 0
+      return sum + (validWeight < 0 || validWeight > 100 ? 0 : validWeight)
+    }, 0)
+})
+
+// 编辑表单规则行
+const addEditRuleRow = (): void => {
+  editForm.value.ruleItems.push({
+    id: uuidv4(),
+    ruleName: '',
+    weight: 0,
+    isConfirmed: false
+  })
+}
+const deleteEditRuleRow = (index: number): void => {
+  if (editForm.value.ruleItems.length <= 1) {
+    ElMessage.warning('至少保留1条规则行')
+    return
+  }
+  editForm.value.ruleItems.splice(index, 1)
+}
+const toggleEditRuleConfirm = (index: number): void => {
+  const item = editForm.value.ruleItems[index]
+  if (!item.isConfirmed) {
+    if (!item.ruleName.trim()) {
+      ElMessage.warning('请先填写规则名称')
+      return
+    }
+    if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
+      ElMessage.warning('权重需为0-100的整数')
+      return
+    }
+  }
+  item.isConfirmed = !item.isConfirmed
+}
+const handleEditWeightInput = (item: RuleItem): void => {
+  if (!Number.isInteger(item.weight)) {
+    item.weight = Math.floor(item.weight) || 0
+  }
+  item.weight = Math.max(0, Math.min(100, item.weight))
+}
+const validateEditWeight = (item: RuleItem): void => {
+  if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
+    ElMessage.warning('权重需为0-100的整数')
+    item.weight = 0
+  }
+}
+
+// 编辑弹窗控制
+const openEditModal = (category: MajorCategory): void => {
+  currentEditCategoryId.value = category.id
+  editForm.value = initEditForm(category)
+  editModalVisible.value = true
+}
+const closeEditModal = (): void => {
+  editModalVisible.value = false
+  editFormRef.value?.resetFields()
+}
+
+// 编辑表单提交
+const convertEditToStorageFormat = (): CalculationRuleStorage => {
+  const storageObj: CalculationRuleStorage = {}
+  editForm.value.ruleItems
+    .filter(item => item.isConfirmed && item.ruleName.trim())
+    .forEach(item => {
+      storageObj[item.ruleName.trim()] = item.weight
+    })
+  return storageObj
+}
+const submitEditForm = async (): Promise<void> => {
+  const confirmedItems = editForm.value.ruleItems.filter(item => item.isConfirmed)
+  if (confirmedItems.length === 0) {
+    ElMessage.error('请至少确定1条规则行')
+    return
+  }
+
+  const requestData: MajorCategoryUpdateDTO = {
+    name: editForm.value.name.trim(),
+    calculationRule: convertEditToStorageFormat()
+  }
+
+  const updatedCategory = await MajorCategoryService.updateCategory(
+    currentEditCategoryId.value,
+    requestData
+  )
+  updateMajorCategory(currentEditCategoryId.value, requestData)
+  const idx = categories.value.findIndex(item => item.id === currentEditCategoryId.value)
+  if (idx > -1) {
+    categories.value[idx] = updatedCategory
+  }
+  ElMessage.success('专业类别修改成功')
+  closeEditModal()
+}
+
+//初始化页面
 const initPage = async () => {
   if (isInitialized.value) return
 
@@ -262,6 +560,7 @@ watch(
   { immediate: true }
 )
 
+//学院信息
 const loadCollegeInfo = async () => {
   const collegeId = getCollegeIdStrFromToken()
   if (!collegeId) throw new RequestError('未从Token解析到学院ID')
@@ -270,12 +569,14 @@ const loadCollegeInfo = async () => {
   college.value = collegeInfo
 }
 
-// 加载专业类别
+//加载专业类别列表
 const loadCategories = async () => {
   const res = await MajorCategoryService.getCategoriesByCollegeId()
   setMajorCategories(res)
   categories.value = res
 }
+
+//日期格式化
 
 const formatDate = (dateStr?: string): string => {
   if (!dateStr) return '-'
@@ -288,135 +589,25 @@ const formatDate = (dateStr?: string): string => {
   })
 }
 
-const addRuleRow = (): void => {
-  categoryForm.value.ruleItems.push({
-    id: uuidv4(),
-    ruleName: '',
-    weight: 0,
-    isConfirmed: false
-  })
-}
-
-const deleteRuleRow = (index: number): void => {
-  if (categoryForm.value.ruleItems.length <= 1) {
-    ElMessage.warning('至少保留1条规则行')
-    return
-  }
-  categoryForm.value.ruleItems.splice(index, 1)
-}
-
-const toggleRuleConfirm = (index: number): void => {
-  const item = categoryForm.value.ruleItems[index]
-
-  if (!item.isConfirmed) {
-    if (!item.ruleName.trim()) {
-      ElMessage.warning('请先填写规则名称')
-      return
-    }
-    if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
-      ElMessage.warning('权重需为0-100的整数')
-      return
-    }
-  }
-
-  item.isConfirmed = !item.isConfirmed
-}
-
-const handleWeightInput = (item: RuleItem): void => {
-  if (!Number.isInteger(item.weight)) {
-    item.weight = Math.floor(item.weight) || 0
-  }
-  item.weight = Math.max(0, Math.min(100, item.weight))
-}
-
-const validateWeight = (item: RuleItem): void => {
-  if (!Number.isInteger(item.weight) || item.weight < 0 || item.weight > 100) {
-    ElMessage.warning('权重需为0-100的整数')
-    item.weight = 0
-  }
-}
-
-const openAddModal = (): void => {
-  isEdit.value = false
-  categoryForm.value = initCategoryForm()
-  modalVisible.value = true
-}
-
-const openEditModal = (category: MajorCategory): void => {
-  isEdit.value = true
-
-  const ruleItems = Object.entries(category.calculationRule).map(([ruleName, weight]) => ({
-    id: uuidv4(),
-    ruleName,
-    weight: Number(weight),
-    isConfirmed: true
-  }))
-
-  categoryForm.value = {
-    id: category.id,
-    name: category.name,
-    ruleItems: ruleItems.length > 0 ? ruleItems : initCategoryForm().ruleItems
-  }
-  modalVisible.value = true
-}
-
-const closeModal = (): void => {
-  modalVisible.value = false
-  categoryFormRef.value?.resetFields()
-}
-
-const convertToStorageFormat = (): CalculationRuleStorage => {
-  const storageObj: CalculationRuleStorage = {}
-  categoryForm.value.ruleItems
-    .filter(item => item.isConfirmed && item.ruleName.trim())
-    .forEach(item => {
-      storageObj[item.ruleName.trim()] = item.weight
-    })
-  return storageObj
-}
-
-const submitForm = async (): Promise<void> => {
-  const confirmedItems = categoryForm.value.ruleItems.filter(item => item.isConfirmed)
-  if (confirmedItems.length === 0) {
-    ElMessage.error('请至少确定1条规则行')
-    return
-  }
-
-  const requestData: MajorCategoryAddDTO | MajorCategoryUpdateDTO = {
-    name: categoryForm.value.name.trim(),
-    calculationRule: convertToStorageFormat()
-  }
-
-  if (isEdit.value) {
-    const updatedCategory = await MajorCategoryService.updateCategory(
-      categoryForm.value.id,
-      requestData as MajorCategoryUpdateDTO
-    )
-    updateMajorCategory(categoryForm.value.id, requestData)
-    const idx = categories.value.findIndex(item => item.id === categoryForm.value.id)
-    if (idx > -1) {
-      categories.value[idx] = updatedCategory
-    }
-    ElMessage.success('专业类别修改成功')
-  } else {
-    const newCategory = await MajorCategoryService.addCategory(requestData as MajorCategoryAddDTO)
-    addMajorCategory(newCategory)
-    categories.value.push(newCategory)
-    ElMessage.success('专业类别添加成功')
-  }
-  closeModal()
-}
+//删除专业类别
 
 const removeCategory = async (category: MajorCategory): Promise<void> => {
-  await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
-    type: 'warning'
-  })
-  await MajorCategoryService.deleteCategory(category.id)
-  removeMajorCategory(category.id)
-  categories.value = categories.value.filter(item => item.id !== category.id)
-  ElMessage.success('删除成功')
+  try {
+    await ElMessageBox.confirm(`确定删除类别「${category.name}」吗？`, '确认删除', {
+      type: 'warning'
+    })
+    await MajorCategoryService.deleteCategory(category.id)
+    removeMajorCategory(category.id)
+    categories.value = categories.value.filter(item => item.id !== category.id)
+    ElMessage.success('删除成功')
+  } catch (error) {
+    if ((error as Error).message !== 'cancel') {
+      ElMessage.error(`删除失败：${(error as Error).message}`)
+    }
+  }
 }
 
+//专业管理页面
 const manageMajors = (category: MajorCategory): void => {
   router.push(`/collegeadmin/categories/${category.id}/majors`)
 }
