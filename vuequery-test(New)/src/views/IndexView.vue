@@ -2,7 +2,7 @@
   <div>
     <VueQueryDevtools />
     <h2>学院列表</h2>
-
+    <!--
     <div>
       <input
         v-model="newCollegeName"
@@ -11,6 +11,15 @@
       <button @click="handleAdd">
         {{ addMutation.isPending.value ? '添加中...' : '添加学院' }}
       </button>
+    </div>
+  -->
+
+    <div>
+      <input
+        v-model="newCollegeName"
+        placeholder="输入学院名称"
+        style="padding: 4px; margin-right: 8px" />
+      <button @click="handleAdd">添加学院</button>
     </div>
 
     <div v-if="isPending">加载中...</div>
@@ -41,8 +50,11 @@
 </template>
 
 <script lang="ts" setup>
-import { addCollege, getAllCollege, removeCollege, updateCollege } from '@/service'
-import type { AddCollegeRequest, College, UpdateCollegeRequest } from '@/types'
+//import { addCollege, getAllCollege, removeCollege, updateCollege } from '@/service'
+import { getAllCollege, removeCollege, updateCollege } from '@/service'
+//import type { AddCollegeRequest, College, UpdateCollegeRequest } from '@/types'
+import { CollegeService } from '@/service/CollegeService'
+import type { College, UpdateCollegeRequest } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { reactive, ref } from 'vue'
@@ -51,10 +63,25 @@ const queryClient = useQueryClient()
 
 const { isPending, isError, data, error } = useQuery<College[]>({
   queryKey: ['colleges'],
-  queryFn: getAllCollege,
+  queryFn: getAllCollege
 })
-
+//===================================================================
 //添加学院
+const newCollegeName = ref('')
+const addMutation = CollegeService.addCollege()
+
+const handleAdd = async () => {
+  if (!newCollegeName.value.trim()) return
+  try {
+    await addMutation.mutateAsync({ name: newCollegeName.value.trim() } as College)
+    newCollegeName.value = ''
+  } catch (error) {
+    console.error('添加学院失败：', error)
+  }
+}
+//========================================================================
+
+/*
 const newCollegeName = ref('')
 const addMutation = useMutation({
   mutationFn: (params: AddCollegeRequest) => addCollege(params),
@@ -70,6 +97,7 @@ const handleAdd = () => {
   if (!newCollegeName.value.trim()) return
   addMutation.mutate({ name: newCollegeName.value.trim() })
 }
+*/
 
 //更新学院名   Record<K,V>  K是key的类型，V是value的类型
 const editNameMap = reactive<Record<string, string>>({}) //存更新后名称

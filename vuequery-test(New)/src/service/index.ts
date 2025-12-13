@@ -1,5 +1,7 @@
 import axios from '@/axios'
-import type { AddCollegeRequest, College, ResultVO, UpdateCollegeRequest } from '@/types'
+//import type { AddCollegeRequest, College, ResultVO, UpdateCollegeRequest } from '@/types'
+//import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import type { College, ResultVO, UpdateCollegeRequest } from '@/types'
 
 export const getAllCollege = async (): Promise<College[]> => {
   const { data } = await axios.get('/open/colleges')
@@ -7,14 +9,16 @@ export const getAllCollege = async (): Promise<College[]> => {
 }
 
 // 做这个测试前把后端的WebMvcConfig注释掉
-
+/*
 export const addCollege = async (params: AddCollegeRequest): Promise<void> => {
   const { data } = await axios.post<ResultVO>('/admin/colleges', params)
   if (data.code !== 200) {
     throw new Error(data.message || '添加失败')
   }
 }
+*/
 
+//========================================
 export const updateCollege = async (
   collegeId: string,
   params: UpdateCollegeRequest
