@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import HeaderView from './header/IndexView.vue'
+//import { CommonService } from '@/services/CommonService'
+
+//const { suspense } = CommonService.getUserInfoService()
+//await suspense()
 </script>
 
 <template>

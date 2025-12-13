@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 
 //获取当前用户角色和信息
 const role = CommonService.getRole()
+console.log('当前角色：', role)
 const userS = useUserStore().userS
 const router = useRouter()
 
@@ -40,7 +41,7 @@ const handleLogout = () => {
     </div>
 
     <div class="user-ops">
-      <span class="username">{{ userS?.name || '未登录' }}</span>
+      <span class="username">欢迎！{{ userS?.name || '未登录' }}</span>
       <button class="logout-btn" @click="handleLogout">退出</button>
     </div>
   </div>

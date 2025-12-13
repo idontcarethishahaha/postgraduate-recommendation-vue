@@ -42,39 +42,22 @@ export const parseToken = (): CustomJwtPayload | null => {
   }
 }
 
-/**
- * 获取当前用户角色
- * @returns 角色字符串 | null
- */
 export const getUserRole = (): string | null => {
   const payload = parseToken()
   return payload?.role || sessionStorage.getItem('role') || null
 }
 
-/**
- * 获取学院ID（适配学院管理员/辅导员/学生）
- * @returns 学院ID（number）| null
- */
 export const getCollegeIdFromToken = (): number | null => {
   const payload = parseToken()
-  // 仅COLLEGE_ADMIN/COUNSELOR/STUDENT有cid，ADMIN返回null
-  if (getUserRole() === 'ADMIN') return null
+  if (getUserRole() === 'Fr5g') return null
   return payload?.cid || null
 }
 
-/**
- * 获取学院ID字符串（路由参数使用）
- * @returns 学院ID字符串 | ''
- */
 export const getCollegeIdStrFromToken = (): string => {
   const cid = getCollegeIdFromToken()
   return cid ? cid.toString() : ''
 }
 
-/**
- * 验证是否为学院管理员
- * @returns boolean
- */
 export const isCollegeAdmin = (): boolean => {
-  return getUserRole() === 'COLLEGE_ADMIN'
+  return getUserRole() === 'yHJ7'
 }

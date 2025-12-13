@@ -67,6 +67,11 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/main/collegeadmin/MajorView.vue'),
             meta: { roles: [consty.COLLEGE_ADMIN] }
           }
+          /*//预留
+          {
+            path: 'conselor/:majorCategoryId',
+            component: () => import('@/views/main/admin/CollegeAdminsView.vue')
+          }*/
         ]
       },
 

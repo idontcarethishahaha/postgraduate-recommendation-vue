@@ -1,4 +1,4 @@
-import axios, { useGet } from '@/axios'
+import axios from '@/axios'
 import { createMessageDialog } from '@/components/message'
 import { useCollegeStore } from '@/stores/CollegeStore'
 import type { College, ResultVO } from '@/types'
@@ -72,18 +72,7 @@ export class CollegeService {
   }
 
   static async getCollegeById(collegeId: string): Promise<College> {
-    console.log('开始查询学院详情,ID:', collegeId)
-    if (!collegeId || collegeId.trim() === '') {
-      throw new Error('学院ID不能为空')
-    }
-    const college = await useGet<College>(`/open/colleges/${collegeId}`)
-    if (!college) {
-      throw new Error('未查询到该学院信息')
-    }
-    if (!college.name) {
-      throw new Error('学院名称为空')
-    }
-    console.log('查询到学院详情:', college)
-    return college
+    const resp = await axios.get(`/open/colleges/${collegeId}`)
+    return resp.data.data
   }
 }

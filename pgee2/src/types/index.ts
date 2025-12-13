@@ -81,12 +81,6 @@ export interface RegisterRequest {
   majorId: string
 }
 
-//登录请求参数
-export interface LoginRequest {
-  account: string
-  password: string
-}
-
 //登录响应（包含token）
 export interface LoginResponse {
   user: User
@@ -129,15 +123,6 @@ export interface AddCollegeAdminRequest {
   password?: string
 }
 
-//专业类别
-export interface MajorCategory {
-  id: string
-  name: string
-  collegeId: string
-  createTime?: string
-  updateTime?: string
-}
-
 //专业类型
 export interface Major {
   id: string
@@ -154,7 +139,7 @@ export interface CalculationRule {
   weight: number //权重
 }
 
-//数据库存储用：规则名-权重键值对（最终存库是json格式）
+//数据库最终存json格式
 export interface CalculationRuleStorage {
   [ruleName: string]: number //{"规则1":80, "规则2":20}
 }
@@ -163,7 +148,7 @@ export interface CalculationRuleStorage {
 export interface MajorCategory {
   id: string
   name: string
-  collegeId: string
+  collegeId?: string
   calculationRule: CalculationRuleStorage //存库格式：{规则名:权重}
   createTime?: string
   updateTime?: string

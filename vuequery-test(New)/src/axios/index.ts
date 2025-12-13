@@ -76,8 +76,8 @@ export const usePost = async <T>(url: string, data: unknown): Promise<T> => {
   return resp.data.data
 }
 
-export const usePut = async <T>(url: string, data: unknown): Promise<T> => {
-  const resp = await axios.put<ResultVO<T>>(url, data)
+export const usePut = async <T>(url: string): Promise<T> => {
+  const resp = await axios.put<ResultVO<T>>(url)
   return resp.data.data
 }
 

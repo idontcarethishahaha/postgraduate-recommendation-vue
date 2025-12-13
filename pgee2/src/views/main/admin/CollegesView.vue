@@ -132,7 +132,6 @@ const removeCollege = (college: College) => {
 
 // 跳转到管理员管理页面,RESTful路径参数拼接
 const manageAdmins = (college: College) => {
-  // 只传递 collegeId
   router.push(`/admin/college-admins/${college.id}`)
 }
 
