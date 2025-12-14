@@ -16,7 +16,7 @@ const catidsR = ref<string[]>([])
 const { mutateAsync } = CollegeService.addAdminService()
 
 const submitF = async () => {
-  userR.value.catIds = catidsR.value
+  userR.value.majorCategoryIds = catidsR.value
   await mutateAsync(userR.value)
   createElNotificationSuccess('审核人添加成功')
   userR.value = {}

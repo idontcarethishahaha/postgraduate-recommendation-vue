@@ -18,14 +18,14 @@ const widthC = computed(() => {
   return wWidth.value < 768 ? '80%' : '50%'
 })
 
-const { mutateAsync } = CollegeService.addItemService(props.parentItem.catId!)
+const { mutateAsync } = CollegeService.addItemService(props.parentItem.majorCategoryId!)
 
 const submitF = async () => {
   const item: Item = {
     name: itemR.value.name,
     comment: itemR.value.comment,
     maxPoints: itemR.value.maxPoints,
-    catId: props.parentItem?.catId ?? props.category?.id
+    majorCategoryId: props.parentItem?.majorCategoryId ?? props.category?.id
   }
   if (itemR.value.maxItems) {
     item.maxItems = itemR.value.maxItems

@@ -18,7 +18,7 @@ const addMajorActiveF = async () => {
   createElNotificationSuccess('专业添加成功')
   majorR.value = {}
 }
-const addMajorDisC = computed(() => majorR.value.name && majorR.value.catId)
+const addMajorDisC = computed(() => majorR.value.name && majorR.value.majorCategoryId)
 
 const { mutateAsync: mutateAsyncCat } = CollegeService.addCategoryService()
 const categoryR = ref<MajorCategory>({})
@@ -43,7 +43,7 @@ const addCategoryF = async () => {
     <el-col>
       <el-select
         value-key="id"
-        v-model="majorR.catId"
+        v-model="majorR.majorCategoryId"
         placeholder="类别"
         size="large"
         style="width: 200px; margin-right: 10px">

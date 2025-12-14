@@ -25,6 +25,7 @@ export class CommonService {
   }
 
   static async registerService(user: User) {
+    console.log('传递给register接口的参数:', user)
     await usePost(addPreUrl('register'), user)
     CommonService.loginService({ account: user.account, password: user.account })
   }

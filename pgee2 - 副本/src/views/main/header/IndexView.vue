@@ -1,87 +1,87 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { CollegeService } from '@/services/CollegeService'
+import { CommonService } from '@/services/CommonService'
 import { ADMIN, COLLEGE_ADMIN, COUNSELOR, STUDENT } from '@/services/Const'
-import { CommonService } from '@/services/index.ts'
-import { useUserStore } from '@/stores/UserStore'
-import { defineAsyncComponent } from 'vue'
-import { useRouter } from 'vue-router'
-
-//获取当前用户角色和信息
+import { StudentService } from '@/services/StudentService'
+import type { Item, MajorCategory } from '@/types'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import LogoutView from './LogoutView.vue'
+import SettingView from './SettingView.vue'
+//
 const role = CommonService.getRoleService()
-console.log('当前角色：', role)
-const userS = useUserStore().userS
-const router = useRouter()
+let result:
+  | ReturnType<typeof StudentService.listTopLevelItemsService>
+  | ReturnType<typeof CollegeService.listCategoriesService>
+  | unknown
 
-//动态加载角色对应的导航组件
-const RoleNavComponent =
-  role === ADMIN
-    ? defineAsyncComponent(() => import('@/views/main/header/admin/IndexView.vue'))
-    : role === COLLEGE_ADMIN
-      ? defineAsyncComponent(() => import('@/views/main/header/collegeadmin/IndexView.vue'))
-      : role === COUNSELOR
-        ? defineAsyncComponent(() => import('@/views/main/header/counselor/IndexView.vue'))
-        : role === STUDENT
-          ? defineAsyncComponent(() => import('@/views/main/header/student/IndexView.vue'))
-          : null
+if (role === STUDENT) {
+  result = StudentService.listTopLevelItemsService()
+}
+if (role === COLLEGE_ADMIN || role === COUNSELOR) {
+  result = CollegeService.listCategoriesService()
+}
+if (role === ADMIN) {
+  result = { suspense: () => Promise.resolve(), data: [] }
+}
 
-const handleLogout = () => {
-  if (confirm('确定退出登录吗？')) {
-    sessionStorage.clear()
-    router.push('/login')
+const { data, suspense } = result as { suspense: () => Promise<void>; data: unknown }
+await suspense()
+//
+const menusMapR = computed(() => {
+  const menusMap = new Map<string, string>()
+  if (role === STUDENT) {
+    menusMap.set('中心', '/student')
+    menusMap.set('加权成绩', '/student/weightedscore')
+    const level1Items = data as Item[]
+    level1Items.forEach(item => {
+      menusMap.set(item.name ?? '', `/student/studentitems/${item.id}`)
+    })
   }
-}
+
+  if (role === COLLEGE_ADMIN || role === COUNSELOR) {
+    menusMap.set('中心', '/college')
+    const categories = data as MajorCategory[]
+    categories.forEach(cat => menusMap.set(cat.name ?? '', `/college/categories/${cat.id}`))
+    if (role === COLLEGE_ADMIN) {
+      menusMap.set('功能', '/college/functions')
+    }
+  }
+  return menusMap
+})
+//
+const route = useRoute()
+const activeIndexR = computed(() => {
+  // 匹配最符合当前路径的menu
+  const pathArray = route.fullPath.split('/')
+  let count = 0
+  let pName = ''
+  for (const [menuName, nemuPath] of menusMapR.value) {
+    const countTemp = nemuPath.split('/').filter(np => pathArray.includes(np)).length
+    if (countTemp > count) {
+      count = countTemp
+      pName = menuName
+    }
+  }
+  return menusMapR.value.get(pName)
+})
 </script>
-
 <template>
-  <div class="header">
-    <div class="logo">推免管理系统</div>
+  <el-row class="my-row" style="padding: 3px" align="middle">
+    <el-col :span="4">
+      <SettingView />
+    </el-col>
 
-    <!--动态加载角色对应导航-->
-    <div class="role-nav">
-      <component :is="RoleNavComponent" v-if="RoleNavComponent" />
-    </div>
-
-    <div class="user-ops">
-      <span class="username">欢迎！{{ userS?.name || '未登录' }}</span>
-      <button class="logout-btn" @click="handleLogout">退出</button>
-    </div>
-  </div>
+    <el-col :span="16">
+      <el-menu :default-active="activeIndexR" mode="horizontal" router>
+        <el-menu-item v-for="(menu, index) of menusMapR" :key="index" :index="menu[1]">
+          {{ menu[0] }}
+        </el-menu-item>
+      </el-menu>
+    </el-col>
+    <!--  -->
+    <el-col :span="4" style="text-align: right; padding-right: 10px">
+      <LogoutView />
+    </el-col>
+  </el-row>
 </template>
-
-<style scoped>
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  height: 60px;
-  background-color: #fff;
-  border-bottom: 1px solid #e8e8e8;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.logo {
-  font-size: 18px;
-  font-weight: bold;
-  color: #1890ff;
-}
-.role-nav {
-  flex: 1;
-  margin: 0 20px;
-}
-.user-ops {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-.setting-btn,
-.logout-btn {
-  padding: 5px 10px;
-  border: 1px solid #e8e8e8;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-}
-.logout-btn {
-  color: #ff4d4f;
-  border-color: #ff4d4f;
-}
-</style>

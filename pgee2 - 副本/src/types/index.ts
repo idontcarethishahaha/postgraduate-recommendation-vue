@@ -18,8 +18,8 @@ export interface User {
   password?: string
   tel?: string
   collegeId?: string
-  catId?: string //  major_category_id
-  catIds?: string[]
+  majorCategoryId?: string
+  majorCategoryIds?: string[]
   majorId?: string
   role?: string
   createTime?: string
@@ -30,14 +30,17 @@ export interface User {
 export interface RegisterUserDTO {
   name?: string
   account?: string
-  tel?: string // 保留字段名，类型保持 string
-  catIds?: string[] // 保留字段名，类型保持 string[]
+  tel?: string
+  collegeId?: string
+  majorId?: string
+  majorCategoryIds?: string[]
+  majorCategoryId?: string
 }
 
 //用户信息VO
 export interface UserInfo {
   name: string
-  collegeName?: string // 保留字段名，类型保持 string
+  collegeName?: string
   majorName?: string
   categories?: string[] // 所属专业类别名称列表
 }
@@ -73,7 +76,7 @@ export interface MajorCategory {
 export interface Major {
   id?: string
   name?: string // 专业名称
-  catId?: string // major_category_id
+  majorCategoryId?: string
   collegeId?: string
   createTime?: string
   updateTime?: string
@@ -116,7 +119,7 @@ export interface ComfirmWeightedScoreReq {
 export interface Item {
   id?: string
   name?: string
-  catId?: string // major_category_id
+  majorCategoryId?: string
   maxPoints?: number // 上限
   maxItems?: number // 限项数
   parentId?: string

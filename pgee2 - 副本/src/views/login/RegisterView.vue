@@ -14,6 +14,8 @@ const userR = ref<User>({ account: '', tel: '', name: '' })
 
 const selectCollegeF = (cid: string) => {
   const r = collegesR.value!.find(d => d.college.id === cid)
+  //test
+  console.log('学院对应的专业数据：', r?.majors)
   majorsR.value = r?.majors ?? []
 }
 
@@ -27,34 +29,12 @@ const submitC = computed(
     userR.value.tel.length === 11
 )
 
-/* const submitF = async () => {
-  const account = userR.value.account
-  const tel = userR.value.tel
-  userR.value.collegeId = collegeIdR.value
-  userR.value.majorId = majorR.value?.id
-  userR.value.catId = majorR.value?.catId
-
-  if (account?.length !== 10 || isNaN(parseInt(account))) {
-    throw '学号应为数字，或位数错误'
-  }
-  if (tel?.length !== 11 || isNaN(parseInt(tel))) {
-    throw '手机号错误'
-  }
-  if (!userR.value.collegeId || !userR.value.catId) {
-    throw '专业错误'
-  }
-
-  await CommonService.registerService(userR.value)
-  createElNotificationSuccess('注册成功')
-  CommonService.loginService({ account: userR.value.account, password: userR.value.account })
-} */
 const submitF = async () => {
   const account = userR.value.account
   const tel = userR.value.tel
-  // 1. 同步学院ID
   userR.value.collegeId = collegeIdR.value
   userR.value.majorId = majorR.value?.id
-  userR.value.catId = majorR.value?.catId
+  userR.value.majorCategoryId = majorR.value?.majorCategoryId
 
   if (account?.length !== 10 || isNaN(parseInt(account))) {
     throw '学号应为数字，或位数错误'
@@ -62,8 +42,7 @@ const submitF = async () => {
   if (tel?.length !== 11 || isNaN(parseInt(tel))) {
     throw '手机号错误'
   }
-  // 3. 校验学院ID和专业类别ID
-  if (!userR.value.collegeId || !userR.value.catId) {
+  if (!userR.value.collegeId || !userR.value.majorCategoryId) {
     throw '专业错误'
   }
 
