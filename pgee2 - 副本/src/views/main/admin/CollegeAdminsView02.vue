@@ -1,138 +1,5 @@
-<script setup lang="ts">
-import { createMessageDialog } from '@/components/message'
-import { CollegeService } from '@/services/CollegeService'
-import type { User } from '@/types'
-import { querycachename } from '@/vuequery/Const'
-import { useQueryClient } from '@tanstack/vue-query'
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
-// 管理员列表项类型
-interface CollegeAdminItem {
-  id: string
-  name: string
-  account: string
-  tel: string
-}
-
-const router = useRouter()
-const route = useRoute()
-const qc = useQueryClient()
-
-// 状态管理
-const showModal = ref(false)
-const searchKeyword = ref('')
-const adminForm = ref({ name: '', account: '', tel: '', password: '' })
-const currentCollegeId = ref(String(route.params.collegeId || ''))
-const currentCollegeName = ref('加载中...')
-const admins = ref<CollegeAdminItem[]>([])
-
-// 服务调用初始化
-const {
-  data: adminsR,
-  suspense: adminsSup,
-  refetch: refetchAdmins
-} = CollegeService.listCollegeAdminsService(currentCollegeId.value)
-const {
-  data: collegeR,
-  suspense: collegeSup,
-  refetch: refetchCollege
-} = CollegeService.listCollegeByIdService(currentCollegeId.value)
-const { mutateAsync: addAdminMutate } = CollegeService.addCollegeAdminService()
-const { mutateAsync: removeAdminMutate } = CollegeService.removeCollegeAdminService()
-
-// 筛选列表
-const filteredAdmins = computed(() => {
-  if (!searchKeyword.value) return admins.value
-  const keyword = searchKeyword.value.toLowerCase()
-  return admins.value.filter(
-    item =>
-      item.name?.toLowerCase().includes(keyword) ||
-      item.account?.toLowerCase().includes(keyword) ||
-      item.tel?.includes(keyword)
-  )
-})
-
-// 加载管理员列表
-const loadAdmins = async () => {
-  if (!currentCollegeId.value) return
-  try {
-    await refetchAdmins()
-    admins.value = adminsR.value || []
-  } catch (e) {
-    createMessageDialog(`加载失败：${e instanceof Error ? e.message : '未知错误'}`)
-  }
-}
-
-// 加载学院名称
-const loadCollegeName = async () => {
-  if (!currentCollegeId.value) return
-  try {
-    await refetchCollege()
-    currentCollegeName.value = collegeR.value?.name || '未知学院'
-  } catch (e) {
-    createMessageDialog(`加载学院名称失败：${e instanceof Error ? e.message : '未知错误'}`)
-    currentCollegeName.value = '未知学院'
-  }
-}
-
-// 保存管理员
-const saveAdminService = async () => {
-  const { name, account, tel } = adminForm.value
-  if (!name.trim() || !account.trim()) {
-    return createMessageDialog('姓名和账号不能为空')
-  }
-  try {
-    await addAdminMutate({
-      name: name.trim(),
-      account: account.trim(),
-      tel: tel.trim(),
-      password: account.trim(),
-      collegeId: currentCollegeId.value,
-      role: 'COLLEGE_ADMIN'
-    } as User)
-    createMessageDialog('添加成功')
-    showModal.value = false
-    adminForm.value = { name: '', account: '', tel: '', password: '' }
-    qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
-    loadAdmins()
-  } catch (e) {
-    createMessageDialog(`添加失败：${e instanceof Error ? e.message : '未知错误'}`)
-  }
-}
-
-// 移除管理员
-const handleRemoveAdmin = async (uid: string) => {
-  if (!confirm('确定移除该管理员吗？')) return
-  try {
-    await removeAdminMutate(uid)
-    createMessageDialog('移除成功')
-    qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
-    loadAdmins()
-  } catch (e) {
-    createMessageDialog(`移除失败：${e instanceof Error ? e.message : '未知错误'}`)
-  }
-}
-
-// 显示添加模态框
-const showAddAdminModal = () => {
-  adminForm.value = { name: '', account: '', tel: '', password: '' }
-  showModal.value = true
-}
-
-const navigateToColleges = () => router.push('/admin/colleges')
-
-if (!currentCollegeId.value) {
-  createMessageDialog('无效的学院信息')
-  router.push('/admin/colleges')
-} else {
-  await Promise.all([collegeSup(), adminsSup()])
-  loadCollegeName()
-  loadAdmins()
-}
-</script>
-
 <template>
+  <!--能用，不报错，待定-->
   <div class="admins-page">
     <el-breadcrumb class="breadcrumb" separator=">">
       <el-breadcrumb-item @click="navigateToColleges" style="cursor: pointer; color: #1890ff">
@@ -219,6 +86,145 @@ if (!currentCollegeId.value) {
     </el-dialog>
   </div>
 </template>
+
+<script setup lang="ts">
+import { createMessageDialog } from '@/components/message'
+import { CollegeService } from '@/services/CollegeService'
+import type { User } from '@/types'
+import { querycachename } from '@/vuequery/Const'
+import { useQueryClient } from '@tanstack/vue-query'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+// 管理员列表项类型
+interface CollegeAdminItem {
+  id: string
+  name: string
+  account: string
+  tel: string
+}
+
+const router = useRouter()
+const route = useRoute()
+const qc = useQueryClient()
+
+// 状态管理
+const showModal = ref(false)
+const searchKeyword = ref('')
+const adminForm = ref({ name: '', account: '', tel: '', password: '' })
+const currentCollegeId = ref(String(route.params.collegeId || ''))
+const currentCollegeName = ref('加载中...')
+const admins = ref<CollegeAdminItem[]>([])
+
+// 服务调用初始化（修复ref类型传递问题）
+const {
+  data: adminsR,
+  suspense: adminsSup,
+  refetch: refetchAdmins
+} = CollegeService.listCollegeAdminsService(currentCollegeId.value)
+const {
+  data: collegeR,
+  suspense: collegeSup,
+  refetch: refetchCollege
+} = CollegeService.listCollegeByIdService(currentCollegeId.value)
+const { mutateAsync: addAdminMutate } = CollegeService.addCollegeAdminService()
+const { mutateAsync: removeAdminMutate } = CollegeService.removeCollegeAdminService()
+
+// 筛选列表
+const filteredAdmins = computed(() => {
+  if (!searchKeyword.value) return admins.value
+  const keyword = searchKeyword.value.toLowerCase()
+  return admins.value.filter(
+    item =>
+      item.name?.toLowerCase().includes(keyword) ||
+      item.account?.toLowerCase().includes(keyword) ||
+      item.tel?.includes(keyword)
+  )
+})
+
+// 加载管理员列表
+const loadAdmins = async () => {
+  if (!currentCollegeId.value) return
+  try {
+    await refetchAdmins()
+    admins.value = adminsR.value || []
+  } catch (e) {
+    createMessageDialog(`加载失败：${e instanceof Error ? e.message : '未知错误'}`)
+  }
+}
+
+// 加载学院名称
+const loadCollegeName = async () => {
+  if (!currentCollegeId.value) return
+  try {
+    await refetchCollege()
+    currentCollegeName.value = collegeR.value?.name || '未知学院'
+  } catch (e) {
+    createMessageDialog(`加载学院名称失败：${e instanceof Error ? e.message : '未知错误'}`)
+    currentCollegeName.value = '未知学院'
+  }
+}
+
+// 保存管理员
+const saveAdminService = async () => {
+  const { name, account, tel } = adminForm.value
+  if (!name.trim() || !account.trim()) {
+    return createMessageDialog('姓名和账号不能为空')
+  }
+  try {
+    await addAdminMutate({
+      name: name.trim(),
+      account: account.trim(),
+      tel: tel.trim(),
+      password: account.trim(), // 默认账号为密码
+      collegeId: currentCollegeId.value,
+      role: 'COLLEGE_ADMIN'
+    } as User)
+    createMessageDialog('添加成功')
+    showModal.value = false
+    adminForm.value = { name: '', account: '', tel: '', password: '' }
+    // 修复缓存键名错误
+    qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
+    loadAdmins()
+  } catch (e) {
+    createMessageDialog(`添加失败：${e instanceof Error ? e.message : '未知错误'}`)
+  }
+}
+
+// 移除管理员
+const handleRemoveAdmin = async (uid: string) => {
+  if (!confirm('确定移除该管理员吗？')) return
+  try {
+    await removeAdminMutate(uid)
+    createMessageDialog('移除成功')
+    // 修复缓存键名错误
+    qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
+    loadAdmins()
+  } catch (e) {
+    createMessageDialog(`移除失败：${e instanceof Error ? e.message : '未知错误'}`)
+  }
+}
+
+// 显示添加模态框
+const showAddAdminModal = () => {
+  adminForm.value = { name: '', account: '', tel: '', password: '' }
+  showModal.value = true
+}
+
+// 导航到学院列表
+const navigateToColleges = () => router.push('/admin/colleges')
+
+// 初始化加载
+onMounted(async () => {
+  if (!currentCollegeId.value) {
+    createMessageDialog('无效的学院信息')
+    return router.push('/admin/colleges')
+  }
+  await Promise.all([collegeSup(), adminsSup()])
+  loadCollegeName()
+  loadAdmins()
+})
+</script>
 
 <style scoped>
 .breadcrumb {
