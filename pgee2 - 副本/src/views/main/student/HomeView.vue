@@ -4,7 +4,6 @@
       <p class="title">基本信息数据</p>
       <div>
         {{ userInfo?.name }} - {{ userInfo?.collegeName }} -
-        <!-- 修复：处理 categories 为 undefined 的情况 -->
         <template v-for="(cat, index) of userInfo?.categories || []" :key="index">
           {{ cat }}
           <template v-if="index !== (userInfo?.categories?.length || 0) - 1">-</template>
@@ -38,7 +37,7 @@
         <el-row :gutter="10" class="row">
           <el-col :span="colspan" class="col-title">已认定成绩：</el-col>
           <el-col :span="12">
-            <el-tag size="large" :type="confirmedStatus.color" class="info-tag">
+            <el-tag size="large" :type="confirmedStatus?.color" class="info-tag">
               {{ statusR?.totalPoint ?? 0 }}
             </el-tag>
           </el-col>
@@ -47,7 +46,7 @@
         <el-row :gutter="10" class="row">
           <el-col :span="colspan" class="col-title">已认定项：</el-col>
           <el-col :span="12">
-            <el-tag size="large" :type="confirmedStatus.color" class="info-tag">
+            <el-tag size="large" :type="confirmedStatus?.color" class="info-tag">
               {{ statusR?.confirmedCount ?? 0 }}
             </el-tag>
           </el-col>
@@ -56,7 +55,7 @@
         <el-row :gutter="10" class="row">
           <el-col :span="colspan" class="col-title">待审核项：</el-col>
           <el-col :span="12">
-            <el-tag size="large" :type="pendingStatus.color" class="info-tag">
+            <el-tag size="large" :type="pendingStatus?.color" class="info-tag">
               {{ statusR?.pendingReviewCount ?? 0 }}
             </el-tag>
           </el-col>
@@ -65,7 +64,7 @@
         <el-row :gutter="10" class="row">
           <el-col :span="colspan" class="col-title">待修改项：</el-col>
           <el-col :span="12">
-            <el-tag size="large" :type="pendingStatus.color" class="info-tag">
+            <el-tag size="large" :type="pendingStatus?.color" class="info-tag">
               {{ statusR?.pendingModificationCount ?? 0 }}
             </el-tag>
           </el-col>
@@ -136,24 +135,22 @@ await suspense() // 等待异步数据加载完成
 // 基础配置
 const colspan = 3
 
-// 修复：确保 getStatusUtil 返回值符合 StatusConfig 类型
 const confirmedStatus = computed<StatusConfig>(() => {
   const res = getStatusUtil(CONFIRMED)
-  // 强制转换为 StatusConfig 类型（若后端返回格式不一致，需同步调整）
-  return (res as StatusConfig) || { color: 'success', text: '已确认' }
+  return (res as StatusConfig) || { color: 'success', name: '已确认' }
 })
 const pendingStatus = computed<StatusConfig>(() => {
   const res = getStatusUtil(PENDING_REVIEW)
-  return (res as StatusConfig) || { color: 'info', text: '待审核' }
+  return (res as StatusConfig) || { color: 'info', name: '待审核' }
 })
 const rejectedStatus = computed<StatusConfig>(() => {
   const res = getStatusUtil(REJECTED)
-  return (res as StatusConfig) || { color: 'danger', text: '已驳回' }
+  return (res as StatusConfig) || { color: 'danger', name: '已驳回' }
 })
 const scoreStatus = computed<StatusConfig>(() => {
   const verified = statusR.value?.verified ?? 0
   const res = SCORE_STATUS_MAP.get(verified)
-  return (res as StatusConfig) || { color: 'warning', text: '未知状态' }
+  return (res as StatusConfig) || { color: 'warning', name: '未知状态' }
 })
 
 // 权重计算
