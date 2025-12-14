@@ -23,7 +23,7 @@ html {
 
 #app {
   max-width: 1200px;
-  background: indigo;
+  background: rgb(254, 254, 254);
   min-height: 100vh;
   border-radius: 4px;
   margin: 0 auto;
