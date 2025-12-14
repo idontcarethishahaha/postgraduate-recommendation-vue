@@ -96,7 +96,7 @@ import {
   ElTable,
   ElTableColumn
 } from 'element-plus'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 // 管理员列表项类型
@@ -118,7 +118,17 @@ const currentCollegeId = ref(String(route.params.collegeId || ''))
 const currentCollegeName = ref('加载中...')
 const admins = ref<CollegeAdminItem[]>([])
 
-// 筛选列表（直接基于admins计算）
+// ========== 核心修复：在setup顶层提前初始化所有需要的mutation/query ==========
+// 1. 提前初始化「添加管理员」的mutation（关键：在setup顶层执行，绑定上下文）
+const addCollegeAdminMutation = CollegeService.addCollegeAdminService()
+// 2. 提前初始化「移除管理员」的mutation
+const removeCollegeAdminMutation = CollegeService.removeCollegeAdminService()
+// 3. 提前封装「加载管理员列表」的方法（避免重复创建query）
+const getCollegeAdminsQuery = (cid: string) => CollegeService.listCollegeAdminsService(cid)
+// 4. 提前封装「加载学院名称」的方法
+const getCollegeByIdQuery = (cid: string) => CollegeService.listCollegeByIdService(cid)
+
+// 筛选列表
 const filteredAdmins = computed(() => {
   if (!searchKeyword.value) return admins.value
   const keyword = searchKeyword.value.toLowerCase()
@@ -130,11 +140,10 @@ const filteredAdmins = computed(() => {
   )
 })
 
-// 核心方法简化
 const loadAdmins = async () => {
   if (!currentCollegeId.value) return
   try {
-    const query = CollegeService.listCollegeAdminsService(currentCollegeId.value)
+    const query = getCollegeAdminsQuery(currentCollegeId.value)
     await query.refetch()
     admins.value = query.data.value || []
   } catch (e) {
@@ -145,7 +154,7 @@ const loadAdmins = async () => {
 const loadCollegeName = async () => {
   if (!currentCollegeId.value) return
   try {
-    const query = CollegeService.listCollegeByIdService(currentCollegeId.value)
+    const query = getCollegeByIdQuery(currentCollegeId.value)
     await query.refetch()
     currentCollegeName.value = query.data.value?.name || '未知学院'
   } catch (e) {
@@ -160,7 +169,7 @@ const saveAdminService = async () => {
     return createMessageDialog('姓名和账号不能为空')
   }
   try {
-    await CollegeService.addCollegeAdminService().mutateAsync({
+    await addCollegeAdminMutation.mutateAsync({
       name: name.trim(),
       account: account.trim(),
       tel: tel.trim(),
@@ -180,7 +189,8 @@ const saveAdminService = async () => {
 const handleRemoveAdmin = async (uid: string) => {
   if (!confirm('确定移除该管理员吗？')) return
   try {
-    await CollegeService.removeCollegeAdminService().mutateAsync(uid)
+    // 使用提前初始化的mutation
+    await removeCollegeAdminMutation.mutateAsync(uid)
     createMessageDialog('移除成功')
     loadAdmins()
   } catch (e) {
@@ -195,14 +205,14 @@ const showAddAdminModal = () => {
 
 const navigateToColleges = () => router.push('/admin/colleges')
 
-// 初始化
-;(async () => {
+// 初始化（改用onMounted，更符合Vue规范）
+onMounted(async () => {
   if (!currentCollegeId.value) {
     createMessageDialog('无效的学院信息')
     return router.push('/admin/colleges')
   }
   await Promise.all([loadCollegeName(), loadAdmins()])
-})()
+})
 </script>
 
 <style scoped>
