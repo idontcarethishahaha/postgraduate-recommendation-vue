@@ -31,7 +31,7 @@ export class CommonService {
       throw '登录错误'
     }
 
-    userStore.setUserSessionStorage(token, role)
+    userStore.setUserSessionStorage(resp.data.data, token, role)
     if (user.account === user.password) {
       router.push('/settings')
       throw '账号密码相同，建议重置密码'
