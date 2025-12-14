@@ -23,7 +23,7 @@ const loginF = async () => {
     <div class="login-header">
       <h1>推免系统</h1>
       <p>欢迎登录，请填写您的账号信息</p>
-      <p>示例: 账号admin 密码admin</p>
+      <p>示例: 账号admin 密码123456</p>
     </div>
 
     <el-form @keyup.enter="loginF" class="login-form">
