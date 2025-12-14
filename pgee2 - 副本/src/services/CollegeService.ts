@@ -1,12 +1,12 @@
 import { useGet, usePost, usePut } from '@/axios'
 import { createElLoading } from '@/components/loading'
 import type {
-  Category,
   CategoryMajors,
   CategoryWeighting,
   ComfirmWeightedScoreReq,
   Item,
   Major,
+  MajorCategory,
   RegisterUserDTO,
   StudentItem,
   StudentItemLog,
@@ -17,6 +17,7 @@ import type {
 } from '@/types'
 import { querycachename } from '@/vuequery/Const'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { type MaybeRefOrGetter, toValue } from 'vue'
 import { CommonService } from './CommonService'
 import { getFinalScoreUtil } from './Utils'
 //
@@ -27,7 +28,7 @@ export class CollegeService {
   static listCategoriesService() {
     return useQuery({
       queryKey: [querycachename.college.categories],
-      queryFn: () => useGet<Category[]>(addPreUrl('categories'))
+      queryFn: () => useGet<MajorCategory[]>(addPreUrl('categories'))
     })
   }
 
@@ -148,11 +149,14 @@ export class CollegeService {
         })
     })
   }
-
+  /*
   static async downloadFileService(sfile: string, fileName: string) {
     const result = CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
   }
-
+*/
+  static async downloadFileService(sfile: string, fileName: string) {
+    await CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
+  }
   //
   static addAdminService() {
     const qc = useQueryClient()
@@ -168,7 +172,7 @@ export class CollegeService {
       queryFn: () =>
         useGet<
           {
-            category?: Category
+            category?: MajorCategory
             users?: User[]
           }[]
         >(addPreUrl('categories/users'))
@@ -178,7 +182,7 @@ export class CollegeService {
   static addCategoryService() {
     const qc = useQueryClient()
     return useMutation({
-      mutationFn: (cat: Category) => usePost(addPreUrl('categories'), cat),
+      mutationFn: (cat: MajorCategory) => usePost(addPreUrl('categories'), cat),
       onSuccess: () => {
         qc.refetchQueries({
           queryKey: [querycachename.college.categories]
