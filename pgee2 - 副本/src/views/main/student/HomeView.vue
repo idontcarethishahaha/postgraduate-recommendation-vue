@@ -73,7 +73,7 @@
         <el-row :gutter="10" class="row">
           <el-col :span="colspan" class="col-title">已驳回项：</el-col>
           <el-col :span="12">
-            <el-tag size="large" :type="rejectedStatus.color" class="info-tag">
+            <el-tag size="large" :type="rejectedStatus?.color" class="info-tag">
               {{ statusR?.rejectedCount ?? 0 }}
             </el-tag>
           </el-col>
