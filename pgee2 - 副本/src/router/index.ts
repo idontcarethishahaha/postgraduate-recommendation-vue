@@ -23,12 +23,27 @@ const router = createRouter({
       path: '/',
       component: () => import('@/views/main/IndexView.vue'),
       meta: {
-        roles: [consty.STUDENT, consty.COUNSELOR, consty.COLLEGE_ADMIN]
+        roles: [consty.ADMIN, consty.STUDENT, consty.COUNSELOR, consty.COLLEGE_ADMIN]
       },
       children: [
         {
           path: 'settings',
           component: () => import('@/views/main/UserSettingView.vue')
+        },
+        {
+          path: 'admin',
+          component: () => import('../views/main/admin/IndexView.vue'),
+          meta: { roles: [consty.ADMIN] },
+          children: [
+            {
+              path: 'colleges',
+              component: () => import('../views/main/admin/CollegesView.vue')
+            },
+            {
+              path: 'college-admins/:collegeId',
+              component: () => import('../views/main/admin/CollegeAdminsView.vue')
+            }
+          ]
         },
         {
           path: 'student',
@@ -88,7 +103,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(to => {
+/* router.beforeEach(to => {
   if (!to.meta.roles) {
     return true
   }
@@ -99,6 +114,57 @@ router.beforeEach(to => {
   }
   CommonService.clearLoginService()
   return false
+}) */
+/* router.beforeEach(async (to, from, next) => {
+  // 1. 无需权限的路由（如/login、/register）直接放行
+  if (!to.meta.roles) {
+    return next()
+  }
+
+  // 2. 获取当前登录角色（兼容null/undefined）
+  const currentRole = CommonService.getRoleService()
+  if (!currentRole) {
+    // 未登录 → 跳登录页
+    CommonService.clearLoginService()
+    return next('/login')
+  }
+
+  // 3. 角色匹配校验
+  const hasPermission = to.meta.roles.some(role => role === currentRole)
+  if (hasPermission) {
+    // 有权限 → 放行
+    return next()
+  } else {
+    // 无权限 → 清空登录态并跳登录
+    CommonService.clearLoginService()
+    return next('/login')
+  }
+}) */
+
+router.beforeEach((to, from, next) => {
+  // 1. 无roles的路由（登录/注册）直接放行
+  if (!to.meta.roles) {
+    return next()
+  }
+
+  // 2. 获取当前角色（同步操作，无需async）
+  const currentRole = CommonService.getRoleService()
+
+  // 3. 未登录 → 跳登录页（仅调用一次next）
+  if (!currentRole) {
+    // 先清空登录态，再跳转（避免重复push）
+    sessionStorage.clear()
+    return next('/login')
+  }
+
+  // 4. 角色匹配校验（严格相等）
+  const hasPermission = to.meta.roles.some(role => role === currentRole)
+  if (hasPermission) {
+    next()
+  } else {
+    sessionStorage.clear()
+    next('/login')
+  }
 })
 
 export default router

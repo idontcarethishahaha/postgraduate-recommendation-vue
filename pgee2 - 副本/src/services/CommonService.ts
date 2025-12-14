@@ -23,7 +23,7 @@ export class CommonService {
   }
 
   // login
-  static loginService = async (user: User) => {
+  /*   static loginService = async (user: User) => {
     const resp = await axios.post<ResultVO<UserInfo>>(addPreUrl('login'), user)
     const token = resp.headers.token
     const role = resp.headers.role
@@ -40,6 +40,34 @@ export class CommonService {
     switch (role) {
       case ADMIN:
         path = '/admin'
+        break
+      case STUDENT:
+        path = '/student'
+        break
+      case COLLEGE_ADMIN:
+      case COUNSELOR:
+        path = '/college'
+        break
+    }
+    router.push(path)
+  } */
+  static loginService = async (user: User) => {
+    const resp = await axios.post<ResultVO<UserInfo>>(addPreUrl('login'), user)
+    const token = resp.headers.token
+    const role = resp.headers.role
+    if (!token || !role) {
+      throw '登录错误'
+    }
+
+    userStore.setUserSessionStorage(resp.data.data, token, role)
+    if (user.account === user.password) {
+      router.push('/settings')
+      throw '账号密码相同，建议重置密码'
+    }
+    let path = ''
+    switch (role) {
+      case ADMIN:
+        path = '/admin/colleges' // 改为跳转到/admin/colleges
         break
       case STUDENT:
         path = '/student'

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { CommonService } from '@/services'
 import { ADMIN, COLLEGE_ADMIN, COUNSELOR, STUDENT } from '@/services/Const'
+import { CommonService } from '@/services/index.ts'
 import { useUserStore } from '@/stores/UserStore'
 import { defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 
 //获取当前用户角色和信息
-const role = CommonService.getRole()
+const role = CommonService.getRoleService()
 console.log('当前角色：', role)
 const userS = useUserStore().userS
 const router = useRouter()

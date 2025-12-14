@@ -1,8 +1,9 @@
-import { useGet, usePost, usePut } from '@/axios'
+import { useDelete, useGet, usePost, usePut } from '@/axios'
 import { createElLoading } from '@/components/loading'
 import type {
   CategoryMajors,
   CategoryWeighting,
+  College,
   ComfirmWeightedScoreReq,
   Item,
   Major,
@@ -202,5 +203,80 @@ export class CollegeService {
 
   static async updatePasswordService(account: string) {
     await usePut(addPreUrl(`passwords/${account}`))
+  }
+  //==============================================================
+  //添加学院
+  static addCollegeService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (college: College) => usePost('admin/colleges', college),
+      onSuccess: () =>
+        qc.refetchQueries({
+          queryKey: [querycachename.college.colleges]
+        })
+    })
+  }
+  //查看学院列表
+  static listCollegeService() {
+    return useQuery<College[], Error>({
+      queryKey: [querycachename.college.colleges],
+      queryFn: () => useGet<College[]>('open/colleges1')
+    })
+  }
+  // 移除学院
+  static removeCollegeService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (id: string) => useDelete(`admin/colleges/${id}`),
+      onSuccess: () => {
+        qc.invalidateQueries({ queryKey: [querycachename.college.colleges] })
+      }
+    })
+  }
+  //==========================================================
+  //添加学院管理员
+  static addCollegeAdminService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (user: User) => usePost('admin/users', user),
+      onSuccess: () =>
+        qc.refetchQueries({
+          queryKey: [querycachename.college.collegeadmin]
+        })
+    })
+  }
+
+  // 移除学院管理员
+  static removeCollegeAdminService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (uid: string) => useDelete(`admin/users/${uid}`),
+      onSuccess: () => {
+        qc.invalidateQueries({ queryKey: [querycachename.college.collegeadmin] })
+      }
+    })
+  }
+
+  // 查看指定学院的管理员列表（后端接口 /admin/users/{cid}）
+  static listCollegeAdminsService(collegeId: string) {
+    return useQuery<
+      Array<{
+        id: string
+        name: string
+        account: string
+        tel: string
+      }>,
+      Error
+    >({
+      queryKey: [querycachename.college.collegeadmin],
+      queryFn: () => useGet(`admin/users/${collegeId}`)
+    })
+  }
+  //加载学院名称
+  static listCollegeByIdService(collegeId: string) {
+    return useQuery<College, Error>({
+      queryKey: ['colleges', collegeId],
+      queryFn: () => useGet(`open/colleges/${collegeId}`)
+    })
   }
 }

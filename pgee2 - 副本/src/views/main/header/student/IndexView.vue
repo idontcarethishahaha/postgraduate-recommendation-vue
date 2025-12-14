@@ -1,13 +1,8 @@
 <template>
-  <div class="student-header">
-    <!-- 学生角色头部内容 -->
-    学生头部视图
-  </div>
+  <div class="student-header">学生</div>
 </template>
 
-<script setup lang="ts">
-// 后续可添加学生相关头部逻辑
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 .student-header {

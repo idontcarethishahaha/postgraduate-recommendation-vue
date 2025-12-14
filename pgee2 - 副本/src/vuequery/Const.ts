@@ -9,6 +9,8 @@ export const querycachename = {
     category: 'category'
   },
   college: {
+    colleges: 'colleges',
+    collegeadmin: 'collegeadmin',
     categories: 'categories',
     majors: 'majors',
     majorstudentstatuses: 'majorstudentstatuses',
