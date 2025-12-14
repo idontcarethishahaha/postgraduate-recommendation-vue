@@ -72,7 +72,7 @@ const router = createRouter({
               children: [
                 {
                   path: 'marjors/:majorid',
-                  component: () => import('@/views/main/college/marjors/IndexView.vue')
+                  component: () => import('@/views/main/college/majors/IndexView.vue')
                 }
               ]
             }
