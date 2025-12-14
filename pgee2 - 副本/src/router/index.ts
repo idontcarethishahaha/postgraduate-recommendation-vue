@@ -142,22 +142,17 @@ const router = createRouter({
 }) */
 
 router.beforeEach((to, from, next) => {
-  // 1. 无roles的路由（登录/注册）直接放行
   if (!to.meta.roles) {
     return next()
   }
 
-  // 2. 获取当前角色（同步操作，无需async）
   const currentRole = CommonService.getRoleService()
 
-  // 3. 未登录 → 跳登录页（仅调用一次next）
   if (!currentRole) {
-    // 先清空登录态，再跳转（避免重复push）
     sessionStorage.clear()
     return next('/login')
   }
 
-  // 4. 角色匹配校验（严格相等）
   const hasPermission = to.meta.roles.some(role => role === currentRole)
   if (hasPermission) {
     next()

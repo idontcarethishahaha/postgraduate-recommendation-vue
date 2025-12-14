@@ -18,9 +18,15 @@ app.use(VueQueryPlugin, {
 })
 app.use(router)
 
-app.config.errorHandler = err => {
+/* app.config.errorHandler = err => {
   const error = err as string
   console.error(error)
   createMessageDialog(error)
+} */
+app.config.errorHandler = err => {
+  // 兼容 Error 对象和字符串
+  const errorMsg = err instanceof Error ? err.message : String(err)
+  console.error(errorMsg)
+  createMessageDialog(errorMsg)
 }
 app.mount('#app')
