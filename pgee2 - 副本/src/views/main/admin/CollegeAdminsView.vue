@@ -71,13 +71,6 @@
         <el-form-item label="手机号">
           <el-input v-model="adminForm.tel" type="tel" class="form-control" />
         </el-form-item>
-        <el-form-item label="初始密码">
-          <el-input
-            v-model="adminForm.password"
-            type="text"
-            class="form-control"
-            placeholder="留空则使用账号作为密码" />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="showModal = false">取消</el-button>
