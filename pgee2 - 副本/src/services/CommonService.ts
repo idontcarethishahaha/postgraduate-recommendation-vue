@@ -12,9 +12,16 @@ const addPreUrl = (url: string) => `open/${url}`
 
 const userStore = useUserStore()
 export class CommonService {
-  static listCollegesService() {
+  /* static listCollegesService() {
     const query = useGet<{ college: College; majors: Major[] }[]>(addPreUrl('colleges'))
     return useQuery({ queryKey: ['colleges'], queryFn: () => query })
+  } */
+  static listCollegesService() {
+    // 直接返回useGet的结果
+    return useQuery({
+      queryKey: ['colleges'],
+      queryFn: () => useGet<{ college: College; majors: Major[] }[]>(addPreUrl('colleges'))
+    })
   }
 
   static async registerService(user: User) {
