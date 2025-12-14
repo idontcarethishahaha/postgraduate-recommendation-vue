@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import { ref, render } from 'vue'
+
+const dialogVisible = ref(true)
+
+const props = defineProps<{ message: string; close?: () => void }>()
+
+const close = () => {
+  if (props.close) {
+    props.close()
+  }
+  render(null, document.body)
+}
+</script>
+
+<template>
+  <el-dialog v-model="dialogVisible" title="消息" width="30%" @close="close">
+    <span>{{ props.message }}</span>
+  </el-dialog>
+</template>
