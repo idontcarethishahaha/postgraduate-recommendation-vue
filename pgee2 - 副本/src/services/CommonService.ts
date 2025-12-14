@@ -3,7 +3,7 @@ import { createProgressNotification } from '@/components/progress'
 import router from '@/router'
 import { ADMIN, COLLEGE_ADMIN, COUNSELOR, STUDENT } from '@/services/Const'
 import { useUserStore } from '@/stores/UserStore'
-import type { College, Major, Progress, ResultVO, User, UserInfo } from '@/types'
+import type { College, Major, Progress, RegisterUserDTO, ResultVO, User, UserInfo } from '@/types'
 import { querycachename } from '@/vuequery/Const'
 import { useQuery } from '@tanstack/vue-query'
 import { ref } from 'vue'
@@ -24,8 +24,14 @@ export class CommonService {
     })
   }
 
-  static async registerService(user: User) {
+  /*   static async registerService(user: User) {
     console.log('传递给register接口的参数:', user)
+    await usePost(addPreUrl('register'), user)
+    CommonService.loginService({ account: user.account, password: user.account })
+  } */
+  // 修正参数类型为RegisterUserDTO
+  static async registerService(user: RegisterUserDTO) {
+    console.log('最终传递给后端的参数：', user) // 验证包含majorCategoryId
     await usePost(addPreUrl('register'), user)
     CommonService.loginService({ account: user.account, password: user.account })
   }

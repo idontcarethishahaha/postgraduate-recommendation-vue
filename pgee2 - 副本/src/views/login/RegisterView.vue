@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { createElNotificationSuccess } from '@/components/message'
 import { CommonService } from '@/services/CommonService'
 import type { Major, User } from '@/types'
@@ -35,6 +35,60 @@ const submitF = async () => {
   userR.value.collegeId = collegeIdR.value
   userR.value.majorId = majorR.value?.id
   userR.value.majorCategoryId = majorR.value?.majorCategoryId
+
+  if (account?.length !== 10 || isNaN(parseInt(account))) {
+    throw '学号应为数字，或位数错误'
+  }
+  if (tel?.length !== 11 || isNaN(parseInt(tel))) {
+    throw '手机号错误'
+  }
+  if (!userR.value.collegeId || !userR.value.majorCategoryId) {
+    throw '专业错误'
+  }
+
+  await CommonService.registerService(userR.value)
+  createElNotificationSuccess('注册成功')
+  CommonService.loginService({ account: userR.value.account, password: userR.value.account })
+}
+</script> -->
+<script setup lang="ts">
+import { createElNotificationSuccess } from '@/components/message'
+import { CommonService } from '@/services/CommonService'
+import type { Major, User } from '@/types'
+import { User as UserICO } from '@element-plus/icons-vue'
+import { computed, ref } from 'vue'
+
+const { data: collegesR } = CommonService.listCollegesService()
+
+const collegeIdR = ref('')
+const majorR = ref<Major>()
+const majorsR = ref<Major[]>([])
+const userR = ref<User>({ account: '', tel: '', name: '' })
+
+const selectCollegeF = (cid: string) => {
+  const r = collegesR.value!.find(d => d.college.id === cid)
+  console.log('学院对应的专业数据：', r?.majors)
+  majorsR.value = r?.majors ?? []
+}
+
+const submitC = computed(
+  () =>
+    majorR.value?.majorCategoryId &&
+    majorR.value &&
+    userR.value.account &&
+    userR.value.name &&
+    userR.value.tel &&
+    userR.value.account.length === 10 &&
+    userR.value.tel.length === 11
+)
+
+const submitF = async () => {
+  const account = userR.value.account
+  const tel = userR.value.tel
+  userR.value.collegeId = collegeIdR.value
+  userR.value.majorId = majorR.value?.id
+
+  userR.value.majorCategoryId = majorR.value?.majorCategoryId || ''
 
   if (account?.length !== 10 || isNaN(parseInt(account))) {
     throw '学号应为数字，或位数错误'
