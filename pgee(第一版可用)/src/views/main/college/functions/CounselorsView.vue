@@ -66,7 +66,6 @@ const handleRemoveCounselor = async (uid: string) => {
 watch([() => props.categoryId], loadCounselors, { immediate: true })
 onMounted(loadCounselors)
 
-// 关闭弹窗
 const close = () => {
   emit('close')
 }
