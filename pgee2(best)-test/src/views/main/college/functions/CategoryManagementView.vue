@@ -1,14 +1,9 @@
 <script setup lang="ts">
-// 能用
 import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
-import type { Major, MajorCategory } from '@/types'
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
-//import { useQueryClient } from '@tanstack/vue-query'
-
-const router = useRouter()
-//const qc = useQueryClient()
+import type { MajorCategory } from '@/types'
+import MajorsView from '@/views/main/college/functions/MajorsView.vue'
+import { ref } from 'vue'
 
 // 获取类别-专业列表
 const {
@@ -17,34 +12,22 @@ const {
   refetch: refetchCategoriesMajors
 } = CollegeService.listcategoryMajorsService()
 // 获取类别列表
-const { data: categoriesR, suspense: categoriesRsup } = CollegeService.listCategoriesService()
+const { suspense: categoriesRsup } = CollegeService.listCategoriesService()
 await Promise.all([suspense(), categoriesRsup()])
 
-const majorR = ref<Major>({})
 const categoryR = ref<MajorCategory>({})
-
-// 添加专业
-const { mutateAsync } = CollegeService.addMajorService()
-const addMajorActiveF = async () => {
-  await mutateAsync(majorR.value)
-  createElNotificationSuccess('专业添加成功')
-  majorR.value = {}
-  // 添加专业后刷新列表
-  refetchCategoriesMajors()
-}
-const addMajorDisC = computed(() => majorR.value.name && majorR.value.majorCategoryId)
+// 当前激活类别ID+名称
+const activeCategory = ref<{ id: string; name: string } | null>(null)
 
 // 添加类别
 const { mutateAsync: mutateAsyncCat } = CollegeService.addCategoryService()
 const addCategoryF = async () => {
-  // ===================暂时写死======================
   categoryR.value.weighting = { score: 85, compositeScore: 15 }
   // @ts-expect-error: JSON
   categoryR.value.weighting = JSON.stringify(categoryR.value.weighting)
-  console.log('添加类别的参数：', categoryR.value)
   await mutateAsyncCat(categoryR.value)
   createElNotificationSuccess('类别添加成功')
-  categoryR.value = {} // 清空输入框
+  categoryR.value = {}
 }
 
 // 移除类别
@@ -53,19 +36,25 @@ const handleRemoveCategory = async (mcid: string) => {
   if (!confirm('确定移除该类别吗？')) return
   await removeCategoryMutate(mcid)
   createElNotificationSuccess('类别移除成功')
-  // 刷新列表
   refetchCategoriesMajors()
+  // 移除后关闭专业视图
+  activeCategory.value = null
 }
 
-// 跳转到专业管理页面
-const manageMajors = (majorCategory: MajorCategory) => {
-  router.push(`/college/categories/majors/${majorCategory.id}`)
+// 再次点击管理专业时，关闭专业视图
+// 点击管理专业时，记录ID和名称
+const manageMajors = (category: MajorCategory) => {
+  if (!category.id) return
+  // 判断是否是当前激活的类别，是则关闭，否则激活
+  activeCategory.value =
+    activeCategory.value?.id === category.id
+      ? null
+      : { id: category.id, name: category.name || '未知类别' }
 }
 </script>
 
 <template>
   <div class="container" style="padding: 20px">
-    <!-- 横向添加 -->
     <el-row class="my-row" :gutter="15" style="margin-bottom: 20px">
       <el-col :span="8">
         <el-input
@@ -74,29 +63,6 @@ const manageMajors = (majorCategory: MajorCategory) => {
           placeholder="类别名称"
           clearable />
         <el-button type="primary" @click="addCategoryF">添加类别</el-button>
-      </el-col>
-
-      <el-col :span="16">
-        <el-select
-          value-key="id"
-          v-model="majorR.majorCategoryId"
-          placeholder="类别"
-          size="large"
-          style="width: 200px; margin-right: 10px">
-          <el-option
-            v-for="(cat, index) of categoriesR"
-            :key="index"
-            :label="cat?.name"
-            :value="cat?.id" />
-        </el-select>
-        <el-input
-          style="width: 240px; margin-right: 8px"
-          v-model="majorR.name"
-          placeholder="专业名称"
-          clearable />
-        <el-button type="primary" @click="addMajorActiveF" :disabled="!addMajorDisC">
-          添加专业
-        </el-button>
       </el-col>
     </el-row>
 
@@ -138,6 +104,18 @@ const manageMajors = (majorCategory: MajorCategory) => {
         </el-table-column>
       </el-table>
     </div>
+
+    <!--专业管理-->
+    <div v-if="activeCategory" class="majors-view-container" style="margin-top: 20px">
+      <el-card shadow="hover">
+        <template #header>
+          <div style="font-size: 16px; font-weight: bold; color: #1890ff">
+            专业管理（当前类别：{{ activeCategory.name }}）
+          </div>
+        </template>
+        <MajorsView :category-id="activeCategory.id" />
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -161,9 +139,8 @@ const manageMajors = (majorCategory: MajorCategory) => {
   }
 }
 
-.dashed {
-  border-top: 2px dashed #dcdfe6;
-  margin: 8px;
-  padding: 8px;
+.majors-view-container {
+  border-top: 1px solid #e8e8e8;
+  padding-top: 20px;
 }
 </style>

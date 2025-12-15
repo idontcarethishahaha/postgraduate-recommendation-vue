@@ -77,11 +77,11 @@ const router = createRouter({
               path: '',
               component: () => import('@/views/main/college/HomeView.vue')
             },
-            {
+            /*       {
               // 类别管理跳转至专业管理
               path: 'categories/majors/:catid',
               component: () => import('@/views/main/college/functions/MajorsView.vue')
-            },
+            }, */
             {
               path: 'functions',
               component: () => import('@/views/main/college/functions/IndexView.vue')

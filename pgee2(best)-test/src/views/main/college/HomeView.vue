@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CatGif from '@/assets/loading.gif'
 import { CommonService } from '@/services/CommonService'
 
 const { data: userInfoR } = CommonService.getUserInfoService()
@@ -12,6 +13,7 @@ const { data: userInfoR } = CommonService.getUserInfoService()
         <template v-for="(cat, index) of userInfoR?.categories" :key="index">{{ cat }};</template>
       </h3>
       <h3>{{ userInfoR?.majorName }}</h3>
+      <img :src="CatGif" alt="cat" />
     </el-col>
   </el-row>
 </template>

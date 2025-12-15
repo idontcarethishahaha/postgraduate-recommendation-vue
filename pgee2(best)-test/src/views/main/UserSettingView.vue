@@ -21,17 +21,40 @@ const resetPwd = async () => {
 <template>
   <el-row class="my-row">
     <el-col :span="8">
-      <p style="margin-bottom: 8px">重置密码</p>
+      <p style="margin-bottom: 8px">修改密码</p>
       <el-input
         type="password"
         v-model="pwdM.p1"
-        placeholder="password"
+        placeholder="请输入修改后密码"
         :prefix-icon="Lock"
         style="margin-bottom: 10px" />
-      <el-input type="password" v-model="pwdM.p2" placeholder="re-enter" :prefix-icon="Lock" />
+      <el-input
+        type="password"
+        v-model="pwdM.p2"
+        placeholder="请再次确认密码"
+        :prefix-icon="Lock" />
     </el-col>
     <el-col>
-      <el-button type="primary" @click="resetPwd" :disabled="!pwdM.p2 || !pwdM.p1">Reset</el-button>
+      <el-button
+        @click="resetPwd"
+        :disabled="!pwdM.p2 || !pwdM.p1"
+        style="
+          background-color: #1890ff;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+        :style="!pwdM.p2 || !pwdM.p1 ? { backgroundColor: '#a0cfff', cursor: 'not-allowed' } : {}">
+        提交修改
+      </el-button>
     </el-col>
   </el-row>
 </template>
+
+<style scoped>
+.el-button:hover:not(:disabled) {
+  background-color: #40a9ff !important;
+}
+</style>

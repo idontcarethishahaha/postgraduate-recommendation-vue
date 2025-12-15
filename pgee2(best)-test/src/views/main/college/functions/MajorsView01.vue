@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createElNotificationSuccess, createMessageDialog } from '@/components/message'
+import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { Major } from '@/types'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -9,95 +9,60 @@ const props = defineProps<{
   categoryId: string // 当前激活的类别ID
 }>()
 
-const searchKeyword = ref('')
-const newMajorName = ref('')
+const searchKeywordR = ref('')
 const majors = ref<Major[]>([])
-const loading = ref(false)
 
-// 加载指定类别的专业列表
+// 加载指定类别的专业
 const { data: majorsR, refetch: refetchMajors } = CollegeService.listMajorsService(props.categoryId)
 
-const { mutateAsync: addMajorMutate } = CollegeService.addMajorService()
+// 移除专业
 const { mutateAsync: removeMajorMutate } = CollegeService.removeMajorService()
 
 const filteredMajors = computed(() => {
-  if (!searchKeyword.value) return majors.value
-  const keyword = searchKeyword.value.toLowerCase()
-  return majors.value.filter(item => item?.name?.toLowerCase().includes(keyword))
+  if (!searchKeywordR.value) return majors.value
+  const keyword = searchKeywordR.value.toLowerCase()
+  return majors.value.filter(item => item.name?.toLowerCase().includes(keyword))
 })
 
-// 加载专业列表数据
+// 加载专业
 const loadMajors = async () => {
   if (!props.categoryId) return
-  loading.value = true
-  try {
-    await refetchMajors()
-    majors.value = majorsR.value || []
-  } finally {
-    loading.value = false
-  }
+  await refetchMajors()
+  majors.value = majorsR.value || []
 }
 
-// 监听类别ID变化
+// 类别ID变化，重新加载专业列表
 watch([() => props.categoryId], loadMajors, { immediate: true })
 onMounted(loadMajors)
 
-const addMajorInline = async () => {
-  const name = newMajorName.value.trim()
-  if (!name) {
-    return createMessageDialog('请输入专业名称')
-  }
-
-  const newMajor: Major = {
-    name,
-    majorCategoryId: props.categoryId,
-    id: ''
-  }
-  await addMajorMutate(newMajor)
-  createElNotificationSuccess('专业添加成功')
-  newMajorName.value = ''
-  loadMajors()
-}
-
-// 移除
+// 移除专业
 const handleRemoveMajor = async (mid: string) => {
   if (!confirm('确定移除该专业吗？')) return
   await removeMajorMutate(mid)
   createElNotificationSuccess('专业移除成功')
-  loadMajors()
+  loadMajors() // 刷新列表
 }
 
+// 搜索专业（触发重新过滤）
 const searchMajors = () => {}
 </script>
 
 <template>
   <div class="majors-manage-page">
     <div
-      class="page-header"
-      style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap">
+      class="search-bar"
+      style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem">
       <el-input
-        v-model="searchKeyword"
+        v-model="searchKeywordR"
         placeholder="搜索专业名称..."
         style="width: 200px"
         clearable
         @keypress.enter="searchMajors" />
-      <el-button type="default" @click="searchMajors" :loading="loading">搜索</el-button>
-
-      <el-input
-        v-model="newMajorName"
-        placeholder="输入专业名称添加..."
-        style="width: 200px"
-        clearable
-        @keypress.enter="addMajorInline" />
-      <el-button type="primary" @click="addMajorInline" :loading="loading">添加专业</el-button>
-
-      <el-button type="default" @click="loadMajors" :loading="loading" style="margin-left: auto">
-        刷新
-      </el-button>
+      <el-button type="default" @click="searchMajors">搜索</el-button>
+      <el-button type="default" @click="loadMajors">刷新</el-button>
     </div>
 
     <el-table
-      v-loading="loading"
       v-if="filteredMajors.length"
       :data="filteredMajors"
       border
@@ -110,6 +75,7 @@ const searchMajors = () => {}
         min-width="200"
         align="center"
         :formatter="(row: Major) => row.name || '未知专业'" />
+
       <el-table-column label="操作" width="120" align="center">
         <template #default="scope">
           <el-button
@@ -117,7 +83,7 @@ const searchMajors = () => {}
             text
             class="remove-btn"
             @click="handleRemoveMajor(scope.row.id)"
-            :disabled="!scope.row.id || loading">
+            :disabled="!scope.row.id">
             移除
           </el-button>
         </template>
@@ -126,7 +92,7 @@ const searchMajors = () => {}
 
     <div v-else class="empty-state" style="text-align: center; padding: 3rem; color: #666">
       <h3>暂无专业数据</h3>
-      <p>输入专业名称后点击"添加专业"按钮创建第一个专业吧～</p>
+      <p>当前类别下还未添加专业</p>
     </div>
   </div>
 </template>
