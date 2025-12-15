@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createMessageDialog } from '@/components/message'
+import { createElNotificationSuccess, createMessageDialog } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { College } from '@/types'
 import { ElButton, ElInput, ElTable, ElTableColumn } from 'element-plus'
@@ -26,7 +26,8 @@ const saveCollegeService = async () => {
   }
 
   await addMutation.mutateAsync({ name } as College)
-  createMessageDialog('添加成功')
+  //createMessageDialog('添加成功')
+  createElNotificationSuccess('添加成功')
   collegeName.value = '' // 清空输入框
   refetchColleges() // 刷新列表
 }
@@ -36,7 +37,7 @@ const removeMutation = CollegeService.removeCollegeService()
 const handleRemove = async (id: string) => {
   if (!confirm('确定删除该学院吗？')) return
   await removeMutation.mutateAsync(id)
-  createMessageDialog('删除成功')
+  createElNotificationSuccess('删除成功')
   refetchColleges() // 刷新列表
 }
 

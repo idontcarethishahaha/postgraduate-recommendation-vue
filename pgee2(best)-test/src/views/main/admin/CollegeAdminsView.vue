@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { createMessageDialog } from '@/components/message'
+import { createElNotificationSuccess, createMessageDialog } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { User } from '@/types'
 import { querycachename } from '@/vuequery/Const'
@@ -77,7 +77,7 @@ const saveAdminService = async () => {
     collegeId: currentCollegeId.value,
     role: 'COLLEGE_ADMIN'
   } as User)
-  createMessageDialog('添加成功')
+  createElNotificationSuccess('添加成功')
   showModal.value = false
   adminForm.value = { name: '', account: '', tel: '', password: '' }
   qc.refetchQueries({ queryKey: [querycachename.college.counselors, currentCollegeId.value] })
@@ -88,7 +88,7 @@ const saveAdminService = async () => {
 const handleRemoveAdmin = async (uid: string) => {
   if (!confirm('确定移除该管理员吗？')) return
   await removeAdminMutate(uid)
-  createMessageDialog('移除成功')
+  createElNotificationSuccess('移除成功')
   qc.refetchQueries({ queryKey: [querycachename.college.counselors, currentCollegeId.value] })
   loadAdmins()
 }

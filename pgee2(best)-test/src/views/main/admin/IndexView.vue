@@ -1,8 +1,4 @@
-<script setup lang="ts">
-//import { CollegeService } from '@/services'
-
-//CollegeService.initCollegeManagement()
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="admin-module">
@@ -11,11 +7,8 @@
       <h2>超级管理员中心</h2>
     </div>
     <div class="module-content">
+      <!--动态-->
       <router-view />
-
-      <!--根据当前匹配的路由规则，动态渲染对应的子组件-->
-      <!--当访问 /admin/colleges 时，<router-view /> 会渲染 CollegeManagementView 组件
-          当访问 /admin/college-admins 时，会渲染 CollegeAdminsView 组件-->
     </div>
   </div>
 </template>
