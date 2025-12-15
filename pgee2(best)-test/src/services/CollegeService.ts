@@ -195,7 +195,7 @@ export class CollegeService {
       queryFn: () =>
         useGet<
           {
-            category?: MajorCategory
+            majorCategory?: MajorCategory
             users?: User[]
           }[]
         >(addPreUrl('categories/users'))
