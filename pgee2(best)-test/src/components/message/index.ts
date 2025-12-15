@@ -16,3 +16,11 @@ export const createElNotificationSuccess = (msg: string) => {
     type: 'success'
   })
 }
+
+export const createElNotificationError = (msg: string) => {
+  ElNotification({
+    title: 'Error',
+    message: msg,
+    type: 'error'
+  })
+}

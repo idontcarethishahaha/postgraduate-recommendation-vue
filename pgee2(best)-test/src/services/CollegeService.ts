@@ -5,10 +5,11 @@ import type {
   CategoryWeighting,
   College,
   ComfirmWeightedScoreReq,
+  //RegisterUserDTO,
+  CounselorDTO,
   Item,
   Major,
   MajorCategory,
-  RegisterUserDTO,
   StudentItem,
   StudentItemLog,
   StudentItemResp,
@@ -180,15 +181,24 @@ export class CollegeService {
   static async downloadFileService(sfile: string, fileName: string) {
     await CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
   }
-  //
-  static addAdminService() {
+  //添加辅导员
+  /*   static addCounselorService() {
     const qc = useQueryClient()
     return useMutation({
       mutationFn: (user: RegisterUserDTO) => usePost(addPreUrl('users'), user),
       onSuccess: () => qc.refetchQueries({ queryKey: [querycachename.college.counselors] })
     })
+  } */
+  //添加辅导员
+  static addCounselorService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (user: CounselorDTO) => usePost(addPreUrl('users'), user),
+      onSuccess: () => qc.refetchQueries({ queryKey: [querycachename.college.counselors] })
+    })
   }
 
+  /*   //查看辅导员列表
   static listCounselorsService() {
     return useQuery({
       queryKey: [querycachename.college.counselors],
@@ -200,9 +210,15 @@ export class CollegeService {
           }[]
         >(addPreUrl('categories/users'))
     })
+  } */
+  static listCounselorsService() {
+    return useQuery({
+      queryKey: [querycachename.college.counselors],
+      queryFn: () => useGet<CategoryCounselors[]>(addPreUrl('categories/users')) // 替换为 CategoryCounselors[]
+    })
   }
-
-  // 添加类别（似乎是没有问题）
+  //================================================
+  // 添加类别
   static addCategoryService() {
     const qc = useQueryClient()
     return useMutation({

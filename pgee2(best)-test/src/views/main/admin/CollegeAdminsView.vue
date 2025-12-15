@@ -35,7 +35,7 @@ const {
   suspense: collegeSup,
   refetch: refetchCollege
 } = CollegeService.listCollegeByIdService(currentCollegeId.value)
-const { mutateAsync: addAdminMutate } = CollegeService.addCollegeAdminService()
+const { mutateAsync: addCounselorMutate } = CollegeService.addCollegeAdminService()
 const { mutateAsync: removeAdminMutate } = CollegeService.removeCollegeAdminService()
 
 const filteredAdmins = computed(() => {
@@ -69,7 +69,7 @@ const saveAdminService = async () => {
   if (!name.trim() || !account.trim()) {
     return createMessageDialog('姓名和账号不能为空')
   }
-  await addAdminMutate({
+  await addCounselorMutate({
     name: name.trim(),
     account: account.trim(),
     tel: tel.trim(),

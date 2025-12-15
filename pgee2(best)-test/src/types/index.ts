@@ -33,7 +33,7 @@ export interface RegisterUserDTO {
   tel?: string
   collegeId?: string
   majorId?: string
-  majorCategoryIds?: string[]
+  //majorCategoryIds?: string[]
   majorCategoryId?: string
 }
 
@@ -70,6 +70,15 @@ export interface MajorCategory {
   deadLineTime?: Date
   createTime?: string
   updateTime?: string
+}
+
+// 添加辅导员DTO
+export interface CounselorDTO {
+  account: string
+  name: string
+  tel?: string
+  collegeId?: string
+  majorCategoryId?: string
 }
 
 //专业表 - major
@@ -210,4 +219,10 @@ export interface Progress {
   total: number // 文件总大小
   loaded: number // 已上传大小
   title: string // 文件名
+}
+
+// 类别-辅导员关联VO（AdminResp后端结构）
+export interface CategoryCounselors {
+  majorCategory?: MajorCategory
+  users?: User[]
 }
