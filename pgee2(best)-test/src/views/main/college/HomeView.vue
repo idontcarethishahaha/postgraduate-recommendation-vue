@@ -6,7 +6,7 @@ const { data: userInfoR } = CommonService.getUserInfoService()
 <template>
   <el-row class="my-row">
     <el-col>
-      <h3>{{ userInfoR?.name }}</h3>
+      <h3>hello!{{ userInfoR?.name }}</h3>
       <h3>{{ userInfoR?.collegeName }}</h3>
       <h3>
         <template v-for="(cat, index) of userInfoR?.categories" :key="index">{{ cat }};</template>

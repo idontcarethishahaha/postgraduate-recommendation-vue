@@ -1,5 +1,7 @@
 <script setup lang="ts">
+//没有问题
 import { CommonService } from '@/services/CommonService'
+import { SwitchButton } from '@element-plus/icons-vue'
 import { useQueryClient } from '@tanstack/vue-query'
 const qc = useQueryClient()
 const logoutF = () => {
@@ -7,19 +9,11 @@ const logoutF = () => {
   qc.clear()
 }
 </script>
-
 <template>
-  <el-button id="logout-btn" type="danger" size="default" @click="logoutF">退出</el-button>
+  <el-icon id="switch" :size="32" color="red" @click="logoutF"><SwitchButton /></el-icon>
 </template>
-
 <style scoped>
-#logout-btn {
-  padding: 8px 16px;
-  font-size: 14px;
+#switch:hover {
   cursor: pointer;
-}
-
-#logout-btn:hover {
-  background-color: #d03050;
 }
 </style>

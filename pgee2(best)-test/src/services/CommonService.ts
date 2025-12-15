@@ -12,12 +12,7 @@ const addPreUrl = (url: string) => `open/${url}`
 
 const userStore = useUserStore()
 export class CommonService {
-  /* static listCollegesService() {
-    const query = useGet<{ college: College; majors: Major[] }[]>(addPreUrl('colleges'))
-    return useQuery({ queryKey: ['colleges'], queryFn: () => query })
-  } */
   static listCollegesService() {
-    // 直接返回useGet的结果
     return useQuery({
       queryKey: ['colleges'],
       queryFn: () => useGet<{ college: College; majors: Major[] }[]>(addPreUrl('colleges'))
@@ -29,7 +24,7 @@ export class CommonService {
     await usePost(addPreUrl('register'), user)
     CommonService.loginService({ account: user.account, password: user.account })
   } */
-  // 修正参数类型为RegisterUserDTO
+  // 参数类型为改RegisterUserDTO
   static async registerService(user: RegisterUserDTO) {
     console.log('最终传递给后端的参数：', user) // 验证包含majorCategoryId
     await usePost(addPreUrl('register'), user)
@@ -37,42 +32,21 @@ export class CommonService {
   }
 
   // login
-  /*   static loginService = async (user: User) => {
-    const resp = await axios.post<ResultVO<UserInfo>>(addPreUrl('login'), user)
-    const token = resp.headers.token
-    const role = resp.headers.role
-    if (!token || !role) {
-      throw '登录错误'
-    }
-
-    userStore.setUserSessionStorage(resp.data.data, token, role)
-    if (user.account === user.password) {
-      router.push('/settings')
-      throw '账号密码相同，建议重置密码'
-    }
-    let path = ''
-    switch (role) {
-      case ADMIN:
-        path = '/admin'
-        break
-      case STUDENT:
-        path = '/student'
-        break
-      case COLLEGE_ADMIN:
-      case COUNSELOR:
-        path = '/college'
-        break
-    }
-    router.push(path)
-  } */
   static loginService = async (user: User) => {
     const resp = await axios.post<ResultVO<UserInfo>>(addPreUrl('login'), user)
     const token = resp.headers.token
     const role = resp.headers.role
+    //
+    console.log('登录响应头：', resp.headers)
+    console.log('登录响应体：', resp.data)
+    //
     if (!token || !role) {
       throw '登录错误'
     }
-
+    //
+    console.log('提取的token:', token)
+    console.log('提取的role:', role)
+    //
     userStore.setUserSessionStorage(resp.data.data, token, role)
     if (user.account === user.password) {
       router.push('/settings')
@@ -81,7 +55,7 @@ export class CommonService {
     let path = ''
     switch (role) {
       case ADMIN:
-        path = '/admin/colleges' // 改为跳转到/admin/colleges
+        path = '/admin/colleges'
         break
       case STUDENT:
         path = '/student'
@@ -102,14 +76,26 @@ export class CommonService {
   static getRoleService() {
     return sessionStorage.getItem('role')
   }
-
+  //==============================================
   // 获取登录用户信息
-  static getUserInfoService() {
+  /*   static getUserInfoService() {
     return useQuery({
       queryKey: [querycachename.common.userinfo],
       queryFn: () => useGet<UserInfo>('info')
     })
+  } */
+  static getUserInfoService() {
+    return useQuery({
+      queryKey: [querycachename.common.userinfo],
+      queryFn: async () => {
+        const res = await useGet<UserInfo>('info')
+        // 后端UserInfoDTO
+        console.log('获取用户信息接口返回：', res)
+        return res
+      }
+    })
   }
+  //============================================
 
   static clearLoginService() {
     sessionStorage.clear()

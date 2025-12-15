@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CommonService } from '@/services/CommonService'
 import type { User } from '@/types'
-import { Lock, SwitchButton, User as UserIco } from '@element-plus/icons-vue'
+import { Lock, User as UserIco } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 const user = ref<User>({})
@@ -22,7 +22,7 @@ const loginF = async () => {
   <div class="login-page">
     <div class="login-header">
       <h1>推免系统</h1>
-      <p>欢迎登录，请填写您的账号信息</p>
+      <p>欢迎使用本系统,请填写您的账号信息</p>
       <p>示例: 账号admin 密码123456</p>
     </div>
 
@@ -52,13 +52,13 @@ const loginF = async () => {
           @click="loginF"
           :disabled="!user.account || !user.password"
           class="login-btn">
-          <el-icon><SwitchButton /></el-icon>
+          登录
         </el-button>
       </el-form-item>
     </el-form>
 
     <div class="register-link">
-      <el-button type="text" @click="$router.push('/register')">学生注册</el-button>
+      <el-button type="text" @click="$router.push('/register')">还没有账号?马上注册一个</el-button>
     </div>
   </div>
 </template>

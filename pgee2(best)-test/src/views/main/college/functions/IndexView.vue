@@ -4,11 +4,11 @@ import { defineAsyncComponent, type Component } from 'vue'
 
 const components: { name: string; component: Component }[] = [
   {
-    name: '类别专业',
+    name: '类别管理',
     component: defineAsyncComponent(() => import('./CategoryManagementView.vue'))
   },
   {
-    name: '项管理',
+    name: '指标项管理',
     component: defineAsyncComponent(
       () => import('@/views/main/college/functions/itemmanagement/IndexView.vue')
     )

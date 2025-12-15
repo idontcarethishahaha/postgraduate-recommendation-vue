@@ -41,11 +41,11 @@ if (role === ADMIN) {
 const { data, suspense } = result
 await suspense() // 等待异步请求完成
 
-// 生成菜单Map
+//菜单Map
 const menusMapR = computed(() => {
   const menusMap = new Map<string, string>()
   if (role === STUDENT) {
-    menusMap.set('中心', '/student')
+    menusMap.set('个人中心', '/student')
     menusMap.set('加权成绩', '/student/weightedscore')
     const level1Items = data.value as Item[]
     level1Items.forEach(item => {
@@ -54,11 +54,11 @@ const menusMapR = computed(() => {
   }
 
   if (role === COLLEGE_ADMIN || role === COUNSELOR) {
-    menusMap.set('中心', '/college')
+    menusMap.set('个人中心', '/college')
     const categories = data.value as MajorCategory[]
     categories.forEach(cat => menusMap.set(cat.name ?? '', `/college/categories/${cat.id}`))
     if (role === COLLEGE_ADMIN) {
-      menusMap.set('功能', '/college/functions')
+      menusMap.set('功能栏', '/college/functions')
     }
   }
   return menusMap

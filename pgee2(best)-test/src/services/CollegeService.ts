@@ -195,7 +195,7 @@ export class CollegeService {
       }
     })
   }
-  //
+  //=================================
   static getCategoryWeightingService = (catid: string) => {
     return CollegeService.listCategoriesService().data.value?.find(cat => cat.id === catid)
       ?.weighting
@@ -204,7 +204,7 @@ export class CollegeService {
   static async updatePasswordService(account: string) {
     await usePut(addPreUrl(`passwords/${account}`))
   }
-  //==============================================================
+  //=====================================
   //添加学院
   static addCollegeService() {
     const qc = useQueryClient()
@@ -233,7 +233,7 @@ export class CollegeService {
       }
     })
   }
-  //==========================================================
+  //======================
   //添加学院管理员
   static addCollegeAdminService() {
     const qc = useQueryClient()
