@@ -1,29 +1,23 @@
 <script setup lang="ts">
-import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { User } from '@/types'
-import { querycachename } from '@/vuequery/Const'
-import { useQueryClient } from '@tanstack/vue-query'
 import { computed, onMounted, ref, watch } from 'vue'
 
 // 接收父组件传递的参数
 const props = defineProps<{
-  categoryId: string
-  categoryName: string
+  categoryId: string // 类别ID
+  categoryName: string // 类别名称
 }>()
 
+// 定义关闭事件
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
 const loading = ref(false)
-const qc = useQueryClient()
 
 // 拉取辅导员列表
 const { data: counselorsR, refetch: refetchCounselors } = CollegeService.listCounselorsService()
-
-// 引入移除辅导员的mutation
-const { mutateAsync: removeCounselorMutate } = CollegeService.removeCounselorService()
 
 // 筛选当前类别下的辅导员
 const currentCategoryCounselors = computed(() => {
@@ -51,17 +45,6 @@ const loadCounselors = async () => {
   }
 }
 
-// 移除辅导员方法
-const handleRemoveCounselor = async (uid: string) => {
-  //if (!confirm('确定移除该辅导员吗？')) return
-  await removeCounselorMutate(uid)
-  createElNotificationSuccess('移除辅导员成功')
-  // 刷新辅导员列表缓存
-  qc.invalidateQueries({ queryKey: [querycachename.college.collegeadmin] })
-  // 重新加载当前列表
-  await loadCounselors()
-}
-
 // 监听类别ID变化
 watch([() => props.categoryId], loadCounselors, { immediate: true })
 onMounted(loadCounselors)
@@ -74,6 +57,7 @@ const close = () => {
 
 <template>
   <div class="counselors-manage-page">
+    <!-- 使用父组件传递的类别名称 -->
     <div style="margin-bottom: 16px; font-size: 16px; font-weight: 600; color: #303133">
       当前类别：{{ props.categoryName || '未知类别' }}
     </div>
@@ -91,15 +75,9 @@ const close = () => {
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="120" align="center">
+      <el-table-column label="辅导员id" min-width="200" align="center">
         <template #default="scope">
-          <el-button
-            type="danger"
-            text
-            class="remove-btn"
-            @click="handleRemoveCounselor(scope.row.id)">
-            移除辅导员
-          </el-button>
+          {{ scope.row.id || '未知id' }}
         </template>
       </el-table-column>
     </el-table>
@@ -131,15 +109,5 @@ const close = () => {
 
 :deep(.el-table__row) {
   height: 50px;
-}
-
-:deep(.remove-btn) {
-  color: #ff4d4f;
-  padding: 4px 8px;
-}
-
-:deep(.remove-btn:hover) {
-  background-color: rgba(255, 77, 79, 0.1);
-  border-radius: 4px;
 }
 </style>
