@@ -84,7 +84,7 @@ export interface Major {
 
 //类别+专业关联VO
 export interface CategoryMajors {
-  category?: MajorCategory
+  majorCategory?: MajorCategory
   majors?: Major[] // 该类别下的专业列表
 }
 

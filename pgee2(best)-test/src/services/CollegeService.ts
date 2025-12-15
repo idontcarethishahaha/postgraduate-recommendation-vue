@@ -32,16 +32,23 @@ export class CollegeService {
       queryFn: () => useGet<MajorCategory[]>(addPreUrl('categories'))
     })
   }
-
-  // 仅用于collegeadmin，添加专业
-  static listcategoryMajorsService() {
+  //===================================
+  // 用于学院管理员添加专业，在类别管理页面显示
+  /*   static listcategoryMajorsService() {
     return useQuery({
       queryKey: [querycachename.college.categoriesmajors],
       queryFn: () => useGet<CategoryMajors[]>(addPreUrl('categories/majors'))
     })
+  } */
+  static listcategoryMajorsService() {
+    return useQuery({
+      queryKey: [querycachename.college.categoriesmajors],
+      queryFn: () => useGet<CategoryMajors[]>(addPreUrl('categories/majors')),
+      suspense: true // 启用suspense，当数据加载时，组件将暂停渲染，直到数据加载完成
+    })
   }
-
-  //
+  //=========================
+  //添加专业
   static addMajorService() {
     const qc = useQueryClient()
     return useMutation({
@@ -61,7 +68,9 @@ export class CollegeService {
     })
   }
 
-  //
+  //======================
+  //=======================
+  //添加指标项，有问题
   static addItemService(catid: string) {
     const qc = useQueryClient()
     return useMutation({
@@ -70,7 +79,8 @@ export class CollegeService {
         qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
     })
   }
-
+  //=========================
+  //===================================
   // 基于类别，加载全专业
   static listMajorsService(catidR: MaybeRefOrGetter<string>) {
     return useQuery({
@@ -78,7 +88,7 @@ export class CollegeService {
       queryFn: () => useGet<Major[]>(addPreUrl(`categories/${toValue(catidR)}/majors`))
     })
   }
-
+  //学生指标项状态
   static listStudentsStatusesService(
     majorid: MaybeRefOrGetter<string>,
     weighting: CategoryWeighting
@@ -180,6 +190,7 @@ export class CollegeService {
     })
   }
 
+  // 添加类别（似乎是没有问题）
   static addCategoryService() {
     const qc = useQueryClient()
     return useMutation({
@@ -201,6 +212,7 @@ export class CollegeService {
       ?.weighting
   }
 
+  // 更新密码
   static async updatePasswordService(account: string) {
     await usePut(addPreUrl(`passwords/${account}`))
   }

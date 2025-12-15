@@ -8,7 +8,6 @@ import { computed, ref, render } from 'vue'
 const dialogVisible = ref(true)
 const props = defineProps<{ parentItem: Item; category?: MajorCategory }>()
 
-// top
 const isTopItem = !!props.category
 
 const itemR = ref<Item>({})
@@ -17,7 +16,8 @@ const wWidth = ref(window.innerWidth)
 const widthC = computed(() => {
   return wWidth.value < 768 ? '80%' : '50%'
 })
-
+//=============================
+// 添加指标项，目前有问题，需要修改
 const { mutateAsync } = CollegeService.addItemService(props.parentItem.majorCategoryId!)
 
 const submitF = async () => {
@@ -45,6 +45,7 @@ const closeF = () => {
 }
 </script>
 <template>
+  <!--这部分有问题，模板显示失败了-->
   <el-dialog v-model="dialogVisible" title="添加指标项" :width="widthC" @close="closeF">
     <el-row :gutter="10" class="row">
       <el-col :span="2" class="col-title">父节点</el-col>
