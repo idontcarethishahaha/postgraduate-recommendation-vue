@@ -59,6 +59,18 @@ export class CollegeService {
         })
     })
   }
+  // 移除专业
+  static removeMajorService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (mid: string) => useDelete(addPreUrl(`majors/${mid}`)),
+      onSuccess: () => {
+        qc.invalidateQueries({
+          queryKey: [querycachename.college.categoriesmajors]
+        })
+      }
+    })
+  }
 
   //
   static listCategoryItemsService(catid: string) {
@@ -206,6 +218,20 @@ export class CollegeService {
       }
     })
   }
+
+  // 移除类别
+  static removeCategoryService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (mcid: string) => useDelete(addPreUrl(`categories/${mcid}`)),
+      onSuccess: () => {
+        qc.invalidateQueries({
+          queryKey: [querycachename.college.categories]
+        })
+      }
+    })
+  }
+
   //=================================
   static getCategoryWeightingService = (catid: string) => {
     return CollegeService.listCategoriesService().data.value?.find(cat => cat.id === catid)

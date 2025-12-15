@@ -5,8 +5,7 @@ import { CollegeService } from '@/services/CollegeService'
 import type { Major, MajorCategory } from '@/types'
 import { computed, ref } from 'vue'
 
-const { suspense } = CollegeService.listcategoryMajorsService()
-//const { data: categoriesMajorsR, suspense } = CollegeService.listcategoryMajorsService()
+const { data: categoriesMajorsR, suspense } = CollegeService.listcategoryMajorsService()
 const { data: categoriesR, suspense: categoriesRsup } = CollegeService.listCategoriesService()
 await Promise.all([suspense(), categoriesRsup()])
 
@@ -68,6 +67,18 @@ const addCategoryF = async () => {
         </el-button>
       </el-col>
     </el-row>
+
+    <el-col>
+      <div v-for="cat of categoriesMajorsR" :key="cat.majorCategory?.id" class="dashed">
+        <span style="font-size: 18px; font-weight: bold">
+          {{ cat.majorCategory?.name || '未知' }}
+        </span>
+        :
+        <span v-for="major of cat.majors" :key="major.id" style="margin-right: 8px">
+          {{ major.name }};
+        </span>
+      </div>
+    </el-col>
   </div>
 </template>
 
