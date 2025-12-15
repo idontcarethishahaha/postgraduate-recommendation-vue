@@ -6,7 +6,7 @@ import { ref } from 'vue'
 
 const { data: categoryMajorsR, suspense } = CollegeService.listcategoryMajorsService()
 await suspense()
-const categories = (categoryMajorsR.value ?? []).map(cm => cm.category)
+const categories = (categoryMajorsR.value ?? []).map(cm => cm.majorCategory)
 const categoryR = ref<MajorCategory>()
 </script>
 <template>

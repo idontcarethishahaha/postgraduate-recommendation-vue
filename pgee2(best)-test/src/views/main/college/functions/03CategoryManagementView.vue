@@ -59,7 +59,7 @@ const handleRemoveCategory = async (mcid: string) => {
 
 // 跳转到专业管理页面
 const manageMajors = (majorCategory: MajorCategory) => {
-  router.push(`/college/categories/majors/${majorCategory.id}`)
+  router.push(`/college/categoryies/majors/${majorCategory.id}`)
 }
 </script>
 
