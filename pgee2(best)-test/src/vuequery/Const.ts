@@ -17,7 +17,7 @@ export const querycachename = {
     studentweightedscores: 'studentweightedscores',
     studentitems: 'studentitems',
     categoryitems: 'categoryitems',
-    categoryadmins: 'categoryadmins',
+    counselors: 'counselors',
     categoriesmajors: 'categoriesmajors'
   },
   common: {

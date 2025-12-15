@@ -80,7 +80,7 @@ const saveAdminService = async () => {
   createMessageDialog('添加成功')
   showModal.value = false
   adminForm.value = { name: '', account: '', tel: '', password: '' }
-  qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
+  qc.refetchQueries({ queryKey: [querycachename.college.counselors, currentCollegeId.value] })
   loadAdmins()
 }
 
@@ -89,7 +89,7 @@ const handleRemoveAdmin = async (uid: string) => {
   if (!confirm('确定移除该管理员吗？')) return
   await removeAdminMutate(uid)
   createMessageDialog('移除成功')
-  qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins, currentCollegeId.value] })
+  qc.refetchQueries({ queryKey: [querycachename.college.counselors, currentCollegeId.value] })
   loadAdmins()
 }
 

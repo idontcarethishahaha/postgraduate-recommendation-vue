@@ -185,13 +185,13 @@ export class CollegeService {
     const qc = useQueryClient()
     return useMutation({
       mutationFn: (user: RegisterUserDTO) => usePost(addPreUrl('users'), user),
-      onSuccess: () => qc.refetchQueries({ queryKey: [querycachename.college.categoryadmins] })
+      onSuccess: () => qc.refetchQueries({ queryKey: [querycachename.college.counselors] })
     })
   }
 
-  static listCategoryAdminsService() {
+  static listCounselorsService() {
     return useQuery({
-      queryKey: [querycachename.college.categoryadmins],
+      queryKey: [querycachename.college.counselors],
       queryFn: () =>
         useGet<
           {

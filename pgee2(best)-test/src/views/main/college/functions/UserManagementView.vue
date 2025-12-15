@@ -4,8 +4,8 @@ import { CollegeService } from '@/services/CollegeService'
 import type { RegisterUserDTO } from '@/types'
 import { User as UserICO } from '@element-plus/icons-vue'
 import { computed, ref, shallowRef } from 'vue'
-
-const { data: result, suspense } = CollegeService.listCategoryAdminsService()
+// 添加辅导员
+const { data: result, suspense } = CollegeService.listCounselorsService()
 
 await suspense()
 const categoriesR = shallowRef((result.value ?? []).map(res => res.category))
@@ -18,7 +18,7 @@ const { mutateAsync } = CollegeService.addAdminService()
 const submitF = async () => {
   userR.value.majorCategoryIds = catidsR.value
   await mutateAsync(userR.value)
-  createElNotificationSuccess('审核人添加成功')
+  createElNotificationSuccess('辅导员添加成功')
   userR.value = {}
   catidsR.value = []
 }

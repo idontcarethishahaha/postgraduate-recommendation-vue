@@ -22,6 +22,7 @@ const activeCategory = ref<{ id: string; name: string } | null>(null)
 // 添加类别
 const { mutateAsync: mutateAsyncCat } = CollegeService.addCategoryService()
 const addCategoryF = async () => {
+  // 这里写死了，后面改模态框==================
   categoryR.value.weighting = { score: 85, compositeScore: 15 }
   // @ts-expect-error: JSON
   categoryR.value.weighting = JSON.stringify(categoryR.value.weighting)
