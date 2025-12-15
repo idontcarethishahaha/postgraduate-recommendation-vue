@@ -1,11 +1,12 @@
 import { useDelete, useGet, usePost, usePut } from '@/axios'
 import { createElLoading } from '@/components/loading'
 import type {
+  //RegisterUserDTO,
+  CategoryCounselors,
   CategoryMajors,
   CategoryWeighting,
   College,
   ComfirmWeightedScoreReq,
-  //RegisterUserDTO,
   CounselorDTO,
   Item,
   Major,
@@ -195,6 +196,16 @@ export class CollegeService {
     return useMutation({
       mutationFn: (user: CounselorDTO) => usePost(addPreUrl('users'), user),
       onSuccess: () => qc.refetchQueries({ queryKey: [querycachename.college.counselors] })
+    })
+  }
+  // 移除辅导员
+  static removeCounselorService() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (uid: string) => useDelete(`college/users/${uid}`),
+      onSuccess: () => {
+        qc.invalidateQueries({ queryKey: [querycachename.college.collegeadmin] })
+      }
     })
   }
 

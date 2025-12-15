@@ -75,9 +75,9 @@ const close = () => {
         </template>
       </el-table-column>
 
-      <el-table-column label="辅导员ID" min-width="200" align="center">
+      <el-table-column label="辅导员account" min-width="200" align="center">
         <template #default="scope">
-          {{ scope.row.id || '未知ID' }}
+          {{ scope.row.account || '未知account' }}
         </template>
       </el-table-column>
     </el-table>
