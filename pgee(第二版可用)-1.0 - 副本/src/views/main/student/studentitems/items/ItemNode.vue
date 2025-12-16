@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { Item } from '@/types'
-import { type MaybeRefOrGetter, inject, shallowRef, toRef } from 'vue'
+import { inject, shallowRef, type Ref } from 'vue'
 
 const props = defineProps<{ items: Item[] }>()
 
 const callback = inject('selectItemCallback') as {
   selectItemCallback: (item: Item) => void
-  activeAddForm: MaybeRefOrGetter<boolean>
+  activeAddForm: Ref<boolean> // 改1：类型从MaybeRefOrGetter改为Ref
 }
 
 //el-radio-button，仅支持绑定ID，不支持直接传对象
@@ -19,7 +19,10 @@ const selectItemF = () => {
   const parentItemId = selectItemIdR.value
   selectItemR.value = props.items.find(ite => ite.id === parentItemId)
   childrenItemsR.value = props.items.find(ite => ite.id === parentItemId)?.items ?? []
-  callback.activeAddForm = toRef(() => childrenItemsR.value.length === 0)
+
+  // 改2：修复activeAddForm赋值方式
+  callback.activeAddForm.value = childrenItemsR.value.length === 0
+
   callback.selectItemCallback(selectItemR.value!)
 }
 </script>

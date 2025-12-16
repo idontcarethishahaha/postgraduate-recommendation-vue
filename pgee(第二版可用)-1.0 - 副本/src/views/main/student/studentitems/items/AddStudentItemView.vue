@@ -3,7 +3,6 @@ import { StudentService } from '@/services/StudentService'
 import type { Item } from '@/types'
 import { Plus } from '@element-plus/icons-vue'
 import { defineAsyncComponent, provide, ref, toRef } from 'vue'
-//import AddForm from './AddForm.vue'
 import { useRoute } from 'vue-router'
 import ItemNode from './ItemNode.vue'
 
@@ -79,6 +78,9 @@ const selectItemCallback = (item: Item) => {
       }
     }
   }
+
+  // 补2：添加这一行，触发AddForm显示
+  activeAddForm.value = true
 }
 //
 provide('selectItemCallback', { selectItemCallback, activeAddForm })
@@ -112,7 +114,7 @@ const addForm = defineAsyncComponent(() => import('./AddForm.vue'))
       <ItemNode :items="rootItemR?.items ?? []" :key="rootItemIdR" />
     </el-form>
     <div v-if="activeMaxItemR">
-      <el-tag type="danger" size="large">{{ limitItemR.name }}：已到上限</el-tag>
+      <el-tag type="danger" size="large">{{ limitItemR.name }}：已达到限项数！</el-tag>
     </div>
     <addForm v-if="activeAddForm && !activeMaxItemR" :item="selectItemR" :close="closeF" />
   </el-dialog>
