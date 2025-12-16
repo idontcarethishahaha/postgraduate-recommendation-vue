@@ -92,9 +92,7 @@
           <p class="title">最终成绩</p>
           <el-row :gutter="10" class="row">
             <el-col :span="colspan" class="col-title">
-              <el-icon style="vertical-align: middle" color="#F56C6C">
-                <Ship />
-              </el-icon>
+              <el-icon style="vertical-align: middle" color="#F56C6C"></el-icon>
               总成绩 :
             </el-col>
             <el-col :span="12">
@@ -118,7 +116,6 @@ import { CommonService } from '@/services/CommonService'
 import { CONFIRMED, PENDING_REVIEW, REJECTED, SCORE_STATUS_MAP } from '@/services/Const'
 import { StudentService } from '@/services/StudentService'
 import { getFinalScoreUtil, getStatusUtil } from '@/services/Utils'
-import { Ship } from '@element-plus/icons-vue'
 import { computed } from 'vue'
 
 interface StatusConfig {
