@@ -63,6 +63,11 @@ const router = createRouter({
             {
               path: 'studentitems/:itemid',
               component: () => import('@/views/main/student/studentitems/IndexView.vue')
+            },
+            //new
+            {
+              path: 'studentitems',
+              component: () => import('@/views/main/student/studentitems/IndexView.vue')
             }
           ]
         },

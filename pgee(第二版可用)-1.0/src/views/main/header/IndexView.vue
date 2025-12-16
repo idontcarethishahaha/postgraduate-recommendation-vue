@@ -47,6 +47,8 @@ const menusMapR = computed(() => {
   if (role === STUDENT) {
     menusMap.set('个人中心', '/student')
     menusMap.set('加权成绩', '/student/weightedscore')
+    // new
+    menusMap.set('指标项管理', '/student/studentitems')
     const level1Items = data.value as Item[]
     level1Items.forEach(item => {
       menusMap.set(item.name ?? '', `/student/studentitems/${item.id}`)
