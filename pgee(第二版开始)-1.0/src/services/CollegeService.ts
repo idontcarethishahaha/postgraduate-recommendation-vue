@@ -92,17 +92,19 @@ export class CollegeService {
         qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
     })
   }
-
-  //==================================
-  /*   // 添加顶级指标
-  static addTopItemService(catid: string) {
+  //移除指标项
+  static removeItemService(itemid: string) {
     const qc = useQueryClient()
     return useMutation({
-      mutationFn: (item: Item) => usePost<Item[]>(addPreUrl('items'), item),
-      onSuccess: () =>
-        qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
+      mutationFn: () => useDelete(addPreUrl(`items/${itemid}`)),
+      onSuccess: () => {
+        qc.invalidateQueries({
+          queryKey: [querycachename.college.categoryitems]
+        })
+      }
     })
-  } */
+  }
+
   //===================================
   // 基于类别，加载全专业
   static listMajorsService(catidR: MaybeRefOrGetter<string>) {

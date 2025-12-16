@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { CollegeService } from '@/services/CollegeService'
 import type { Item } from '@/types'
-import { CaretRight, Delete } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { CaretRight } from '@element-plus/icons-vue'
 import { defineAsyncComponent, getCurrentInstance, h, ref, render, toRef } from 'vue'
 
 const props = defineProps<{ item: Item }>()
@@ -10,15 +8,12 @@ const childrenItemsR = toRef(() => props.item.items ?? [])
 const isExpanded = ref(false)
 const instance = getCurrentInstance()
 
-const removeMutation = CollegeService.removeItemService(props.item.id!)
-
 const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
 }
 
-// 添加子指标
 const activeAddItemDialogF = (e: MouseEvent) => {
-  e.stopPropagation()
+  e.stopPropagation() // 阻止事件冒泡到展开/折叠逻辑
   if (!instance) return
 
   const node = h(
@@ -30,48 +25,28 @@ const activeAddItemDialogF = (e: MouseEvent) => {
   node.appContext = instance.appContext
   render(node, document.body)
 }
-
-// 移除
-const removeItemF = async (e: MouseEvent) => {
-  e.stopPropagation()
-  if (!props.item.id) return
-
-  try {
-    await ElMessageBox.confirm('确定要移除该指标项吗？此操作不可恢复！', '移除确认', {
-      type: 'warning'
-    })
-    await removeMutation.mutateAsync()
-    ElMessage.success('指标项移除成功！')
-  } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('移除失败，请重试！')
-      console.error('移除指标失败：', error)
-    }
-  }
-}
 </script>
 
 <template>
   <div class="accordion-item">
     <div class="item-header" @click="toggleExpand">
+      <!-- 展开/折叠图标 -->
       <el-icon class="expand-icon" :class="{ rotated: isExpanded }">
         <CaretRight v-if="!isExpanded" />
         <CaretDown v-else />
       </el-icon>
 
+      <!-- 指标名称和分数 -->
       <div class="item-info">
         <el-text type="primary" size="large">{{ props.item.name }}</el-text>
         <el-text type="secondary" class="item-points">({{ props.item.maxPoints }}分)</el-text>
       </div>
 
-      <div class="item-actions">
-        <el-button size="mini" class="add-btn" @click="activeAddItemDialogF">添加子指标</el-button>
-        <el-button size="mini" class="remove-btn" @click="removeItemF" :icon="Delete">
-          移除指标
-        </el-button>
-      </div>
+      <!-- 添加子指标 -->
+      <el-button size="mini" class="add-btn" @click="activeAddItemDialogF">添加子指标</el-button>
     </div>
 
+    <!-- 子指标列表（手风琴） -->
     <div
       class="children-container"
       v-if="childrenItemsR.length > 0"
@@ -125,11 +100,6 @@ const removeItemF = async (e: MouseEvent) => {
   font-size: 13px;
 }
 
-.item-actions {
-  display: flex;
-  gap: 8px;
-}
-
 .add-btn {
   background-color: #4096ff;
   color: #ffffff;
@@ -142,31 +112,11 @@ const removeItemF = async (e: MouseEvent) => {
 }
 
 .add-btn:hover {
-  background-color: #6aa8ff;
+  background-color: #6aa8ff; /*  hover时浅一点的蓝色 */
   transform: translateY(-1px);
 }
 
 .add-btn:active {
-  transform: translateY(0);
-}
-
-.remove-btn {
-  background-color: #ff4d4f;
-  color: #ffffff;
-  border: none;
-  padding: 4px 12px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.remove-btn:hover {
-  background-color: #ff7875;
-  transform: translateY(-1px);
-}
-
-.remove-btn:active {
   transform: translateY(0);
 }
 
