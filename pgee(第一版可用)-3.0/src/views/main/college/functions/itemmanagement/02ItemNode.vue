@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Item } from '@/types'
-import { CaretRight } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue'
 import { defineAsyncComponent, getCurrentInstance, h, ref, render, toRef } from 'vue'
 
 const props = defineProps<{ item: Item }>()
@@ -13,7 +13,7 @@ const toggleExpand = () => {
 }
 
 const activeAddItemDialogF = (e: MouseEvent) => {
-  e.stopPropagation() // 阻止事件冒泡到展开/折叠逻辑
+  e.stopPropagation()
   if (!instance) return
 
   const node = h(
@@ -30,10 +30,9 @@ const activeAddItemDialogF = (e: MouseEvent) => {
 <template>
   <div class="accordion-item">
     <div class="item-header" @click="toggleExpand">
-      <!-- 展开/折叠图标 -->
       <el-icon class="expand-icon" :class="{ rotated: isExpanded }">
-        <CaretRight v-if="!isExpanded" />
-        <CaretDown v-else />
+        <ChevronRight v-if="!isExpanded" />
+        <ChevronDown v-else />
       </el-icon>
 
       <!-- 指标名称和分数 -->
@@ -42,8 +41,10 @@ const activeAddItemDialogF = (e: MouseEvent) => {
         <el-text type="secondary" class="item-points">({{ props.item.maxPoints }}分)</el-text>
       </div>
 
-      <!-- 添加子指标 -->
-      <el-button size="mini" class="add-btn" @click="activeAddItemDialogF">添加子指标</el-button>
+      <!-- 添加子指标按钮 -->
+      <el-icon class="add-icon" @click="activeAddItemDialogF">
+        <Plus />
+      </el-icon>
     </div>
 
     <!-- 子指标列表（手风琴） -->
@@ -100,24 +101,18 @@ const activeAddItemDialogF = (e: MouseEvent) => {
   font-size: 13px;
 }
 
-.add-btn {
-  background-color: #4096ff;
-  color: #ffffff;
-  border: none;
-  padding: 4px 12px;
-  font-size: 12px;
-  border-radius: 4px;
+.add-icon {
+  color: #67c23a;
+  font-size: 16px;
   cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
   transition: all 0.2s;
 }
 
-.add-btn:hover {
-  background-color: #6aa8ff; /*  hover时浅一点的蓝色 */
-  transform: translateY(-1px);
-}
-
-.add-btn:active {
-  transform: translateY(0);
+.add-icon:hover {
+  background-color: #f0f9eb;
+  transform: scale(1.1);
 }
 
 .children-container {
