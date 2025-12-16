@@ -92,6 +92,16 @@ export class CollegeService {
         qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
     })
   }
+
+  // 添加顶级指标
+  static addTopItemService(catid: string) {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: (item: Item) => usePost<Item[]>(addPreUrl('items'), item),
+      onSuccess: () =>
+        qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
+    })
+  }
   //===================================
   // 基于类别，加载全专业
   static listMajorsService(catidR: MaybeRefOrGetter<string>) {
