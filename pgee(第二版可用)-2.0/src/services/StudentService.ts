@@ -98,7 +98,7 @@ export class StudentService {
 
   //
   private static async _uploadStudentItemFileService(fdata: FormData, stuitemid: string) {
-    const uploadFile = fdata.get('uploadFile')
+    const uploadFile = fdata.get('file')
     const fileName = uploadFile instanceof File ? uploadFile.name : ''
     const progressR = ref<{ progress: Progress }>({
       progress: { percentage: 0, title: fileName, rate: 0, total: 0, loaded: 0 }

@@ -74,7 +74,7 @@ const changeF = async (event: Event) => {
   }
   const fName = fileR.value.name
   const fdata = new FormData()
-  fdata.append('uploadFile', fileR.value, `${studentItem.itemName}-${fName}`)
+  fdata.append('file', fileR.value, `${studentItem.itemName}-${fName}`)
 
   await mutUploadFile({ fdata, stuitemid: studentItem.id ?? '' })
   createElNotificationSuccess('佐证文件上传成功')
