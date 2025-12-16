@@ -2,7 +2,7 @@
 import { CollegeService } from '@/services/CollegeService'
 import type { Item, MajorCategory } from '@/types'
 import ItemNode from '@/views/main/college/functions/itemmanagement/ItemNode.vue'
-import { ref } from 'vue'
+import { defineAsyncComponent, getCurrentInstance, h, ref, render } from 'vue'
 
 // 接收父组件传入的类别
 const props = defineProps<{ category: MajorCategory }>()
@@ -17,11 +17,28 @@ const getTopItems = (): Item[] => {
   return allItems.filter(i => !i.parentId || i.parentId === '0' || i.parentId === '')
 }
 
+// 打开添加指标对话框
+const activeAddItemDialogF = () => {
+  const instance = getCurrentInstance()
+  if (!instance) return
+
+  const node = h(
+    defineAsyncComponent(
+      () => import('@/views/main/college/functions/itemmanagement/ItemDialog.vue')
+    ),
+    { parentItem: {}, category: props.category }
+  )
+  node.appContext = instance.appContext
+  render(node, document.body)
+}
+
 // 加载数据
 try {
   const { data, suspense } = CollegeService.listCategoryItemsService(props.category.id ?? '')
   await suspense()
   itemsR.value = data.value
+} catch (error) {
+  loadError.value = error as Error
 } finally {
   isLoading.value = false
 }
@@ -29,14 +46,20 @@ try {
 
 <template>
   <div class="item-management-container">
-    <!-- 类别名+ID-->
+    <!-- 类别标题栏 -->
     <div class="category-header">
       <div class="category-info">
         <h3 class="category-name">{{ props.category.name }}</h3>
         <span class="category-id">ID: {{ props.category.id }}</span>
-        <!--test-->
-        <button>test</button>
       </div>
+      <el-button
+        size="small"
+        type="primary"
+        icon="Plus"
+        @click="activeAddItemDialogF"
+        class="add-btn">
+        添加指标
+      </el-button>
     </div>
 
     <div v-if="isLoading" class="loading-state">
@@ -49,10 +72,12 @@ try {
       <p>加载失败: {{ loadError.message || '未知错误' }}</p>
     </div>
 
+    <!-- 无数据状态 -->
     <div v-else-if="getTopItems().length === 0" class="empty-state">
       <el-icon color="#c0c4cc" class="empty-icon"><Document /></el-icon>
       <div class="empty-text">
         <p>该类别下暂无顶级指标项</p>
+        <p class="hint-text">点击"添加指标"按钮创建第一个指标项</p>
       </div>
     </div>
 
@@ -105,6 +130,14 @@ try {
   border-radius: 12px;
 }
 
+.add-btn {
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+}
+
 .loading-state {
   text-align: center;
   padding: 40px 0;
@@ -116,6 +149,7 @@ try {
   font-size: 14px;
 }
 
+/* 错误状态 */
 .error-state {
   text-align: center;
   padding: 40px 0;
@@ -146,6 +180,12 @@ try {
 .empty-text p {
   margin: 0;
   color: #86909c;
+}
+
+.empty-text .hint-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #c9cdd4;
 }
 
 .items-list {
