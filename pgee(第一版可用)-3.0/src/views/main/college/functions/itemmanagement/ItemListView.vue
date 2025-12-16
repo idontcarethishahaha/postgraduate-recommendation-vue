@@ -11,34 +11,16 @@ const itemsR = ref<Item[] | undefined>() // 存储接口返回的指标数据
 const loadError = ref<Error | null>(null) // 存储加载错误信息
 const isLoading = ref(true)
 
-console.log('===== 接收的类别信息 =====')
-console.log('类别ID:', props.category.id)
-console.log('类别名称:', props.category.name)
-console.log('是否存在类别ID:', !!props.category.id)
-
 // 筛选顶级指标
 const getTopItems = (): Item[] => {
   const allItems = itemsR.value ?? []
-  console.log(
-    '所有指标的parentId:',
-    allItems.map(i => ({ id: i.id, parentId: i.parentId }))
-  )
-
-  // 筛选parentId为空、0或空字符串的顶级指标
-  const topItems = allItems.filter(i => !i.parentId || i.parentId === '0' || i.parentId === '')
-  console.log('筛选出的顶级指标:', topItems)
-  return topItems
+  return allItems.filter(i => !i.parentId || i.parentId === '0' || i.parentId === '')
 }
 
 // 打开添加指标对话框
 const activeAddItemDialogF = () => {
-  console.log('===== 点击添加指标 =====')
-  console.log('当前选中的类别:', props.category.name)
   const instance = getCurrentInstance()
-  if (!instance) {
-    console.error('无法获取组件实例，添加对话框可能无法正常渲染')
-    return
-  }
+  if (!instance) return
 
   const node = h(
     defineAsyncComponent(
@@ -48,49 +30,187 @@ const activeAddItemDialogF = () => {
   )
   node.appContext = instance.appContext
   render(node, document.body)
-  console.log('添加对话框已渲染到页面')
 }
 
-console.log('===== 开始加载指标项 =====')
-console.log('请求的类别ID:', props.category.id ?? '无ID(为空)')
-
+// 加载数据
 try {
-  // 调用接口
   const { data, suspense } = CollegeService.listCategoryItemsService(props.category.id ?? '')
   await suspense()
   itemsR.value = data.value
-  console.log('===== 指标项加载完成 =====')
-  console.log('接口返回的原始指标数据:', itemsR.value)
-  console.log('指标项总数:', itemsR.value?.length ?? 0)
+} catch (error) {
+  loadError.value = error as Error
 } finally {
-  isLoading.value = false // 无论成功失败，都结束加载状态
+  isLoading.value = false
 }
 </script>
 
 <template>
-  <div>
-    <!-- 显示类别名称和ID -->
-    <h3 @click="activeAddItemDialogF" style="cursor: pointer; color: #1890ff">
-      {{ props.category.name }}
-      <span style="font-size: 12px; color: #666">(ID: {{ props.category.id }})</span>
-    </h3>
-
-    <div v-if="isLoading">正在加载指标项...</div>
-
-    <div v-else-if="loadError" style="color: #ff4d4f">
-      加载失败: {{ loadError.message || '未知错误' }}
+  <div class="item-management-container">
+    <!-- 类别标题栏 -->
+    <div class="category-header">
+      <div class="category-info">
+        <h3 class="category-name">{{ props.category.name }}</h3>
+        <span class="category-id">ID: {{ props.category.id }}</span>
+      </div>
+      <el-button
+        size="small"
+        type="primary"
+        icon="Plus"
+        @click="activeAddItemDialogF"
+        class="add-btn">
+        添加指标
+      </el-button>
     </div>
 
-    <div v-else-if="getTopItems().length === 0" style="color: #909399; margin: 20px 0">
-      📌 该类别下暂无顶级指标项
-      <br />
-      - 检查数据库中是否存在 major_category_id = {{ props.category.id }} 的item
-      <br />
-      - 检查item的parent_id是否为NULL/0/空字符串
+    <!-- 加载状态 -->
+    <div v-if="isLoading" class="loading-state">
+      <el-loading-spinner></el-loading-spinner>
+      <p>正在加载指标项...</p>
     </div>
 
-    <div v-else style="margin-left: 20px; border-left: 2px dashed #e8e8e8; padding-left: 15px">
-      <ItemNode v-for="item of getTopItems()" :item="item" :key="item.id" />
+    <!-- 错误状态 -->
+    <div v-else-if="loadError" class="error-state">
+      <el-icon color="#ff4d4f" class="error-icon"><WarningFilled /></el-icon>
+      <p>加载失败: {{ loadError.message || '未知错误' }}</p>
+    </div>
+
+    <!-- 无数据状态 -->
+    <div v-else-if="getTopItems().length === 0" class="empty-state">
+      <el-icon color="#c0c4cc" class="empty-icon"><Document /></el-icon>
+      <div class="empty-text">
+        <p>该类别下暂无顶级指标项</p>
+        <p class="hint-text">点击"添加指标"按钮创建第一个指标项</p>
+      </div>
+    </div>
+
+    <!-- 指标列表 -->
+    <div v-else class="items-list">
+      <div class="items-list__container">
+        <ItemNode v-for="item of getTopItems()" :item="item" :key="item.id" class="top-item" />
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.item-management-container {
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* 类别标题栏 */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #fff;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border: 1px solid #f0f0f0;
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1f2329;
+}
+
+.category-id {
+  font-size: 13px;
+  color: #86909c;
+  background-color: #f2f3f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.add-btn {
+  transition: all 0.2s;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* 加载状态 */
+.loading-state {
+  text-align: center;
+  padding: 40px 0;
+  color: #86909c;
+}
+
+.loading-state p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* 错误状态 */
+.error-state {
+  text-align: center;
+  padding: 40px 0;
+  color: #ff4d4f;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #ffebe9;
+}
+
+.error-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+/* 无数据状态 */
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px dashed #e5e6eb;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-text p {
+  margin: 0;
+  color: #86909c;
+}
+
+.empty-text .hint-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #c9cdd4;
+}
+
+/* 指标列表 */
+.items-list {
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.items-list__container {
+  padding: 10px 20px;
+}
+
+.top-item {
+  margin: 10px 0;
+  transition: background-color 0.2s;
+}
+
+.top-item:hover {
+  background-color: #fafafa;
+}
+</style>

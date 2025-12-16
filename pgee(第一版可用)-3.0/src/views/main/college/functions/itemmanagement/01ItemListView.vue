@@ -89,7 +89,7 @@ try {
       - 检查item的parent_id是否为NULL/0/空字符串
     </div>
 
-    <div v-else style="margin-left: 20px; border-left: 2px dashed #e8e8e8; padding-left: 15px">
+    <div v-else style="margin-left: 20px; padding-left: 15px">
       <ItemNode v-for="item of getTopItems()" :item="item" :key="item.id" />
     </div>
   </div>
