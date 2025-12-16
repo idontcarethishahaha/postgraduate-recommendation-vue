@@ -83,8 +83,7 @@ export class CollegeService {
   }
 
   //======================
-  //=======================
-  //添加指标项，有问题
+  //添加指标项
   static addItemService(catid: string) {
     const qc = useQueryClient()
     return useMutation({
@@ -93,7 +92,6 @@ export class CollegeService {
         qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
     })
   }
-  //=========================
   //===================================
   // 基于类别，加载全专业
   static listMajorsService(catidR: MaybeRefOrGetter<string>) {
