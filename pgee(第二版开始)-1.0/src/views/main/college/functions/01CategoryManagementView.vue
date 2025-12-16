@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { createElNotificationError, createElNotificationSuccess } from '@/components/message'
+import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { MajorCategory } from '@/types'
 import MajorsView from '@/views/main/college/functions/MajorsView.vue'
-import type { FormRules } from 'element-plus'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 
 // 获取类别-专业列表
 const {
@@ -20,67 +19,16 @@ const categoryR = ref<MajorCategory>({})
 // 当前激活类别ID+名称
 const activeCategory = ref<{ id: string; name: string } | null>(null)
 
-// 弹窗显隐
-const scoreDialogVisible = ref(false)
-// 分数表单
-const scoreForm = reactive({
-  score: 85, // 默认值
-  compositeScore: 15 // 默认值
-})
-const scoreFormRules: FormRules<typeof scoreForm> = {
-  score: [
-    { required: true, message: '请输入基础分数百分占比', trigger: 'blur' },
-    { type: 'number', min: 0, max: 100, message: '分数需在 0-100 之间', trigger: 'blur' }
-  ],
-  compositeScore: [
-    { required: true, message: '请输入综合分数百分占比', trigger: 'blur' },
-    { type: 'number', min: 0, max: 100, message: '分数需在 0-100 之间', trigger: 'blur' }
-  ]
-}
-
-const scoreFormRef = ref<InstanceType<typeof import('element-plus').ElForm>>()
-
 // 添加类别
 const { mutateAsync: mutateAsyncCat } = CollegeService.addCategoryService()
-
-// 弹窗
-const openScoreDialog = () => {
-  if (!categoryR.value.name) {
-    createElNotificationError('请先输入类别名称')
-    return
-  }
-  // 重置表单
-  scoreForm.score = 85
-  scoreForm.compositeScore = 15
-  scoreDialogVisible.value = true
-}
-
-// 确认分数并提交
-const confirmScoreAndAdd = async () => {
-  // 表单校验
-  if (!scoreFormRef.value) return
-  await scoreFormRef.value.validate()
-
-  // 总分校验（必须等于100）
-  if (scoreForm.score + scoreForm.compositeScore !== 100) {
-    createElNotificationError('基础分数百分占比 + 综合分数百分占比 必须等于 100')
-    return
-  }
-
-  // 组装数据
-  categoryR.value.weighting = {
-    score: scoreForm.score,
-    compositeScore: scoreForm.compositeScore
-  }
+const addCategoryF = async () => {
+  // 这里写死了，后面改模态框==================
+  categoryR.value.weighting = { score: 85, compositeScore: 15 }
   // @ts-expect-error: JSON
   categoryR.value.weighting = JSON.stringify(categoryR.value.weighting)
-
-  // 提交添加
   await mutateAsyncCat(categoryR.value)
   createElNotificationSuccess('类别添加成功')
-  // 重置状态
   categoryR.value = {}
-  scoreDialogVisible.value = false
 }
 
 // 移除类别
@@ -115,7 +63,7 @@ const manageMajors = (category: MajorCategory) => {
           v-model="categoryR.name"
           placeholder="类别名称"
           clearable />
-        <el-button type="primary" @click="openScoreDialog">添加类别</el-button>
+        <el-button type="primary" @click="addCategoryF">添加类别</el-button>
       </el-col>
     </el-row>
 
@@ -169,55 +117,6 @@ const manageMajors = (category: MajorCategory) => {
         <MajorsView :category-id="activeCategory.id" />
       </el-card>
     </div>
-
-    <!-- ====== 新增：分数输入弹窗 ====== -->
-    <ElDialog
-      v-model="scoreDialogVisible"
-      title="设置类别加权分数"
-      width="400px"
-      :close-on-click-modal="false"
-      :before-close="() => (scoreDialogVisible = false)">
-      <ElForm
-        ref="scoreFormRef"
-        :model="scoreForm"
-        :rules="scoreFormRules"
-        label-width="100px"
-        style="margin-top: 10px">
-        <ElFormItem label="基础分数" prop="score">
-          <ElInputNumber
-            v-model="scoreForm.score"
-            :min="0"
-            :max="100"
-            style="width: 100%"
-            placeholder="请输入基础分数（0-100）" />
-        </ElFormItem>
-        <ElFormItem label="综合分数" prop="compositeScore">
-          <ElInputNumber
-            v-model="scoreForm.compositeScore"
-            :min="0"
-            :max="100"
-            style="width: 100%"
-            placeholder="请输入综合分数（0-100）" />
-        </ElFormItem>
-        <ElFormItem label="总分校验">
-          <div style="color: #666; font-size: 12px">
-            当前总分：
-            <span
-              :style="{
-                color: scoreForm.score + scoreForm.compositeScore === 100 ? '#52c41a' : '#ff4d4f'
-              }">
-              {{ scoreForm.score + scoreForm.compositeScore }}
-            </span>
-            <span style="margin-left: 8px">（需等于 100）</span>
-          </div>
-        </ElFormItem>
-      </ElForm>
-
-      <template #footer>
-        <ElButton @click="scoreDialogVisible = false">取消</ElButton>
-        <ElButton type="primary" @click="confirmScoreAndAdd">确认添加</ElButton>
-      </template>
-    </ElDialog>
   </div>
 </template>
 
@@ -244,13 +143,5 @@ const manageMajors = (category: MajorCategory) => {
 .majors-view-container {
   border-top: 1px solid #e8e8e8;
   padding-top: 20px;
-}
-
-:deep(.el-dialog__body) {
-  padding: 20px;
-}
-
-:deep(.el-input-number) {
-  --el-input-number-input-width: 100%;
 }
 </style>
