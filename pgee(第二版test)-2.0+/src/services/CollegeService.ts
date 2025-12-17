@@ -190,6 +190,7 @@ export class CollegeService {
     const result = CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
   }
 */
+  // 下载文件
   static async downloadFileService(sfile: string, fileName: string) {
     await CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
   }
