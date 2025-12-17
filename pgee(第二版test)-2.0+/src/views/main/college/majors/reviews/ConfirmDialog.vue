@@ -58,61 +58,136 @@ const submitF = async () => {
   props.close()
 }
 </script>
+
 <template>
-  <el-dialog v-model="dialogVisible" destroy-on-close @close="closeF">
-    <h3 style="margin-bottom: 8px">审核</h3>
-    <el-row :gutter="10" class="row" align="middle">
-      <el-col :span="2" class="col-title"></el-col>
-      <el-col :span="6">
-        <el-radio-group size="large" v-model="checkStatusR">
-          <el-radio-button label="认定" value="confirm" class="custom-color-confirm" />
-          <el-radio-button label="驳回" value="reject" class="custom-color-reject" />
-          <el-radio-button label="修改" value="modif" class="custom-color-modif" />
-        </el-radio-group>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10" class="row" align="middle">
-      <el-col :span="2" class="col-title"></el-col>
-      <el-col :span="6">
-        <el-input-number
-          :disabled="!isConfirmC"
-          v-model="pointR"
-          :max="props.stuitem.maxPoints"
-          :min="0"
-          :precision="2"
-          size="large"
-          placeholder="认定分数" />
-      </el-col>
-      <el-col :span="4">项最高分：{{ props.stuitem.maxPoints }}</el-col>
-    </el-row>
-    <el-row :gutter="10" class="row" align="middle" v-if="!isConfirmC">
-      <el-col :span="2" class="col-title"></el-col>
-      <el-col :span="10">
-        <el-input
-          v-model="commentR"
-          type="textarea"
-          :autosize="{ minRows: 4 }"
-          placeholder="驳回/修改，信息说明" />
-      </el-col>
-    </el-row>
-    <el-row :gutter="10" class="row" align="middle">
-      <el-col :span="2" class="col-title"></el-col>
-      <el-col :span="10">
-        <el-button type="primary" :disabled="disSubmitC" @click="submitF">提交</el-button>
-      </el-col>
-    </el-row>
+  <el-dialog
+    v-model="dialogVisible"
+    destroy-on-close
+    @close="closeF"
+    title="审核操作"
+    width="600px"
+    class="review-confirm-dialog">
+    <div class="dialog-content">
+      <el-row :gutter="16" class="form-row" align="middle">
+        <el-col :span="4" class="form-label">操作类型：</el-col>
+        <el-col :span="20">
+          <el-radio-group size="large" v-model="checkStatusR" class="radio-group">
+            <el-radio-button label="confirm" class="custom-color-confirm">认定</el-radio-button>
+            <el-radio-button label="reject" class="custom-color-reject">驳回</el-radio-button>
+            <el-radio-button label="modif" class="custom-color-modif">修改</el-radio-button>
+          </el-radio-group>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="16" class="form-row" align="middle">
+        <el-col :span="4" class="form-label">认定分数：</el-col>
+        <el-col :span="10">
+          <el-input-number
+            :disabled="!isConfirmC"
+            v-model="pointR"
+            :max="props.stuitem.maxPoints"
+            :min="0"
+            :precision="2"
+            size="large"
+            placeholder="请输入认定分数"
+            class="score-input" />
+        </el-col>
+        <el-col :span="10" class="max-score-text">
+          项最高分：{{ props.stuitem.maxPoints || 0 }}
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="16" class="form-row" align="top" v-if="!isConfirmC">
+        <el-col :span="4" class="form-label">备注说明：</el-col>
+        <el-col :span="20">
+          <el-input
+            v-model="commentR"
+            type="textarea"
+            :autosize="{ minRows: 4, maxRows: 6 }"
+            placeholder="请输入驳回/修改的原因（必填）"
+            class="comment-input" />
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="16" class="form-row submit-row" align="middle">
+        <el-col :span="4" class="form-label"></el-col>
+        <el-col :span="20">
+          <el-button
+            type="primary"
+            size="large"
+            :disabled="disSubmitC"
+            @click="submitF"
+            class="submit-btn">
+            提交审核
+          </el-button>
+          <el-button size="large" @click="closeF" style="margin-left: 12px">取消</el-button>
+        </el-col>
+      </el-row>
+    </div>
   </el-dialog>
 </template>
+
 <style scoped>
+.review-confirm-dialog {
+  --el-dialog-padding-primary: 20px;
+}
+
+.dialog-content {
+  padding: 10px 0;
+}
+
+.form-row {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-label {
+  text-align: right;
+  font-weight: 500;
+  color: #606266;
+  font-size: 14px;
+}
+
+.radio-group {
+  width: 100%;
+}
+
+.score-input {
+  width: 100%;
+}
+
+.max-score-text {
+  color: #909399;
+  font-size: 14px;
+  line-height: 40px;
+}
+
+.comment-input {
+  width: 100%;
+  resize: none;
+}
+
+.submit-row {
+  margin-top: 10px;
+}
+
+.submit-btn {
+  padding: 12px 24px;
+  font-size: 14px;
+}
+
 .custom-color-confirm.is-active {
   --el-radio-button-checked-bg-color: #67c23a;
+  --el-radio-button-checked-text-color: #fff;
 }
 
 .custom-color-reject.is-active {
   --el-radio-button-checked-bg-color: #f56c6c;
+  --el-radio-button-checked-text-color: #fff;
 }
 
 .custom-color-modif.is-active {
-  --el-radio-button-checked-bg-color: #e6a23c;
+  --el-radio-button-checked-bg-color: #faaf3d;
+  --el-radio-button-checked-text-color: #fff;
 }
 </style>

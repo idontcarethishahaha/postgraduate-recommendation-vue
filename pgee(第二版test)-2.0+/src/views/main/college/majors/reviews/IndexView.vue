@@ -6,10 +6,23 @@ import type { Item, StudentItemResp, StudentItemsStatusDO } from '@/types'
 import ItemNode from '@/views/main/college/majors/reviews/ItemNode.vue'
 import ReviewWeigthedScore from '@/views/main/college/majors/reviews/ReviewWeigthedScore.vue'
 import { querycachename } from '@/vuequery/Const'
-import { Odometer } from '@element-plus/icons-vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { defineAsyncComponent, ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+type TagType = 'success' | 'warning' | 'danger' | 'primary' | 'info'
+const TAG_TYPE_TO_COLOR: Record<TagType, string> = {
+  success: '#67c23a',
+  warning: '#e6a23c',
+  danger: '#f56c6c',
+  primary: '#409eff',
+  info: '#909399'
+}
+
+const getTagColor = (type: string | undefined): string => {
+  const safeType = (type as TagType) || 'info'
+  return TAG_TYPE_TO_COLOR[safeType]
+}
 
 const dialogVisible = ref(true)
 const props = defineProps<{
@@ -35,7 +48,6 @@ const qc = useQueryClient()
 
 const closeF = async () => {
   dialogVisible.value = false
-  //关闭，重新拉取专业学生全部状态
   await qc.refetchQueries({
     queryKey: [querycachename.college.majorstudentstatuses, props.majorid]
   })
@@ -84,148 +96,248 @@ const closeconfirmDialog = async () => {
   studentItemOfItemR.value = [...studentItemsAllR.value!]
 }
 </script>
+
 <template>
-  <el-dialog v-model="dialogVisible" @close="closeF" fullscreen>
-    <div style="max-width: 1200px; margin: auto">
-      <el-row>
-        <el-col>
-          <span class="title">基本信息数据</span>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <h3>审核：{{ adminR?.name }}</h3>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <h3>
-            学生：{{ props.studentstatus.userName }} -
-            <el-icon
-              style="cursor: pointer; color: #409eff; font-size: 18px; vertical-align: middle"
-              :title="props.studentstatus.tel"></el-icon>
-          </h3>
-        </el-col>
-      </el-row>
-      <el-divider border-style="dashed" />
-      <ReviewWeigthedScore :sid="props.studentstatus.userId!" />
-      <el-divider border-style="dashed" />
-      <el-row>
-        <el-col>
-          <div>
-            <span class="title">评定指标参考数据</span>
-            说明:1.评定标准以学院文件要求为准;2.学生填报数是否超过限项，需人工审核；
+  <el-dialog
+    v-model="dialogVisible"
+    @close="closeF"
+    fullscreen
+    class="review-dialog"
+    :title="`学生审核 - ${props.studentstatus.userName}`"
+    append-to-body>
+    <div class="review-container">
+      <div class="info-section">
+        <h2 class="section-title">基本信息</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">审核人：</span>
+            <span class="info-value">{{ adminR?.name || '未获取' }}</span>
           </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
+          <div class="info-item">
+            <span class="info-label">学生姓名：</span>
+            <span class="info-value">{{ props.studentstatus.userName }}</span>
+          </div>
+        </div>
+      </div>
+
+      <el-divider border-style="dashed" content-position="left">加权成绩审核</el-divider>
+
+      <div class="score-section">
+        <ReviewWeigthedScore :sid="props.studentstatus.userId!" />
+      </div>
+
+      <el-divider border-style="dashed" content-position="left">评定指标参考数据</el-divider>
+
+      <div class="indicator-section">
+        <div class="indicator-tip">
+          <i class="el-icon-info" style="color: #409eff"></i>
+          说明:1.评定标准以学院文件要求为准;2.学生填报数是否超过限项，需人工审核；
+        </div>
+        <div class="indicator-tree">
           <ItemNode
             :items="itemsR!"
             :studentitems="studentItemsAllR!"
             :get-root-id="getLevelItemId" />
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="4">
-          <span class="title">学生提交数据</span>
-        </el-col>
-        <el-col :span="8">
-          <el-button type="primary" @click="listStudentItemsAllF" style="margin-right: 8px">
+        </div>
+      </div>
+
+      <el-divider border-style="dashed" content-position="left">学生提交数据</el-divider>
+
+      <div class="submit-data-section">
+        <div class="data-header">
+          <el-button
+            type="primary"
+            @click="listStudentItemsAllF"
+            icon="el-icon-refresh"
+            class="refresh-btn">
             加载全部
           </el-button>
-          默认按先择指标参考数据联动过滤
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col>
-          <el-table :data="studentItemOfItemR as StudentItemResp" style="width: 100%">
-            <el-table-column type="index" width="50" />
-            <el-table-column prop="itemName" label="指标点">
-              <template #default="scope">
-                {{ (scope.row as StudentItemResp).itemName }}
-              </template>
-            </el-table-column>
-            <el-table-column label="内容">
-              <template #default="scope">
-                {{ (scope.row as StudentItemResp).name }}
-                <br />
-                {{ (scope.row as StudentItemResp).comment }}
-              </template>
-            </el-table-column>
-            <el-table-column label="佐证">
-              <template #default="scope">
-                <div v-for="file of (scope.row as StudentItemResp).files" :key="file.id">
-                  <el-tooltip
-                    class="box-item"
-                    effect="dark"
-                    :content="file.filename"
-                    placement="top"
-                    :hide-after="0">
-                    <el-tag size="large" style="margin-right: 8px" disable-transitions>
+        </div>
+
+        <el-row>
+          <el-col>
+            <el-table :data="studentItemOfItemR as StudentItemResp[]" style="width: 100%">
+              <el-table-column type="index" width="50" />
+              <el-table-column prop="itemName" label="指标点">
+                <template #default="scope">
+                  {{ scope.row.itemName }}
+                </template>
+              </el-table-column>
+              <el-table-column label="内容">
+                <template #default="scope">
+                  {{ scope.row.name }}
+                  <br />
+                  {{ scope.row.comment || '无备注' }}
+                </template>
+              </el-table-column>
+              <el-table-column label="佐证">
+                <template #default="scope">
+                  <div v-for="file of scope.row.files" :key="file.id" style="margin: 3px 0">
+                    <el-tooltip
+                      class="box-item"
+                      effect="dark"
+                      :content="file.filename"
+                      placement="top"
+                      :hide-after="0">
                       <span
                         class="tag-ellipsis"
-                        type="primary"
-                        size="large"
+                        style="font-weight: 700; font-size: 14px; cursor: pointer"
+                        :style="{ color: getTagColor('primary') }"
                         @click="downloadFileF(file.id!, file.filename!)">
                         {{ file.filename }}
                       </span>
-                    </el-tag>
-                  </el-tooltip>
-                </div>
-                <br />
-              </template>
-            </el-table-column>
-            <el-table-column label="认定" width="120">
-              <template #default="scope">
-                <div>
-                  <el-tag type="success" size="large">
-                    {{ (scope.row as StudentItemResp).point ?? 0 }}
-                  </el-tag>
-                  <span style="vertical-align: middle">
-                    / {{ (scope.row as StudentItemResp).maxPoints }}
+                    </el-tooltip>
+                  </div>
+                  <div v-if="!scope.row.files.length" style="color: #909399; font-size: 12px">
+                    无佐证材料
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="认定" width="120">
+                <template #default="scope">
+                  <div
+                    style="display: flex; align-items: center; justify-content: center; gap: 4px">
+                    <span
+                      style="font-weight: 700; font-size: 14px"
+                      :style="{ color: getTagColor('success') }">
+                      {{ scope.row.point ?? 0 }}
+                    </span>
+                    <span style="vertical-align: middle">/ {{ scope.row.maxPoints || 0 }}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="状态" width="80">
+                <template #default="scope">
+                  <span
+                    style="font-weight: 700; font-size: 14px"
+                    :style="{ color: getTagColor(getStatusUtil(scope.row.status ?? '')?.color) }">
+                    {{ getStatusUtil(scope.row.status ?? '')?.name || '待审核' }}
                   </span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column label="状态" width="80">
-              <template #default="scope">
-                <el-tag :type="getStatusUtil((scope.row as StudentItemResp).status ?? '')?.color">
-                  {{ getStatusUtil((scope.row as StudentItemResp).status ?? '')?.name }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" width="80">
-              <template #default="scope">
-                <el-icon
-                  class="my-action-icon"
-                  color="#409EFF"
-                  @click="confirmF(scope.row as StudentItemResp)">
-                  <Odometer />
-                </el-icon>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="80">
+                <template #default="scope">
+                  <el-button
+                    type="primary"
+                    size="small"
+                    style="padding: 4px 8px; font-size: 12px"
+                    @click="confirmF(scope.row)">
+                    审核
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+      </div>
     </div>
   </el-dialog>
+
   <confirmDialog
     v-if="activeConfirmDialogR"
     :close="closeconfirmDialog"
     :stuitem="selectStudentItemR!" />
 </template>
+
 <style scoped>
-.title {
-  margin-bottom: 10px;
+.review-dialog {
+  --el-dialog-content-padding: 0;
+}
+
+.review-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-title {
   font-size: 18px;
-  color: #409eff;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
 }
-.col-title {
-  text-align: right;
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background-color: #409eff;
+  margin-right: 8px;
+  border-radius: 2px;
 }
-.info-tag {
-  width: 50px;
+
+.info-section {
+  margin-bottom: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  color: #606266;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.info-value {
+  color: #303133;
+  font-size: 14px;
+}
+
+.score-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.indicator-section {
+  margin-bottom: 20px;
+}
+
+.indicator-tip {
+  padding: 12px 16px;
+  background-color: #e8f4ff;
+  border-left: 4px solid #409eff;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  color: #606266;
+  font-size: 14px;
+}
+
+.indicator-tree {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.submit-data-section {
+  margin-top: 16px;
+}
+
+.data-header {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.refresh-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
 .tag-ellipsis {
@@ -236,5 +348,9 @@ const closeconfirmDialog = async () => {
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
+}
+
+:deep(.el-divider) {
+  margin: 20px 0;
 }
 </style>
