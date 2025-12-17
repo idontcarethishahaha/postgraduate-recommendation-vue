@@ -2,7 +2,6 @@
 import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import type { Item, MajorCategory } from '@/types'
-import { EditPen } from '@element-plus/icons-vue'
 import { computed, ref, render } from 'vue'
 
 const dialogVisible = ref(true)
@@ -94,9 +93,7 @@ const closeF = () => {
     <el-row :gutter="10" class="row">
       <el-col :span="2"></el-col>
       <el-col :span="12">
-        <el-button type="primary" @click="submitF">
-          <el-icon><EditPen /></el-icon>
-        </el-button>
+        <el-button type="primary" @click="submitF">提交</el-button>
       </el-col>
     </el-row>
   </el-dialog>
