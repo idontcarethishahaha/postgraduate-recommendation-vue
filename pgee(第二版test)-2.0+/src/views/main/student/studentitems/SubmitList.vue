@@ -48,6 +48,7 @@ const fileR = ref<File>()
 const fileInputR = ref<HTMLInputElement>()
 const submitIndexR = ref(-1)
 const activeF = (index: number) => {
+  // 同步更新元素属性值
   nextTick(() => {
     fileInputR.value?.click()
     fileR.value = undefined
@@ -56,7 +57,6 @@ const activeF = (index: number) => {
   submitIndexR.value = index
 }
 
-//
 const { mutateAsync: mutUploadFile } = StudentService.uploadStudentItemFileService(
   toValue(rootItemId)
 )
@@ -117,7 +117,6 @@ const logdialog = defineAsyncComponent(() => import('./LogDialog.vue'))
 const closeLogDialF = () => {
   logActiveR.value = false
 }
-
 //颜色
 type TagType = 'success' | 'warning' | 'danger' | 'primary' | 'info'
 const TAG_TYPE_TO_COLOR: Record<TagType, string> = {
@@ -132,139 +131,116 @@ const getTagColor = (type: string | undefined): string => {
   return TAG_TYPE_TO_COLOR[safeType]
 }
 </script>
-
 <template>
-  <div class="simple-wrapper">
-    <el-table
-      :data="resultR as StudentItemResp[]"
-      style="width: 100%"
-      stripe
-      border
-      class="simple-table">
-      <el-table-column type="index" width="50" />
-      <el-table-column prop="itemName" label="指标点" width="180">
-        <template #default="scope">
-          {{ (scope.row as StudentItemResp).itemName }}
-        </template>
-      </el-table-column>
-      <el-table-column label="标题" width="180">
-        <template #default="scope">
-          {{ (scope.row as StudentItemResp).name }}
-        </template>
-      </el-table-column>
-      <el-table-column label="佐证" min-width="240">
-        <template #default="scope">
-          <div v-if="allowUpdate(scope.row as StudentItemResp)">
-            <input type="file" ref="fileInputR" hidden @change="changeF" />
-            <el-icon
-              class="my-action-icon"
-              color="#409EFF"
-              style="font-size: 24px; cursor: pointer"
-              @click="activeF(scope.$index)">
-              <UploadFilled />
-            </el-icon>
-            <span style="color: #409eff; margin-left: 8px">{{ fileR?.name }}</span>
-          </div>
-          <div
-            v-for="file of (scope.row as StudentItemResp).files"
-            :key="file.id"
-            style="margin: 4px 0">
-            <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="file.filename"
-              placement="top"
-              :hide-after="0">
+  <el-table :data="resultR as StudentItemResp" style="width: 100%">
+    <el-table-column type="index" width="50" />
+    <el-table-column prop="itemName" label="指标点" width="180">
+      <template #default="scope">
+        {{ (scope.row as StudentItemResp).itemName }}
+      </template>
+    </el-table-column>
+    <el-table-column label="标题" width="180">
+      <template #default="scope">
+        {{ (scope.row as StudentItemResp).name }}
+      </template>
+    </el-table-column>
+    <el-table-column label="佐证" min-width="240">
+      <template #default="scope">
+        <div v-if="allowUpdate(scope.row as StudentItemResp)">
+          <input type="file" ref="fileInputR" hidden @change="changeF" />
+          <el-icon
+            class="my-action-icon"
+            color="#409EFF"
+            style="font-size: 24px"
+            @click="activeF(scope.$index)">
+            <UploadFilled />
+          </el-icon>
+          <span>{{ fileR?.name }}</span>
+        </div>
+        <div v-for="file of (scope.row as StudentItemResp).files" :key="file.id">
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            :content="file.filename"
+            placement="top"
+            :hide-after="0">
+            <el-tag size="large" style="margin-right: 8px" disable-transitions>
               <span
                 class="tag-ellipsis"
-                style="
-                  margin-right: 8px;
-                  padding: 4px 8px;
-                  font-size: 14px;
-                  cursor: pointer;
-                  background: #f5f7fa;
-                  border-radius: 4px;
-                  color: #409eff;
-                "
+                type="primary"
+                size="large"
                 @click="downloadFileF(file.id!, file.filename!)">
                 {{ file.filename }}
               </span>
-            </el-tooltip>
+            </el-tag>
+          </el-tooltip>
 
-            <el-icon
-              v-if="allowUpdate(scope.row as StudentItemResp)"
-              color="#F56C6C"
-              class="my-action-icon"
-              style="cursor: pointer"
-              @click="removeStudentItemFileF(file.id!, file.filename!)">
-              <DeleteFilled />
-            </el-icon>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="认定">
-        <template #default="scope">
-          <div>
-            <span style="color: #67c23a; font-weight: 700; font-size: 14px">
-              {{ (scope.row as StudentItemResp).point ?? 0 }}
-            </span>
-            <span style="vertical-align: middle; margin-left: 4px; color: #666">
-              / {{ (scope.row as StudentItemResp).maxPoints }}
-            </span>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态">
-        <template #default="scope">
-          <span
-            style="font-weight: 700; font-size: 14px; padding: 2px 6px; border-radius: 4px"
-            :style="{
-              color: getTagColor(getStatusUtil((scope.row as StudentItemResp).status ?? '')?.color),
-              background: `rgba(${getTagColor(getStatusUtil((scope.row as StudentItemResp).status ?? '')?.color).replace('#', '')}, 0.1)`
-            }">
-            {{ getStatusUtil((scope.row as StudentItemResp).status ?? '')?.name }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column label="日志">
-        <template #default="scope">
-          <el-icon
-            class="my-action-icon"
-            color="#409EFF"
-            style="cursor: pointer"
-            @click="getLogsF(scope.row.id)">
-            <View />
-          </el-icon>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="80">
-        <template #default="scope">
           <el-icon
             v-if="allowUpdate(scope.row as StudentItemResp)"
-            class="my-action-icon"
-            color="#409EFF"
-            style="cursor: pointer; margin-right: 8px"
-            @click="activeEditF(scope.row as StudentItemResp)">
-            <EditPen />
-          </el-icon>
-          <el-icon
-            v-if="allowUpdate(scope.row as StudentItemResp)"
-            class="my-action-icon"
             color="#F56C6C"
-            style="cursor: pointer"
-            @click="
-              removeStudentItemF(
-                (scope.row as StudentItemResp).id!,
-                (scope.row as StudentItemResp).name!
-              )
-            ">
+            class="my-action-icon"
+            @click="removeStudentItemFileF(file.id!, file.filename!)">
             <DeleteFilled />
           </el-icon>
-        </template>
-      </el-table-column>
-    </el-table>
-  </div>
-
+        </div>
+        <br />
+      </template>
+    </el-table-column>
+    <el-table-column label="认定">
+      <template #default="scope">
+        <div>
+          <span style="color: #67c23a; font-weight: 700; font-size: 14px">
+            {{ (scope.row as StudentItemResp).point ?? 0 }}
+          </span>
+          <span style="vertical-align: middle; margin-left: 4px; color: #666">
+            / {{ (scope.row as StudentItemResp).maxPoints }}
+          </span>
+        </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="状态">
+      <template #default="scope">
+        <span
+          style="font-weight: 700; font-size: 14px; padding: 2px 6px; border-radius: 4px"
+          :style="{
+            color: getTagColor(getStatusUtil((scope.row as StudentItemResp).status ?? '')?.color),
+            background: `rgba(${getTagColor(getStatusUtil((scope.row as StudentItemResp).status ?? '')?.color).replace('#', '')}, 0.1)`
+          }">
+          {{ getStatusUtil((scope.row as StudentItemResp).status ?? '')?.name }}
+        </span>
+      </template>
+    </el-table-column>
+    <el-table-column label="日志">
+      <template #default="scope">
+        <el-icon class="my-action-icon" color="#409EFF" @click="getLogsF(scope.row.id)">
+          <View />
+        </el-icon>
+      </template>
+    </el-table-column>
+    <el-table-column label="操作" width="80">
+      <template #default="scope">
+        <el-icon
+          v-if="allowUpdate(scope.row as StudentItemResp)"
+          class="my-action-icon"
+          color="#409EFF"
+          @click="activeEditF(scope.row as StudentItemResp)">
+          <EditPen />
+        </el-icon>
+        <el-icon
+          v-if="allowUpdate(scope.row as StudentItemResp)"
+          class="my-action-icon"
+          color="#F56C6C"
+          @click="
+            removeStudentItemF(
+              (scope.row as StudentItemResp).id!,
+              (scope.row as StudentItemResp).name!
+            )
+          ">
+          <DeleteFilled />
+        </el-icon>
+      </template>
+    </el-table-column>
+  </el-table>
   <StudentItemDialog
     v-if="editDialogVisable"
     :item="selectedR.item!"
@@ -275,37 +251,13 @@ const getTagColor = (type: string | undefined): string => {
   <logdialog :stu-item-id="selectStuItemLogIdR" :close="closeLogDialF" v-if="logActiveR" />
 </template>
 <style scoped>
-.simple-wrapper {
-  padding: 16px;
-  background: #f5f7fa;
-  min-height: calc(100vh - 60px);
-}
-.simple-table {
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
 .tag-ellipsis {
-  padding: 4px 0;
+  padding: 5px 0;
   cursor: pointer;
   max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
-}
-:deep(.el-table-cell) {
-  line-height: 32px;
-  vertical-align: middle;
-  padding: 8px 0;
-}
-:deep(.el-table-header .el-table-cell) {
-  font-weight: 600;
-  background: #f8f9fa;
-}
-.my-action-icon:hover {
-  transform: scale(1.1);
-  transition: transform 0.2s;
 }
 </style>

@@ -19,7 +19,6 @@ if (props.studentitem) {
   studentItemR.value = props.studentitem
 }
 
-//
 const { mutateAsync } = StudentService.updateStudentItemService(props.rootitemid)
 
 const submitF = async () => {

@@ -145,7 +145,7 @@ await suspense() // 等待异步数据加载完成
 
 const colspan = 6
 
-// 颜色映射
+// 颜色
 type TagType = 'success' | 'warning' | 'danger' | 'primary' | 'info'
 const TAG_TYPE_TO_COLOR: Record<TagType, string> = {
   success: '#67c23a',
