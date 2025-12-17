@@ -79,7 +79,7 @@ const closeF = () => {
       <el-col :span="2" class="col-title">限项</el-col>
       <el-col :span="18">
         <el-input-number placeholder="限项" v-model="itemR.maxItems" :min="1" />
-        *仅有点数限制，没有指标项限制，不要填写
+        *仅有点数限制，无指标项限制，不填写
       </el-col>
     </el-row>
 

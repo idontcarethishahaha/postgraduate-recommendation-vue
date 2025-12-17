@@ -194,6 +194,8 @@ export class CollegeService {
   static async downloadFileService(sfile: string, fileName: string) {
     await CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
   }
+  //============================
+
   //添加辅导员
   /*   static addCounselorService() {
     const qc = useQueryClient()
