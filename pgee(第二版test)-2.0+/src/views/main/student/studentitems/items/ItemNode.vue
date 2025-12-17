@@ -6,7 +6,7 @@ const props = defineProps<{ items: Item[] }>()
 
 const callback = inject('selectItemCallback') as {
   selectItemCallback: (item: Item) => void
-  activeAddForm: Ref<boolean> // 改1：类型从MaybeRefOrGetter改为Ref
+  activeAddForm: Ref<boolean>
 }
 
 //el-radio-button，仅支持绑定ID，不支持直接传对象

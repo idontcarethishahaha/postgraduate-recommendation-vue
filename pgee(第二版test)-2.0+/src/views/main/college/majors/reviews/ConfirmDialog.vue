@@ -4,7 +4,6 @@ import { CollegeService } from '@/services/CollegeService'
 import { CommonService } from '@/services/CommonService'
 import { CONFIRMED, PENDING_MODIFICATION, REJECTED } from '@/services/Const'
 import type { StudentItem, StudentItemLog, StudentItemResp } from '@/types'
-import { EditPen } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 
 const dialogVisible = ref(true)
@@ -99,9 +98,7 @@ const submitF = async () => {
     <el-row :gutter="10" class="row" align="middle">
       <el-col :span="2" class="col-title"></el-col>
       <el-col :span="10">
-        <el-button type="primary" :disabled="disSubmitC" @click="submitF">
-          <el-icon><EditPen /></el-icon>
-        </el-button>
+        <el-button type="primary" :disabled="disSubmitC" @click="submitF">提交</el-button>
       </el-col>
     </el-row>
   </el-dialog>

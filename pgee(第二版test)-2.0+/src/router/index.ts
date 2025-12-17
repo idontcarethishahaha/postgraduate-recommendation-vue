@@ -108,44 +108,6 @@ const router = createRouter({
   ]
 })
 
-/* router.beforeEach(to => {
-  if (!to.meta.roles) {
-    return true
-  }
-
-  const role = to.meta.roles.find(r => r == CommonService.getRoleService())
-  if (role) {
-    return true
-  }
-  CommonService.clearLoginService()
-  return false
-}) */
-/* router.beforeEach(async (to, from, next) => {
-  // 1. 无需权限的路由（如/login、/register）直接放行
-  if (!to.meta.roles) {
-    return next()
-  }
-
-  // 2. 获取当前登录角色（兼容null/undefined）
-  const currentRole = CommonService.getRoleService()
-  if (!currentRole) {
-    // 未登录 → 跳登录页
-    CommonService.clearLoginService()
-    return next('/login')
-  }
-
-  // 3. 角色匹配校验
-  const hasPermission = to.meta.roles.some(role => role === currentRole)
-  if (hasPermission) {
-    // 有权限 → 放行
-    return next()
-  } else {
-    // 无权限 → 清空登录态并跳登录
-    CommonService.clearLoginService()
-    return next('/login')
-  }
-}) */
-
 router.beforeEach((to, from, next) => {
   if (!to.meta.roles) {
     return next()

@@ -2,7 +2,6 @@
 import { createElNotificationSuccess } from '@/components/message'
 import { StudentService } from '@/services/StudentService'
 import type { Item, StudentItem } from '@/types'
-import { EditPen } from '@element-plus/icons-vue'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -45,9 +44,7 @@ const submitDisabledC = computed(() => !studentItemR.value.name)
   <el-row :gutter="10" class="row">
     <el-col :span="2"></el-col>
     <el-col :span="12">
-      <el-button type="primary" @click="submitF" :disabled="submitDisabledC">
-        <el-icon><EditPen /></el-icon>
-      </el-button>
+      <el-button type="primary" @click="submitF" :disabled="submitDisabledC">提交</el-button>
     </el-col>
   </el-row>
 </template>
