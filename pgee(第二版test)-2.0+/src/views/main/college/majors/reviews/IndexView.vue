@@ -6,7 +6,7 @@ import type { Item, StudentItemResp, StudentItemsStatusDO } from '@/types'
 import ItemNode from '@/views/main/college/majors/reviews/ItemNode.vue'
 import ReviewWeigthedScore from '@/views/main/college/majors/reviews/ReviewWeigthedScore.vue'
 import { querycachename } from '@/vuequery/Const'
-import { Odometer, PhoneFilled } from '@element-plus/icons-vue'
+import { Odometer } from '@element-plus/icons-vue'
 import { useQueryClient } from '@tanstack/vue-query'
 import { defineAsyncComponent, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -103,9 +103,7 @@ const closeconfirmDialog = async () => {
             学生：{{ props.studentstatus.userName }} -
             <el-icon
               style="cursor: pointer; color: #409eff; font-size: 18px; vertical-align: middle"
-              :title="props.studentstatus.tel">
-              <PhoneFilled />
-            </el-icon>
+              :title="props.studentstatus.tel"></el-icon>
           </h3>
         </el-col>
       </el-row>

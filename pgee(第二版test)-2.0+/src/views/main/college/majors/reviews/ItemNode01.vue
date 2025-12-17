@@ -20,7 +20,6 @@ const selectItemF = () => {
   }
 }
 </script>
-
 <template>
   <div>
     <el-form-item style="margin-bottom: 8px">
@@ -35,15 +34,11 @@ const selectItemF = () => {
     <div v-if="selectItemR" style="white-space: pre-wrap">
       <p>
         {{ selectItemR?.name }}; 总分：
-        <span style="color: #67c23a; font-weight: 700; font-size: 14px">
-          {{ selectItemR?.maxPoints }}
-        </span>
+        <el-tag type="success">{{ selectItemR?.maxPoints }}</el-tag>
         分;
         <span v-if="selectItemR?.maxItems">
           限项：
-          <span style="color: #67c23a; font-weight: 700; font-size: 14px">
-            {{ selectItemR?.maxItems }}
-          </span>
+          <el-tag type="success">{{ selectItemR?.maxItems }}</el-tag>
           项；
         </span>
       </p>
@@ -61,7 +56,6 @@ const selectItemF = () => {
       :get-root-id="props.getRootId" />
   </div>
 </template>
-
 <style scoped>
 .title {
   font-size: 16px;

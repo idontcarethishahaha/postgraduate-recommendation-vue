@@ -3,7 +3,6 @@ import { createElNotificationSuccess } from '@/components/message'
 import { CollegeService } from '@/services/CollegeService'
 import { CommonService } from '@/services/CommonService'
 import type { ComfirmWeightedScoreReq, WeightedScore, WeightedScoreLog } from '@/types'
-import { EditPen } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 const props = defineProps<{ sid: string }>()
@@ -32,6 +31,7 @@ const submitWeightedScoreF = async () => {
     <el-col>
       <span class="title">
         加权成绩数据
+        <p>状态：</p>
         <span v-if="dataweightedScoreR?.verified" style="color: green; font-weight: bold">
           已认定
         </span>
@@ -58,9 +58,7 @@ const submitWeightedScoreF = async () => {
         placeholder="专业排名" />
     </el-col>
     <el-col :span="6">
-      <el-button type="primary" @click="submitWeightedScoreF">
-        <el-icon><EditPen /></el-icon>
-      </el-button>
+      <el-button type="primary" @click="submitWeightedScoreF">认定</el-button>
     </el-col>
   </el-row>
 </template>

@@ -26,27 +26,11 @@ const reviewF = (student: StudentItemsStatusDO) => {
 const reviewdialog = defineAsyncComponent(
   () => import('@/views/main/college/majors/reviews/IndexView.vue')
 )
-
-type TagType = 'success' | 'warning' | 'danger' | 'primary' | 'info'
-// 颜色
-const TAG_TYPE_TO_COLOR: Record<TagType, string> = {
-  success: '#67c23a',
-  warning: '#e6a23c',
-  danger: '#f56c6c',
-  primary: '#409eff',
-  info: '#909399'
-}
-
-const getTagColor = (type: string | undefined): string => {
-  const safeType = (type as TagType) || 'info'
-  return TAG_TYPE_TO_COLOR[safeType]
-}
 </script>
-
 <template>
   <el-row class="my-row">
     <el-col>
-      <el-table :data="studentsR as StudentItemsStatusDO[]" style="width: 100%">
+      <el-table :data="studentsR as StudentItemsStatusDO" style="width: 100%">
         <el-table-column type="index" />
         <el-table-column label="姓名">
           <template #default="scope">
@@ -59,12 +43,11 @@ const getTagColor = (type: string | undefined): string => {
 
         <el-table-column label="待审核项数">
           <template #default="scope">
-            <span style="color: #f56c6c; font-weight: 700; font-size: 14px">
+            <el-tag type="danger" size="large">
               {{ (scope.row as StudentItemsStatusDO).pendingReviewCount }}
-            </span>
+            </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column label="项数">
           <template #default="scope">
             <span>已认定:{{ (scope.row as StudentItemsStatusDO).confirmedCount }}</span>
@@ -77,44 +60,35 @@ const getTagColor = (type: string | undefined): string => {
             <br />
           </template>
         </el-table-column>
-
         <el-table-column label="加权成绩">
           <template #default="scope">
-            <span
-              style="font-weight: 700; font-size: 14px"
-              :style="{
-                color: getTagColor(
-                  SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
-                )
-              }">
+            <el-tag
+              size="large"
+              :type="
+                SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
+              ">
               {{ (scope.row as StudentItemsStatusDO).score }}
-            </span>
+            </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column label="已认定成绩">
           <template #default="scope">
-            <span
-              style="font-weight: 700; font-size: 14px"
-              :style="{
-                color: getTagColor(
-                  SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
-                )
-              }">
+            <el-tag
+              size="large"
+              :type="
+                SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
+              ">
               {{ (scope.row as StudentItemsStatusDO).totalPoint }}
-            </span>
+            </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column label="最终成绩">
           <template #default="scope">
-            <span
-              style="font-weight: 700; font-size: 14px"
-              :style="{
-                color: getTagColor(
-                  SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
-                )
-              }">
+            <el-tag
+              size="large"
+              :type="
+                SCORE_STATUS_MAP.get((scope.row as StudentItemsStatusDO).verified ?? 0)?.color
+              ">
               {{
                 getFinalScoreUtil(
                   (scope.row as StudentItemsStatusDO).score ?? 0,
@@ -122,10 +96,9 @@ const getTagColor = (type: string | undefined): string => {
                   weighting!
                 )
               }}
-            </span>
+            </el-tag>
           </template>
         </el-table-column>
-
         <el-table-column label="" max-width="80">
           <template #default="scope">
             <el-button type="primary" @click="reviewF(scope.row as StudentItemsStatusDO)">
@@ -136,16 +109,9 @@ const getTagColor = (type: string | undefined): string => {
       </el-table>
     </el-col>
   </el-row>
-
   <reviewdialog
     v-if="activeR"
     :studentstatus="studentStatusR"
     :close="closeF"
     :majorid="majorIdR" />
 </template>
-
-<style scoped>
-.my-row {
-  padding: 16px;
-}
-</style>
