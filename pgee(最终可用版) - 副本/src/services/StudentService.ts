@@ -20,6 +20,7 @@ import { CommonService } from './CommonService'
 const addPreUrl = (url: string) => `student/${url}`
 
 export class StudentService {
+  //
   static listTopLevelItemsService() {
     return useQuery({
       queryKey: [querycachename.student.topitems],

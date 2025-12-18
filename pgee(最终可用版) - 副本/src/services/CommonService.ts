@@ -25,21 +25,22 @@ export class CommonService {
     CommonService.loginService({ account: user.account, password: user.account })
   }
 
+  //登录
   static loginService = async (user: User) => {
     const resp = await axios.post<ResultVO<UserInfo>>(addPreUrl('login'), user)
     const token = resp.headers.token
     const role = resp.headers.role
-
+    //
     console.log('登录响应头：', resp.headers)
     console.log('登录响应体：', resp.data)
-
+    //
     if (!token || !role) {
       throw '登录错误'
     }
-
+    //
     console.log('提取的token:', token)
     console.log('提取的role:', role)
-
+    //
     userStore.setUserSessionStorage(resp.data.data, token, role)
     if (user.account === user.password) {
       router.push('/settings')
@@ -69,8 +70,7 @@ export class CommonService {
   static getRoleService() {
     return sessionStorage.getItem('role')
   }
-  //==============================================
-  // 获取用户信息
+
   static getUserInfoService() {
     return useQuery({
       queryKey: [querycachename.common.userinfo],

@@ -26,6 +26,7 @@ const saveCollegeService = async () => {
   }
 
   await addMutation.mutateAsync({ name } as College)
+  //createMessageDialog('添加成功')
   createElNotificationSuccess('添加成功')
   collegeName.value = '' // 清空输入框
   refetchColleges() // 刷新列表

@@ -33,6 +33,7 @@ export class CollegeService {
       queryFn: () => useGet<MajorCategory[]>(addPreUrl('categories'))
     })
   }
+  //===================================
   static listcategoryMajorsService() {
     return useQuery({
       queryKey: [querycachename.college.categoriesmajors],
@@ -176,7 +177,6 @@ export class CollegeService {
         })
     })
   }
-
   // 下载文件
   static async downloadFileService(sfile: string, fileName: string) {
     await CommonService.downloadFile(addPreUrl(`studentitems/files/${sfile}`), fileName)
@@ -302,7 +302,7 @@ export class CollegeService {
     })
   }
 
-  // 查看指定学院的管理员列表
+  // 查看指定学院的管理员列表（后端接口 /admin/users/{cid}）
   static listCollegeAdminsService(collegeId: string) {
     return useQuery<
       Array<{

@@ -37,7 +37,7 @@ export interface RegisterUserDTO {
   majorCategoryId?: string
 }
 
-//用户信息
+//用户信息VO
 export interface UserInfo {
   name: string
   collegeName?: string
@@ -45,7 +45,7 @@ export interface UserInfo {
   categories?: string[] // 所属专业类别名称列表
 }
 
-//major_category
+//major_category 表
 export interface CategoryWeighting {
   score: number
   compositeScore: number
@@ -79,7 +79,7 @@ export interface CounselorDTO {
   majorCategoryId?: string
 }
 
-//专业
+//专业表 - major
 export interface Major {
   id?: string
   name?: string // 专业名称
@@ -89,7 +89,7 @@ export interface Major {
   updateTime?: string
 }
 
-//类别+专业关联
+//类别+专业关联VO
 export interface CategoryMajors {
   majorCategory?: MajorCategory
   majors?: Major[] // 该类别下的专业列表
@@ -151,7 +151,7 @@ export interface StudentItem {
   updateTime?: string
 }
 
-//指标附件表-student_item_file
+//指标附件表 - student_item_file
 export interface StudentItemFile {
   id?: string
   studentItemId?: string
@@ -161,7 +161,7 @@ export interface StudentItemFile {
   updateTime?: string
 }
 
-//学生指标响应
+//学生指标响应VO
 export interface StudentItemResp {
   id?: string
   userId?: string
@@ -179,7 +179,7 @@ export interface StudentItemResp {
   files?: StudentItemFile[] // 附件列表
 }
 
-//学生指标状态统计
+//学生指标状态统计DO
 export interface StudentItemsStatusDO {
   userId?: string
   userName?: string // 学生姓名
@@ -219,7 +219,7 @@ export interface Progress {
   title: string // 文件名
 }
 
-// 类别-辅导员关联（AdminResp后端结构）
+// 类别-辅导员关联VO（AdminResp后端结构）
 export interface CategoryCounselors {
   majorCategory?: MajorCategory
   users?: User[]
