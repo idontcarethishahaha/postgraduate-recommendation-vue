@@ -63,6 +63,7 @@ const menusMapR = computed(() => {
 
 // 匹配激活菜单
 const route = useRoute()
+//通过 activeIndexR 计算属性，根据当前路由路径，匹配对应的菜单并高亮
 const activeIndexR = computed(() => {
   const pathArray = route.fullPath.split('/')
   let count = 0
@@ -80,10 +81,14 @@ const activeIndexR = computed(() => {
 
 <template>
   <el-row class="my-row" style="padding: 3px" align="middle">
+    <!-- 左 -->
     <el-col :span="4">
       <SettingView />
     </el-col>
 
+    <!--   中 -->
+    <!--  el-menu 组件,导航栏 -->
+    <!--  mode="horizontal" 表示横向导航 -->
     <el-col :span="16">
       <el-menu :default-active="activeIndexR" mode="horizontal" router>
         <el-menu-item v-for="(menu, index) of menusMapR" :key="index" :index="menu[1]">
@@ -92,6 +97,7 @@ const activeIndexR = computed(() => {
       </el-menu>
     </el-col>
 
+    <!-- 右 -->
     <el-col :span="4" style="text-align: right; padding-right: 10px">
       <LogoutView />
     </el-col>
