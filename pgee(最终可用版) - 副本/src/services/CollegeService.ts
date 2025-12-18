@@ -22,18 +22,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { type MaybeRefOrGetter, toValue } from 'vue'
 import { CommonService } from './CommonService'
 import { getFinalScoreUtil } from './Utils'
-//
+
+//统一拼接接口前缀
 const addPreUrl = (url: string) => `college/${url}`
 
+//所有接口封装为静态类方法，无需实例化，直接调用
 export class CollegeService {
-  //
+  //类别列表
   static listCategoriesService() {
     return useQuery({
       queryKey: [querycachename.college.categories],
       queryFn: () => useGet<MajorCategory[]>(addPreUrl('categories'))
     })
   }
-  //===================================
+  //类别-专业列表
   static listcategoryMajorsService() {
     return useQuery({
       queryKey: [querycachename.college.categoriesmajors],
@@ -41,7 +43,7 @@ export class CollegeService {
       suspense: true // 启用suspense，当数据加载时，组件将暂停渲染，直到数据加载完成
     })
   }
-  //=========================
+
   //添加专业
   static addMajorService() {
     const qc = useQueryClient()
@@ -66,7 +68,7 @@ export class CollegeService {
     })
   }
 
-  //
+  //加载类别下指标项
   static listCategoryItemsService(catid: string) {
     return useQuery({
       queryKey: [querycachename.college.categoryitems, catid],
@@ -74,8 +76,7 @@ export class CollegeService {
     })
   }
 
-  //======================
-  //添加指标项，可用，但是不知道为什么模板渲染不能自动刷新
+  //添加指标项
   static addItemService(catid: string) {
     const qc = useQueryClient()
     return useMutation({
@@ -84,13 +85,18 @@ export class CollegeService {
         qc.refetchQueries({ queryKey: [querycachename.college.categoryitems, catid] })
     })
   }
+  //refetchQueries,立即重新获取数据
+  //invalidateQueries,查询键失效，下次获取数据时重新请求
   //移除指标项
   static removeItemService(itemid: string) {
     const qc = useQueryClient()
     return useMutation({
       mutationFn: () => useDelete(addPreUrl(`items/${itemid}`)),
       onSuccess: () => {
-        qc.invalidateQueries({
+        /* qc.invalidateQueries({
+          queryKey: [querycachename.college.categoryitems]
+        }) */
+        qc.refetchQueries({
           queryKey: [querycachename.college.categoryitems]
         })
       }
@@ -105,6 +111,7 @@ export class CollegeService {
       queryFn: () => useGet<Major[]>(addPreUrl(`categories/${toValue(catidR)}/majors`))
     })
   }
+
   //学生指标项状态
   static listStudentsStatusesService(
     majorid: MaybeRefOrGetter<string>,
@@ -113,18 +120,23 @@ export class CollegeService {
     return useQuery({
       queryKey: [querycachename.college.majorstudentstatuses, majorid],
       queryFn: () =>
+        //数据较多，请求中显示加载动画
         createElLoading(
+          //将「响应式值 / 取值函数」转为普通值（如 toValue(ref('123')) → '123'）
           useGet<StudentItemsStatusDO[]>(addPreUrl(`majors/${toValue(majorid)}/students/statuses`))
         ),
+      //组件直接用排序后的数据
       select: data =>
         data.sort((a, b) => {
+          //按最终成绩降序排序
           const finalA = getFinalScoreUtil(a.score ?? 0, a.totalPoint ?? 0, weighting)
           const finalB = getFinalScoreUtil(b.score ?? 0, b.totalPoint ?? 0, weighting)
-          return finalB - finalA // 降序
+          return finalB - finalA
         })
     })
   }
 
+  // 获取学生加权分数
   static getStudentWeightedScoreService(sid: string) {
     return useQuery({
       queryKey: [querycachename.college.studentweightedscores, sid],
@@ -132,6 +144,7 @@ export class CollegeService {
     })
   }
 
+  // 修改学生加权分数
   static updateStudentWeightedScoreService(sid: string) {
     const qc = useQueryClient()
     return useMutation({
@@ -143,7 +156,7 @@ export class CollegeService {
     })
   }
 
-  //
+  // 获取学生提交指标项
   static listStudentItemsService(sid: string) {
     return useQuery({
       queryKey: [querycachename.college.studentitems, sid],
@@ -151,21 +164,22 @@ export class CollegeService {
         createElLoading(useGet<StudentItemResp[]>(addPreUrl(`students/${sid}/studentitems`)))
     })
   }
-
-  //
+  //=================================
+  // 审核人修改学生的指标项信息
   static updateStudentItemSercice(sid: string) {
     const qc = useQueryClient()
     return useMutation({
       mutationKey: [querycachename.college.studentitems, sid],
       mutationFn: ({
         sid,
-        stuItem,
-        log
+        stuItem, // 要修改的学生指标项数据
+        log // 操作日志
       }: {
         sid: string
         stuItem: StudentItem
         log: StudentItemLog
       }) => {
+        //返回修改后的学生指标项列表
         return usePost<StudentItemResp[]>(addPreUrl(`students/${sid}/studentitems`), {
           studentItem: stuItem,
           log
@@ -197,19 +211,21 @@ export class CollegeService {
     return useMutation({
       mutationFn: (uid: string) => useDelete(`college/users/${uid}`),
       onSuccess: () => {
-        qc.invalidateQueries({ queryKey: [querycachename.college.collegeadmin] })
+        /*     qc.invalidateQueries({ queryKey: [querycachename.college.collegeadmin] }) */
+        qc.refetchQueries({ queryKey: [querycachename.college.collegeadmin] })
       }
     })
   }
 
+  // 获取辅导员列表
   static listCounselorsService() {
     return useQuery({
       queryKey: [querycachename.college.counselors],
-      queryFn: () => useGet<CategoryCounselors[]>(addPreUrl('categories/users')) // 替换为 CategoryCounselors[]
+      queryFn: () => useGet<CategoryCounselors[]>(addPreUrl('categories/users'))
     })
   }
   //================================================
-  // 添加类别
+  // 添加类别，成功则重新请求类别列表&专业列表
   static addCategoryService() {
     const qc = useQueryClient()
     return useMutation({
@@ -240,6 +256,7 @@ export class CollegeService {
   }
 
   //=================================
+  // 获取指定专业类别权重配置
   static getCategoryWeightingService = (catid: string) => {
     return CollegeService.listCategoriesService().data.value?.find(cat => cat.id === catid)
       ?.weighting

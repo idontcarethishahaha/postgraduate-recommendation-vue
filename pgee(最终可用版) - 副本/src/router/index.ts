@@ -22,6 +22,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/views/main/IndexView.vue'),
+      //to.meta.roles
       meta: {
         roles: [consty.ADMIN, consty.STUDENT, consty.COUNSELOR, consty.COLLEGE_ADMIN]
       },
@@ -77,11 +78,6 @@ const router = createRouter({
               path: '',
               component: () => import('@/views/main/college/HomeView.vue')
             },
-            /*       {
-              // 类别管理跳转至专业管理
-              path: 'categories/majors/:catid',
-              component: () => import('@/views/main/college/functions/MajorsView.vue')
-            }, */
             {
               path: 'functions',
               component: () => import('@/views/main/college/functions/IndexView.vue')
@@ -100,7 +96,7 @@ const router = createRouter({
         }
       ]
     },
-
+    // 404：重定向到登录页
     {
       path: '/:pathMatch(.*)*',
       redirect: '/login'
@@ -109,6 +105,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  //无需角色校验，直接放行
   if (!to.meta.roles) {
     return next()
   }
@@ -120,8 +117,10 @@ router.beforeEach((to, from, next) => {
     return next('/login')
   }
 
+  //校验角色是否匹配
   const hasPermission = to.meta.roles.some(role => role === currentRole)
   if (hasPermission) {
+    //有权限，放行
     next()
   } else {
     sessionStorage.clear()

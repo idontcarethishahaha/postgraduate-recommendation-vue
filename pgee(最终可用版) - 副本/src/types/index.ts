@@ -95,6 +95,12 @@ export interface CategoryMajors {
   majors?: Major[] // 该类别下的专业列表
 }
 
+// 类别-辅导员关联VO（AdminResp）
+export interface CategoryCounselors {
+  majorCategory?: MajorCategory
+  users?: User[]
+}
+
 //加权得分表
 export interface WeightedScore {
   id?: string
@@ -217,10 +223,4 @@ export interface Progress {
   total: number // 文件总大小
   loaded: number // 已上传大小
   title: string // 文件名
-}
-
-// 类别-辅导员关联VO（AdminResp后端结构）
-export interface CategoryCounselors {
-  majorCategory?: MajorCategory
-  users?: User[]
 }

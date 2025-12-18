@@ -12,7 +12,7 @@ const callback = inject('selectItemCallback') as {
 //el-radio-button，仅支持绑定ID，不支持直接传对象
 const selectItemIdR = shallowRef()
 const selectItemR = shallowRef<Item>()
-//
+
 const childrenItemsR = shallowRef<Item[]>([])
 
 const selectItemF = () => {
