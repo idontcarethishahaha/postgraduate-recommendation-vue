@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { CollegeService } from '@/services/CollegeService'
 import type { Item } from '@/types'
+import { querycachename } from '@/vuequery/Const'
 import { CaretRight, Delete } from '@element-plus/icons-vue'
+import { useQueryClient } from '@tanstack/vue-query'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { defineAsyncComponent, getCurrentInstance, h, ref, render, toRef } from 'vue'
+import { defineAsyncComponent, getCurrentInstance, h, inject, ref, render, toRef } from 'vue'
 
 const props = defineProps<{ item: Item }>()
 const childrenItemsR = toRef(() => props.item.items ?? [])
 const isExpanded = ref(false)
 const instance = getCurrentInstance()
+const qc = useQueryClient()
+
+// 注入父组件的刷新方法
+const refreshItems = inject<() => Promise<void>>('refreshItems')
 
 const removeMutation = CollegeService.removeItemService(props.item.id!)
 
@@ -16,7 +22,7 @@ const toggleExpand = () => {
   isExpanded.value = !isExpanded.value
 }
 
-// 添加子指标
+// 添加子指标（传递刷新回调）
 const activeAddItemDialogF = (e: MouseEvent) => {
   e.stopPropagation()
   if (!instance) return
@@ -25,22 +31,34 @@ const activeAddItemDialogF = (e: MouseEvent) => {
     defineAsyncComponent(
       () => import('@/views/main/college/functions/itemmanagement/ItemDialog.vue')
     ),
-    { parentItem: props.item }
+    {
+      parentItem: props.item,
+      onSuccess: refreshItems // 传递刷新回调
+    }
   )
   node.appContext = instance.appContext
   render(node, document.body)
 }
 
-// 移除
+// 移除（参考handleRemoveCounselor逻辑，增加缓存失效+主动刷新）
 const removeItemF = async (e: MouseEvent) => {
   e.stopPropagation()
-  if (!props.item.id) return
+  if (!props.item.id || !props.item.majorCategoryId) return
 
   try {
     await ElMessageBox.confirm('确定要移除该指标项吗？此操作不可恢复！', '移除确认', {
       type: 'warning'
     })
+    // 1. 执行删除操作
     await removeMutation.mutateAsync()
+    // 2. 失效对应缓存
+    await qc.invalidateQueries({
+      queryKey: [querycachename.college.categoryitems, props.item.majorCategoryId]
+    })
+    // 3. 主动重新加载列表（核心：解决渲染延迟）
+    if (refreshItems) {
+      await refreshItems()
+    }
     ElMessage.success('指标项移除成功！')
   } catch (error) {
     if (error !== 'cancel') {
