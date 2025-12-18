@@ -12,7 +12,7 @@ const callback = inject('selectItemCallback') as {
 //el-radio-button，仅支持绑定ID，不支持直接传对象
 const selectItemIdR = shallowRef()
 const selectItemR = shallowRef<Item>()
-//
+
 const childrenItemsR = shallowRef<Item[]>([])
 
 const selectItemF = () => {
@@ -20,7 +20,6 @@ const selectItemF = () => {
   selectItemR.value = props.items.find(ite => ite.id === parentItemId)
   childrenItemsR.value = props.items.find(ite => ite.id === parentItemId)?.items ?? []
 
-  // 改2：修复activeAddForm赋值方式
   callback.activeAddForm.value = childrenItemsR.value.length === 0
 
   callback.selectItemCallback(selectItemR.value!)

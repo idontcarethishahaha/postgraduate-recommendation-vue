@@ -170,7 +170,6 @@ const manageMajors = (category: MajorCategory) => {
       </el-card>
     </div>
 
-    <!-- ====== 新增：分数输入弹窗 ====== -->
     <ElDialog
       v-model="scoreDialogVisible"
       title="设置类别加权分数"

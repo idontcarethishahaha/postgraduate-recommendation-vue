@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { StudentService } from '@/services/StudentService'
 import type { Item } from '@/types'
-import { Plus } from '@element-plus/icons-vue'
+import { InfoFilled, Plus } from '@element-plus/icons-vue'
 import { defineAsyncComponent, provide, ref, toRef } from 'vue'
 import { useRoute } from 'vue-router'
 import ItemNode from './ItemNode.vue'
@@ -29,7 +29,6 @@ const activeF = async () => {
   dialogVisible.value = true
   activeMaxItemR.value = false
 }
-//
 
 const selectItemCallback = (item: Item) => {
   activeMaxItemR.value = false
@@ -62,6 +61,7 @@ const selectItemCallback = (item: Item) => {
     }
     return leafItems
   }
+
   // 路径节点为键，叶子数组为值
   const nodeMap = new Map<Item, Item[]>()
   for (const path of nodePath) {
@@ -79,12 +79,11 @@ const selectItemCallback = (item: Item) => {
     }
   }
 
-  // 补2：添加这一行，触发AddForm显示
   activeAddForm.value = true
 }
-//
+
 provide('selectItemCallback', { selectItemCallback, activeAddForm })
-//
+
 const closeF = () => {
   activeAddForm.value = false
   dialogVisible.value = false
@@ -94,34 +93,83 @@ const closeF = () => {
 
 const addForm = defineAsyncComponent(() => import('./AddForm.vue'))
 </script>
+
 <template>
-  <el-button type="primary" @click="activeF">
-    <el-icon><Plus /></el-icon>
+  <el-button type="primary" @click="activeF" size="default" class="add-item-btn">
+    <el-icon style="margin-right: 4px"><Plus /></el-icon>
+    添加
   </el-button>
 
-  <el-dialog v-model="dialogVisible" title="添加项" @close="closeF">
-    <div>
+  <el-dialog v-model="dialogVisible" title="添加项" @close="closeF" width="700px" top="15vh">
+    <div class="root-item-info">
       <h3 class="title">
         {{ rootItemR?.name }} - 最高 {{ rootItemR?.maxPoints }} 分
-        <span v-if="rootItemR?.maxItems">限项: {{ rootItemR?.maxItems }}</span>
+        <el-tag v-if="rootItemR?.maxItems" size="small" type="warning" style="margin-left: 8px">
+          限项: {{ rootItemR?.maxItems }}
+        </el-tag>
       </h3>
-      <p>
+      <p class="comment" v-if="rootItemR?.comment">
+        <el-icon style="color: #909399; margin-right: 4px"><InfoFilled /></el-icon>
         {{ rootItemR?.comment }}
       </p>
     </div>
 
-    <el-form v-if="dialogVisible">
+    <el-form v-if="dialogVisible" style="margin-top: 16px">
       <ItemNode :items="rootItemR?.items ?? []" :key="rootItemIdR" />
     </el-form>
-    <div v-if="activeMaxItemR">
-      <el-tag type="danger" size="large">{{ limitItemR.name }}：已达到限项数！</el-tag>
+
+    <div v-if="activeMaxItemR" class="limit-tips">
+      <el-tag type="danger" size="large" style="margin-top: 12px">
+        {{ limitItemR.name }}：已达到限项数！
+      </el-tag>
     </div>
-    <addForm v-if="activeAddForm && !activeMaxItemR" :item="selectItemR" :close="closeF" />
+
+    <addForm
+      v-if="activeAddForm && !activeMaxItemR"
+      :item="selectItemR"
+      :close="closeF"
+      style="margin-top: 16px" />
   </el-dialog>
 </template>
+
 <style scoped>
+.add-item-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+.add-item-btn:hover {
+  background-color: #337ecc;
+  border-color: #337ecc;
+}
+
+.root-item-info {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef5;
+}
 .title {
-  margin-bottom: 10px;
+  margin: 0 0 8px 0;
   color: #409eff;
+  font-size: 16px;
+  font-weight: 500;
+}
+.comment {
+  margin: 0;
+  color: #909399;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.limit-tips {
+  margin-top: 12px;
+}
+
+:deep(.el-dialog__body) {
+  padding: 20px;
+}
+:deep(.el-dialog__footer) {
+  padding: 10px 20px;
 }
 </style>
