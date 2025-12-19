@@ -29,6 +29,7 @@ STUDENT_ITEM_STATUS_MAP.set(CONFIRMED, {
 export const VERIFIED = 1
 export const UNVERIFIED = 0
 
+// 状态映射表
 export const SCORE_STATUS_MAP = new Map<number, { name: string; color: string }>()
 SCORE_STATUS_MAP.set(UNVERIFIED, { name: '待审核', color: 'info' })
 SCORE_STATUS_MAP.set(VERIFIED, { name: '已认定', color: 'success' })

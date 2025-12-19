@@ -119,17 +119,20 @@ export class CommonService {
 
     //解析响应头中的文件名
     const filename = decodeURIComponent(resp.headers['filename'])
-    //二进制文件的临时URL
+    // 创建二进制文件的临时URL（Blob URL）
     const urlFile = window.URL.createObjectURL(new Blob([resp.data]))
+    // 创建a标签用于触发下载
     const link = document.createElement('a')
     link.href = urlFile
     link.setAttribute('download', filename)
-    document.body.appendChild(link)
+    document.body.appendChild(link) // 将a标签加入DOM
     link.click()
 
+    // 清理资源：释放Blob URL + 移除a标签
     window.URL.revokeObjectURL(urlFile)
     document.body.removeChild(link)
 
+    // 返回响应对象
     return resp
   }
 }

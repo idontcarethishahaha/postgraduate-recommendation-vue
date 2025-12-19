@@ -100,20 +100,26 @@ export class StudentService {
         qc.refetchQueries({ queryKey: [querycachename.student.studentitems, rootitemid] })
     })
   }
-  //上传过程中实时展示进度条通知，完成后更新页面数据
-  // 私有静态方法，处理文件上传、监听上传进度、展示进度通知、返回上传结果
+  /*
+ 私有，处理文件上传的底层逻辑：进度监听、进度通知、请求发送
+ 仅内部调用，不对外暴露，专注于上传本身的实现
+ */
   private static async _uploadStudentItemFileService(fdata: FormData, stuitemid: string) {
+    // 从FormData中提取上传的文件，获取文件名
     const uploadFile = fdata.get('file')
     const fileName = uploadFile instanceof File ? uploadFile.name : ''
     const progressR = ref<{ progress: Progress }>({
       progress: { percentage: 0, title: fileName, rate: 0, total: 0, loaded: 0 }
     })
 
+    //上传进度通知组件
     const progNotif = createProgressNotification(progressR.value)
+    //发送文件上传请求
     const resp = await axios.post<ResultVO<StudentItemResp[]>>(
       addPreUrl(`studentitems/${stuitemid}/files`),
       fdata,
       {
+        //监听上传进度事件
         onUploadProgress(ProgressEvent) {
           if (!ProgressEvent) return
           progressR.value.progress.percentage = ProgressEvent.progress ?? 0
@@ -124,14 +130,16 @@ export class StudentService {
       }
     )
     progNotif.close()
+    //返回后端响应的核心数据
+    //ResultVO是通用响应体，data字段为实际的附件列表
     return resp.data.data
   }
 
   // 公有静态方法
-  //对外暴露的 mutation 方法，基于 Vue Query 封装上传逻辑，成功后刷新缓存
   static uploadStudentItemFileService(rootitemid: string) {
     const qc = useQueryClient()
     return useMutation({
+      //调用私有上传方法，接收上传参数（FormData + 指标项ID）
       mutationFn: async ({ fdata, stuitemid }: { fdata: FormData; stuitemid: string }) =>
         await StudentService._uploadStudentItemFileService(fdata, stuitemid),
       onSuccess: () =>

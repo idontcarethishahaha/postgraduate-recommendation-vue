@@ -93,7 +93,13 @@
                 <el-col :span="colspan" class="col-title">总提交项：</el-col>
                 <el-col :span="12">
                   <span class="score-text default-color">
-                    {{ statusR?.totalCount ?? 0 }}
+                    <!--  {{ statusR?.totalCount ?? 0 }} 后端出错 -->
+                    {{
+                      (statusR?.confirmedCount ?? 0) +
+                      (statusR?.pendingReviewCount ?? 0) +
+                      (statusR?.pendingModificationCount ?? 0) +
+                      (statusR?.rejectedCount ?? 0)
+                    }}
                   </span>
                 </el-col>
               </el-row>
